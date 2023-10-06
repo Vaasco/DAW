@@ -35,7 +35,8 @@ sealed class Board(val moves: Moves) {
                 require(player == turn) { "Not your turn" }
                 require(position != Position.INVALID) { "Invalid position" }
                 require(moves[position] == null) { "Position already occupied" }
-                return BoardRun(moves = moves + (position to player), turn = turn.other())
+
+                return isOver(this, position, moves + (position to player))
             }
 
             is BoardDraw, is BoardWin -> throw IllegalStateException()
