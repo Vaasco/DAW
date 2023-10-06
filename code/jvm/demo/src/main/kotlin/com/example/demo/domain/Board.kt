@@ -1,11 +1,18 @@
 package com.example.demo.domain
 
+
+import kotlin.IllegalStateException
+import kotlin.math.pow
+
 const val BOARD_DIM = 5
 
-typealias Moves = Map<Cell, Player>
+typealias Moves = Map<Position, Player>
 
-private const val CENTER = (MAX_MOVES / 2 + BOARD_DIM / 2)
-val INITIALMAP get () = mapOf()
+private val MAX_MOVES = (BOARD_DIM + 1).toDouble().pow(2.0)
+
+private val CENTER = (MAX_MOVES / 2 + BOARD_DIM / 2)
+val INITIALMAP: Moves get() = mapOf()
+
 sealed class Board(val moves: Moves) {
 
     /**
@@ -20,6 +27,21 @@ sealed class Board(val moves: Moves) {
         return moves.size == other.moves.size
     }
 
+    fun play(position: Position, player: Player): Board {
+        when (this) {
+            is BoardRun -> {
+                require(player == turn) { "Not your turn" }
+                require(position != Position.INVALID) { "Invalid position" }
+                require(moves[position] == null) { "Position already occupied" }
+                return BoardRun(moves = moves + (position to player), turn = turn.other())
+            }
+
+            is BoardDraw, is BoardWin -> throw IllegalStateException()
+        }
+
+    }
+
+
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
 }
@@ -30,7 +52,9 @@ sealed class Board(val moves: Moves) {
  * @property turn representa o turno do jogador que é a jogar ou não.
  * @return Board representa o Board que representa o nosso BoardRun.
  */
-class BoardRun(moves: Moves, val turn: Player, val pass: Boolean = false): Board(moves)
+class BoardRun(moves: Moves, val turn: Player, val pass: Boolean = false) : Board(moves) {
+
+}
 
 /**
  * Classe "BoardWin" que representa o tabuleiro de jogo quando existe um vencedor desse jogo.
@@ -38,14 +62,18 @@ class BoardRun(moves: Moves, val turn: Player, val pass: Boolean = false): Board
  * @property winner representa o vencedor desse jogo.
  * @return Board representa o Board quando este acabou com um vencedor.
  */
-class BoardWin(moves: Moves, val winner: Player): Board(moves)
+class BoardWin(moves: Moves, val winner: Player) : Board(moves) {
+
+}
 
 /**
  * Classe "BoardDraw" que representa o tabuleiro de jogo quando este empatou.
  * @property moves representa os movimentos efetuados nesse tabuleiro.
  * @return Board representa o board quando este acabou em empate.
  */
-class BoardDraw(moves: Moves) : Board(moves)
+class BoardDraw(moves: Moves) : Board(moves) {
+
+}
 
 /**
  * Função "createBoard" responsável por criar o novo Board com os dados iniciais.
@@ -53,4 +81,3 @@ class BoardDraw(moves: Moves) : Board(moves)
  * @return BoardRun representa o nosso tabuleiro durante um jogo.
  */
 fun createBoard(first: Player) = BoardRun(INITIALMAP, first)
-
