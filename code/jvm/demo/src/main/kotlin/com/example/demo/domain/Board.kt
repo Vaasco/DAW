@@ -4,13 +4,15 @@ package com.example.demo.domain
 import kotlin.IllegalStateException
 import kotlin.math.pow
 
-const val BOARD_DIM = 5
+
+const val SQUARE_DIM = 4
+
+const val BOARD_DIM = SQUARE_DIM + 1
 
 typealias Moves = Map<Position, Player>
 
-private val MAX_MOVES = (BOARD_DIM + 1).toDouble().pow(2.0)
+private val MAX_MOVES = (BOARD_DIM + 1).toDouble().pow(2)
 
-private val CENTER = (MAX_MOVES / 2 + BOARD_DIM / 2)
 val INITIALMAP: Moves get() = mapOf()
 
 sealed class Board(val moves: Moves) {
@@ -39,6 +41,17 @@ sealed class Board(val moves: Moves) {
             is BoardDraw, is BoardWin -> throw IllegalStateException()
         }
 
+    }
+
+    //TODO FALTA O CASO DE SER EFETUADA A ÚLTIMA JOGADA PARA EMPATE!
+    private fun isOver(board: BoardRun, position: Position, newMoves: Moves): Board {
+        if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves)
+        Direction.values().forEach { dir ->
+            //Ver as peças numa certa direção
+            if (cellsInDirection(moves, board.turn, position, dir) >= 5) return BoardWin(newMoves, board.turn)
+            //Ver se estão 5 peças em linha da cor que se quer
+        }
+        return BoardRun(newMoves, board.turn.other())
     }
 
 
@@ -81,3 +94,9 @@ class BoardDraw(moves: Moves) : Board(moves) {
  * @return BoardRun representa o nosso tabuleiro durante um jogo.
  */
 fun createBoard(first: Player) = BoardRun(INITIALMAP, first)
+
+fun main() {
+    val board = BoardRun(INITIALMAP, Player.WHITE)
+    val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.WHITE)
+    println(b)
+}
