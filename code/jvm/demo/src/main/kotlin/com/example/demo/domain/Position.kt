@@ -28,12 +28,19 @@ class Position private constructor(val row: Row, val col: Column) {
 operator fun Position.plus(dir: Direction): Position = Position(row.index + dir.difRow, col.index + dir.difCol)
 
 
-fun cellsInDirection(from: Position, dir: Direction): List<Position> {
-    val line = mutableListOf<Position>()
+fun cellsInDirection(moves: Moves, player: Player, from: Position, dir: Direction): Int {
+    var counter = 1
     var currentCell = from + dir
-    while (currentCell != Position.INVALID) {
-        line.add(currentCell)
-        currentCell += dir
+    var currDir = dir
+    while (currentCell != Position.INVALID && moves[currentCell] == player) {
+        counter++
+        currentCell += currDir
     }
-    return line
+    currDir = dir.invertDirection()
+    currentCell = from + currDir
+    while (currentCell != Position.INVALID && moves[currentCell] == player) {
+        counter++
+        currentCell += currDir
+    }
+    return counter
 }

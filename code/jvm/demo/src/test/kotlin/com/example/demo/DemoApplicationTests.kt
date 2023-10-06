@@ -4,10 +4,16 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class DemoApplicationTests {
+class BoardTest {
+/*
+	@BeforeTest
+	fun `setup`(){
+
+	}
 
 	@Test
-	fun contextLoads() {
+	fun `Game Draw`() {
+
 	}
 
 }

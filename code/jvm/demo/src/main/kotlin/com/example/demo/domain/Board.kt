@@ -57,6 +57,10 @@ sealed class Board(val moves: Moves) {
 
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
+
+    override fun toString(): String {
+        return moves.toString()
+    }
 }
 
 /**
