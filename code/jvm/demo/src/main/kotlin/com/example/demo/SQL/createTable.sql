@@ -17,3 +17,5 @@ create table player_game(
 	constraint game_id foreign key (game_id) references game(id),
 	constraint player_id foreign key (player_id) references player(id)
 );
+--TODO(Temos que garantir que não temos mais que 2 entradas para um jogo)
+--TODO(Temos que garantir que as duas entradas não pertencem ao mesmo jogador)
