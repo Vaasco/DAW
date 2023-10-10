@@ -12,7 +12,8 @@ class DemoApplication {
 
     @Bean
     fun jdbi(): Jdbi {
-        val jdbcDbURl = System.getenv("jdbc:postgresql://localhost/postgres?user=postgres&password=postgres")
+        val password = System.getenv("PASSWORD")
+        val jdbcDbURl = "jdbc:postgresql://localhost/postgres?user=postgres&password=${password}"
         val dataSrc = PGSimpleDataSource()
         dataSrc.setUrl(jdbcDbURl)
 
@@ -21,10 +22,8 @@ class DemoApplication {
         //.registerColumnMapper(BoardMapper())
 
     }
-
-    fun main(args: Array<String>) {
-        runApplication<DemoApplication>(*args)
-    }
 }
 
-
+fun main(args: Array<String>) {
+    runApplication<DemoApplication>(*args)
+}

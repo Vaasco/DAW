@@ -1,9 +1,11 @@
+import com.example.demo.http.PathTemplate
+import com.example.demo.service.exception.NotFoundException
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
-@RestController
+/*@RestController
 class GamesController (private val gamesService : GamesService) {
 
     //TODO
@@ -30,4 +32,4 @@ class GamesController (private val gamesService : GamesService) {
         val gameOutModel = GameOutputModel(game.id, BoardOutputModel(game.board.toString()), game.playerX, game.playerO)
         return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(gameOutModel)
     }
-}
+}*/
