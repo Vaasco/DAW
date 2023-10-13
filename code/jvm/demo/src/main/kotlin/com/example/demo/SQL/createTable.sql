@@ -10,12 +10,15 @@ create table game(
 	primary key (id)
 );
 
-create table player_game(
-	player_id integer not null,
+create table Lobby(
+	id serial,
+	player1_id integer not null,
+	player2_id integer not null,
 	game_id integer not null,
-	primary key(player_id, game_id),
+	board_size integer not null,
+	primary key(id),
+	constraint player1_id foreign key (player1_id) references player(id),
+	constraint player2_id foreign key (player2_id) references player(id),
 	constraint game_id foreign key (game_id) references game(id),
-	constraint player_id foreign key (player_id) references player(id)
+	constraint same_player check(player1_id <> player2_id)
 );
---TODO(Temos que garantir que não temos mais que 2 entradas para um jogo)
---TODO(Temos que garantir que as duas entradas não pertencem ao mesmo jogador)
