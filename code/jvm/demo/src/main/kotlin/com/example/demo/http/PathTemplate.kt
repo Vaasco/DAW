@@ -30,5 +30,7 @@ object PathTemplate {
 
     // Register a new user.
     const val CREATE_USER = "/users"
+
+    //const val GAME_STATE =
     
 }

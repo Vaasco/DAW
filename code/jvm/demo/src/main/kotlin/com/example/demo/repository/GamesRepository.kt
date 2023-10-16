@@ -4,7 +4,9 @@ import com.example.demo.domain.Game
 import java.util.*
 
 interface GamesRepository {
-    fun getById(id: UUID): Game?
-    fun update(game: Game)
-    fun insert(game: Game)
+    fun getById(id: Int): Game?
+    fun updateGame(game: Game)
+    fun createGame(game: Game)
+
+    fun createLobby()
 }
