@@ -9,4 +9,6 @@ import org.springframework.stereotype.Component
 class UsersService(private val userRepository: UsersRepository){
     fun getById(id:Int) = userRepository.getById(id)
     fun createUser(username : TempUser) = userRepository.createUser(username)
+
+    fun checkGameState(id : Int) = userRepository.checkGameState(id)
 }

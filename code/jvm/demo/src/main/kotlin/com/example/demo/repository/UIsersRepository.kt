@@ -5,5 +5,7 @@ import com.example.demo.domain.User
 
 interface UsersRepository {
     fun getById(id : Int) : String?
-    fun createUser(username : String)
+    fun createUser(username : TempUser)
+
+    fun checkGameState(id : Int):String?
 }

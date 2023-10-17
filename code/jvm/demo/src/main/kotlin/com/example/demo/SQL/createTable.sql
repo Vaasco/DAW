@@ -1,7 +1,9 @@
 create table player(
 	id serial,
 	username varchar(30) unique not null,
-	primary key (id)
+	lobby_id integer,
+	primary key (id),
+	foreign key (lobby_id) references lobby(id)
 );
 
 create table game(
@@ -22,3 +24,5 @@ create table Lobby(
 	constraint game_id foreign key (game_id) references game(id),
 	constraint same_player check(player1_id <> player2_id)
 );
+
+drop table Lobby;

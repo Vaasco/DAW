@@ -17,6 +17,7 @@ class UserController(private val usersService: UsersService) {
     @PostMapping(PathTemplate.CREATE_USER)
     fun createUser(@RequestBody username: TempUser) = usersService.createUser(username)
 
-    //@GetMapping()
+    @GetMapping(PathTemplate.GAME_STATE)
+    fun checkGameState(@PathVariable id:Int) = usersService.checkGameState(id)
 }
 
