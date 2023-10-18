@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class UsersService(private val userRepository: UsersRepository){
     fun getById(id:Int) = userRepository.getById(id)
-    fun createUser(username : TempUser) = userRepository.createUser(username)
+    fun createUser(username : String, password : String) = userRepository.createUser(username, password)
 
     fun checkGameState(id : Int) = userRepository.checkGameState(id)
 }

@@ -2,6 +2,7 @@ create table player(
 	id serial,
     token varchar(30) unique not null,--TODO("Adjust the max length of the token")
 	username varchar(30) unique not null,
+	password varchar(30) not null,
 	primary key (id)
 );
 
