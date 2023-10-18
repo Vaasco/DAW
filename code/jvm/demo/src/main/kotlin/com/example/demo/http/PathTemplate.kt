@@ -24,7 +24,7 @@ object PathTemplate {
     const val HOME = "/home"
 
     //Obtain statistical and ranking information, such as number of played games and users ranking, by an unauthenticated user.
-    const val STATICS = "/home/stats"
+    const val STATICS = "/home/stats{id}"
     /*
     Obtain information about the system, such as the system authors and the system version, by an unauthenticated user
      */

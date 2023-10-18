@@ -7,6 +7,6 @@ insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) 
 insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) values (2, null, null, default, default, default);
 insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) values (3, null, null, default, default, default);
 
-
+insert into ranking(player_id, rank, played_games, won_games, lost_games) values (1,1000,50,45,5);
 -- Raise exception insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) values (3, null, null, default, default, default);
 update game set state = 'Ended B' where id = 1;
