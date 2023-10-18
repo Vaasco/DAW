@@ -8,3 +8,5 @@ data class User(
     val password: String,
     val token: UUID
 )
+
+data class TempUser(val name:String) //Class created so that the Json parse works correctly

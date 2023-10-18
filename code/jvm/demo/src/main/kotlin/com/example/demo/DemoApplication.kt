@@ -20,8 +20,7 @@ class DemoApplication {
 
         return Jdbi.create(dataSrc)
             .installPlugin(KotlinPlugin())
-        //.registerColumnMapper(BoardMapper())
-
+            .registerColumnMapper(BoardMapper())
     }
 }
 
