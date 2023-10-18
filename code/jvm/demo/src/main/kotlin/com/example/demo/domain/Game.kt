@@ -8,11 +8,7 @@ package com.example.demo.domain
 )*/
 
 
-data class TempGame(
-    val state: String,
-    val rules: String,
-    val variant: String
-)
+
 
 data class Game(
     val id: Int,

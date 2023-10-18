@@ -2,6 +2,7 @@ package com.example.demo.http
 
 
 import com.example.demo.domain.*
+import com.example.demo.http.model.GameInputModel
 import com.example.demo.http.model.PositionInputModel
 import com.example.demo.service.GamesService
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,7 +18,7 @@ class GameController(private val gamesService: GamesService) {
     fun createLobby() = gamesService.createLobby() // A tabela mudou então temos que mudar isto
 
     @PostMapping(PathTemplate.CREATE_GAME)
-    fun createGame(@RequestBody tg: TempGame) {
+    fun createGame(@RequestBody tg: GameInputModel) {
         gamesService.createGame(
             tg.state,
             tg.rules,
