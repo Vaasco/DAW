@@ -1,5 +1,6 @@
 package com.example.demo
 
+import BoardMapper
 import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

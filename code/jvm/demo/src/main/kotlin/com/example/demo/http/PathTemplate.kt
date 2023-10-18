@@ -8,6 +8,10 @@ object PathTemplate {
   */
     const val START = "/games"
 
+    const val CREATE_GAME = "/games/start"
+
+    const val CHECK_GAME = "/check/{id}"
+
     //Allow an user to observe the game state. GET
 
     const val GAME_BY_ID = "/games/{id}"

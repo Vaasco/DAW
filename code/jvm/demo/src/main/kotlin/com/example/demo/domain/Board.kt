@@ -1,11 +1,12 @@
 package com.example.demo.domain
 
 
+import java.util.regex.Pattern
 import kotlin.IllegalStateException
 import kotlin.math.pow
 
 
-const val SQUARE_DIM = 4
+const val SQUARE_DIM = 14
 
 const val BOARD_DIM = SQUARE_DIM + 1
 
@@ -44,6 +45,7 @@ sealed class Board(val moves: Moves) {
 
     }
 
+
     //TODO FALTA O CASO DE SER EFETUADA A ÚLTIMA JOGADA PARA EMPATE!
     private fun isOver(board: BoardRun, position: Position, newMoves: Moves): Board {
         if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves)
@@ -59,9 +61,8 @@ sealed class Board(val moves: Moves) {
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
 
-    override fun toString(): String {
-        return moves.toString()
-    }
+    override fun toString() = moves.toString()
+
 }
 
 /**
@@ -70,7 +71,7 @@ sealed class Board(val moves: Moves) {
  * @property turn representa o turno do jogador que é a jogar ou não.
  * @return Board representa o Board que representa o nosso BoardRun.
  */
-class BoardRun(moves: Moves, val turn: Player, val pass: Boolean = false) : Board(moves) {
+class BoardRun(moves: Moves, val turn: Player) : Board(moves) {
 
 }
 
@@ -93,6 +94,20 @@ class BoardDraw(moves: Moves) : Board(moves) {
 
 }
 
+fun fromString(boardString: String): Board {
+    val boardMap = mutableMapOf<Position, Player>()
+
+    val newBoardString = boardString.substring(1, boardString.length - 1)
+    val pairs = newBoardString.split(",")
+    for (i in pairs) {
+        val player = i.substring(i.length - 5).toPlayer()
+        val position = i.substring(0, i.length - 6).toPosition()
+        boardMap[position] = player
+    }
+
+    return BoardRun(boardMap, Player.WHITE)
+}
+
 /**
  * Função "createBoard" responsável por criar o novo Board com os dados iniciais.
  * @param first representa o jogador que o utilizador irá ser nesse board.
@@ -104,4 +119,6 @@ fun main() {
     val board = BoardRun(INITIALMAP, Player.WHITE)
     val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.WHITE)
     println(b)
+    //println(fromString("{2B:WHITE,4A:BLACK}").moves)
 }
+

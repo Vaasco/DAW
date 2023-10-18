@@ -1,6 +1,5 @@
 package com.example.demo.repository
 
-import com.example.demo.domain.TempUser
 import com.example.demo.domain.User
 
 interface UsersRepository {

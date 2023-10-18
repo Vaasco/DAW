@@ -1,13 +1,12 @@
 package com.example.demo.domain
 
 
-
 class Position private constructor(val row: Row, val col: Column) {
 
     val rowIndex: Int = row.index
     val colIndex: Int = col.index
 
-    override fun toString(): String = if (this== INVALID) "INVALID Cell" else "${this.row.number}${this.col.symbol}"
+    override fun toString(): String = if (this == INVALID) "INVALID Cell" else "${this.row.number}${this.col.symbol}"
 
     companion object {
         private val values =
@@ -23,6 +22,19 @@ class Position private constructor(val row: Row, val col: Column) {
         operator fun invoke(row: Row, col: Column): Position = Position(row.index, col.index)
     }
 
+}
+
+fun String.toPosition():Position {
+    return if (this.length == 2) {
+        val row = this[0].digitToInt()
+        val col = this[1]
+        Position(row.toRow(),col.toColumn())
+    }
+    else{
+        val row = this.substring(0,2).toInt()
+        val col = this[2]
+        Position(row.toRow(),col.toColumn())
+    }
 }
 
 operator fun Position.plus(dir: Direction): Position = Position(row.index + dir.difRow, col.index + dir.difCol)
@@ -43,4 +55,8 @@ fun cellsInDirection(moves: Moves, player: Player, from: Position, dir: Directio
         currentCell += currDir
     }
     return counter
+}
+
+fun main() {
+    println("13A".toPosition().row)
 }

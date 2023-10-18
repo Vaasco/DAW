@@ -1,10 +1,25 @@
 package com.example.demo.domain
 
-import java.util.UUID
+/*data class Game(
+    val id: UUID,
+    val board: Board,
+    val playerWhite: Int,
+    val playerBlack: Int
+)*/
+
+
+data class TempGame(
+    val state: String,
+    val rules: String,
+    val variant: String
+)
 
 data class Game(
-    val id:UUID,
-    val board:Board,
-    val playerWhite:Int,
-    val playerBlack:Int
+    val id: Int,
+    val board: Board,
+    val state: String,
+    val rules: String,
+    val variant: String
+    //val playerWhite: Int,
+    //val playerBlack: Int
 )

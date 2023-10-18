@@ -7,6 +7,8 @@ create table player(
 
 create table game(
 	id serial,
+	board varchar(1350) not null,
+	turn char(1) not null,
 	state varchar(7) not null,
     rules varchar(8) not null,
     variant varchar(30) not null,
@@ -28,3 +30,5 @@ create table Lobby(
 	constraint game_id foreign key (game_id) references game(id),
 	constraint same_player check(player1_id <> player2_id)
 );
+
+drop table player cascade;
