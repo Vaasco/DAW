@@ -9,4 +9,4 @@ insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) 
 
 
 -- Raise exception insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) values (3, null, null, default, default, default);
-
+update game set state = 'Ended B' where id = 1;

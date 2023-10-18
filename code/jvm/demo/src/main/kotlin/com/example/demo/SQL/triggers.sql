@@ -22,7 +22,7 @@ create or replace trigger create_game_trigger
     for each row
 execute function create_game();
 
---Function that prohibits a player from playing two games simoutaneously
+--Function that prohibits a player from playing two games simultaneously
 create or replace function one_game_check()
     returns trigger
     language plpgsql
@@ -31,7 +31,6 @@ $$
 begin
     if exists (select id from lobby where (state = 'Playing' or state = 'Waiting') and (player1_id = new.player1_id or player2_id = new.player1_id or player1_id = new.player2_id or player2_id = new.player2_id)) then
         raise exception 'You cannot play two games at the same time!';
-        return old;
     end if;
     return new;
 end;
@@ -41,3 +40,29 @@ create or replace trigger one_game_check_trigger
     before insert on lobby
     for each row
 execute function one_game_check();
+
+create or replace function post_game_asserts()
+    returns trigger
+    language plpgsql
+as
+$$
+declare Winner integer;
+        Loser integer;
+begin
+    if (new.state <> 'Playing') then
+        update lobby set state = 'Played' where game_id = new.id;
+        if (new.state = 'Ended D') then
+            update ranking set played_games = played_games + 1 where player_id = new.player_B or player_id = new.player_W;
+        elseif (new.state = 'Ended B') then
+            Winner := new.player_B;
+            Loser := new.player_W;
+        elseif (new.state = 'Ended W') then
+            Winner := new.player_W;
+            Loser := new.player_B;
+            update ranking set won_games = won_games + 1, played_games = played_games + 1 where player_id = Winner;
+            update ranking set lost_games = lost_games + 1, played_games = played_games + 1 where player_id = Loser;
+        end if;
+    end if;
+    return new;
+end;
+$$;
