@@ -19,6 +19,5 @@ class UserController(private val usersService: UsersService) {
     @GetMapping(PathTemplate.GAME_STATE)
     fun checkGameState(@PathVariable id:Int) = usersService.checkGameState(id)
 
-
 }
 
