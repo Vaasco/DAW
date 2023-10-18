@@ -86,7 +86,7 @@ create or replace trigger post_game_asserts_trigger
     for each row
 execute function post_game_asserts();
 
---Automatically creates
+--Function that automatically creates a ranking for a player
 create or replace function create_ranking()
     returns trigger
     language plpgsql
