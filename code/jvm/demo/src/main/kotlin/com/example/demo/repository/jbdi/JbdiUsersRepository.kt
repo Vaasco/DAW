@@ -77,4 +77,26 @@ class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
                 .single()
         }
     }
+
+    override fun createToken(authentication: Authentication) {
+        val query = "insert into authentication (player_id, token,createdAt,lastUsedAt) VALUES (:player_id, :token, :createdAt, :lastUsedAt)"
+        return jdbi.useHandle<Exception> { handle ->
+            handle.createUpdate( query)
+                .bind( "player_id",authentication.userId )
+                .bind("token",authentication.token)
+                .bind("createdAt",authentication.createdAt)
+                .bind("lastUsedAt",authentication.lastUsedAt)
+                .execute()
+        }
+    }
+
+    override fun getCurrDate(): Date {
+        val query = "select CURRENT_DATE;"
+        return jdbi.withHandle<Date, Exception> {handle  ->
+            handle.createQuery(query)
+                .mapTo(Date::class.java)
+                .single()
+        }
+    }
+
 }

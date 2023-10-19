@@ -24,9 +24,13 @@ class GamesService(private val gameRepository: GamesRepository, private val user
         return gameRepository.createGame(rules, variant, boardSize, board)
     }*/
 
-    fun getGameState(id: Int) = gameRepository.getGameState(id)
+    fun getGameState(id: Int?) {
+        require( id != null && gameRepository.getById( id ) != null){"Invalid id"}
+        gameRepository.getGameState(id)
+    }
 
     fun play(gameId: Int, row: Int, col: Int) {
+        require(gameRepository.getById( gameId ) != null){"Invalid id"}
         val game = gameRepository.getById(gameId) ?: throw NotFoundException()
         val position = Position(row.indexToRow(), col.indexToColumn())
         val newBoard = game.board.play(position = position, (game.board as BoardRun).turn)

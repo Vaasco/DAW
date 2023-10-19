@@ -12,7 +12,6 @@ sealed class TokenResult {
 
     object InvalidToken : TokenResult()
 
-
 }
 
 @Component
@@ -56,22 +55,23 @@ class UsersService(
     }
 
     fun createToken(id: Int?): TokenResult {
-        val user = getUserById(id)
         require(id != null) { "Invalid id" }
         require(getUserById(id) != null) { "Invalid user id" }
         return transactionManager.run {
             val userRepository = it.userRepository
-            val user = userRepository.getUserById(id) ?: TODO()
+            val user = userRepository.getUserById(id) ?: TokenResult.InvalidToken
 
             if( user is TokenResult.InvalidToken ) return@run TokenResult.InvalidToken
 
             val now = userRepository.getCurrDate()
             val newToken = Authentication(
                 userDomain.generateTokenValue(),
-                user.id,
+                (user as UserOutputModel).id,
                 now,
                 now
                 )
+            userRepository.createToken(newToken)
+            TokenResult.ValidToken
         }
     }
 }

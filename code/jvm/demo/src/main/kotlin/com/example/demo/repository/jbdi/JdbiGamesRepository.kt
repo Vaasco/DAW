@@ -47,6 +47,10 @@ class JbdiGamesRepository(private val jdbi: Jdbi) : GamesRepository {
     jdbi.useHandle<Exception> { handle ->
             val query = "insert into lobby (player1_id, rules, variant, board_size) values (:playerId, :rules, :variant, :boardSize)"
             handle.createUpdate(query)
+                .bind("player1_id",playerId)
+                .bind("rules",rules)
+                .bind("variant", variant)
+                .bind("boardSize", boardSize)
                 .execute()
         }
     }
