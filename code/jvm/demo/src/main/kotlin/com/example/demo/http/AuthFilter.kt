@@ -18,6 +18,7 @@ class LogFilter : HttpFilter() {
         }
         else{
             val token  = request.getHeader("Authorization header")
+            re
             if (usersService.authenticate) chain.doFilter(request, response)
             else response.setStatus(HttpServletResponse.SC_UNAUTHORIZED)
         }
