@@ -79,4 +79,22 @@ class UsersService(
         //verificar se o token é de um user valido e se o user corresponde ao token devido a probabilidade de haver tokens repetidos 
         return ( userRepository.getToken(token) != null)
     }
+
+    fun processAuthorizationHeaderValue(authorizationValue: String?): String? {
+        if (authorizationValue == null) {
+            return null
+        }
+        val parts = authorizationValue.trim().split(" ")
+        if (parts.size != 2) {
+            return null
+        }
+//        if (parts[0].lowercase() != SCHEME) {
+//            return null
+//        }
+        return parts[1]
+    }
+//    companion object {
+//        const val SCHEME = "bearer"
+//    }
 }
+

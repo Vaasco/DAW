@@ -10,25 +10,29 @@ import org.springframework.stereotype.Component
 
 @Component
 class AuthFilter(private val usersService: UsersService) : HttpFilter() {
-    val unAuthPaths = listOf(
-        // rever com o stor
-        PathTemplate.GAMES_NUMBER.dropLast(5),
-        PathTemplate.STATICS.dropLast(5),
-        PathTemplate.HOME,
-        PathTemplate.AUTHORS
-    )
+
 
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val path = request.requestURI.dropLastWhile { it != '/' }
         if (unAuthPaths.contains(path) ) chain.doFilter(request, response)
         else{
-            val token  = request.getHeader("Authorization header")
+            val token  = request.getHeader(NAME_AUTHORIZATION_HEADER)
             if (usersService.authenticate(token)) chain.doFilter(request, response)
             else response.status = HttpServletResponse.SC_UNAUTHORIZED
         }
 
 
 
+    }
+    companion object{
+        val unAuthPaths = listOf(
+            // rever com o stor
+            PathTemplate.GAMES_NUMBER.dropLast(5),
+            PathTemplate.STATICS.dropLast(5),
+            PathTemplate.HOME,
+            PathTemplate.AUTHORS
+        )
+        const val NAME_AUTHORIZATION_HEADER = "Authorization"
     }
 
 }
