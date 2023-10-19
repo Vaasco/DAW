@@ -16,7 +16,9 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
         val path = request.requestURI.dropLastWhile { it != '/' }
         if (unAuthPaths.contains(path) ) chain.doFilter(request, response)
         else{
-            val token  = request.getHeader(NAME_AUTHORIZATION_HEADER)
+            val token  = usersService.processAuthorizationHeaderValue(
+                request.getHeader(NAME_AUTHORIZATION_HEADER)
+            )
             if (usersService.authenticate(token)) chain.doFilter(request, response)
             else response.status = HttpServletResponse.SC_UNAUTHORIZED
         }
