@@ -19,7 +19,7 @@ create table game(
     primary key (id),
     constraint invalid_state check(state in ('Playing', 'Ended B', 'Ended W', 'Ended D')),
     constraint invalid_player_B foreign key (player_B) references player(id),
-    constraint invalid_player_W foreign key (player_W) references player(id)
+constraint invalid_player_W foreign key (player_W) references player(id)
 );
 
 create table lobby(
