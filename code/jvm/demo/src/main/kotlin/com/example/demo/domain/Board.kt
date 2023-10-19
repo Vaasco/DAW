@@ -5,7 +5,6 @@ import java.util.regex.Pattern
 import kotlin.IllegalStateException
 import kotlin.math.pow
 
-
 const val SQUARE_DIM = 14
 
 const val BOARD_DIM = SQUARE_DIM + 1

@@ -32,23 +32,20 @@ class JbdiGamesRepository(private val jdbi: Jdbi) : GamesRepository {
         }
     }
 
-
-    override fun createGame(state: String, rules: String, variant: String, board: BoardRun) {
+    /*override fun createGame(rules: String, variant: String, boardSize: Int, board: BoardRun) {
         jdbi.useHandle<Exception> { handle ->
-            handle.createUpdate("INSERT INTO game (board, turn ,state, rules, variant) VALUES (:board,:turn ,:state, :rules, :variant)")
-                .bind("board", board.toString())
-                .bind("turn", board.turn.string)
-                .bind("state", state)
+            handle.createUpdate("insert into game (rules, variant, board_size) VALUES (:rules, :variant, :board_size)")
                 .bind("rules", rules)
                 .bind("variant", variant)
+                .bind("board_size", boardSize)
                 .execute()
         }
-    }
+    }*/
 
 
-    override fun createLobby() {
-        jdbi.useHandle<Exception> { handle ->
-            val query = "INSERT INTO lobby DEFAULT VALUES"
+    override fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int) {
+    jdbi.useHandle<Exception> { handle ->
+            val query = "insert into lobby (player1_id, rules, variant, board_size) values (:playerId, :rules, :variant, :boardSize)"
             handle.createUpdate(query)
                 .execute()
         }

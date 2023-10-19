@@ -1,11 +1,13 @@
 package com.example.demo.repository.jbdi
 
+import com.example.demo.domain.Authentication
 import com.example.demo.http.model.StatisticsOutputModel
 import com.example.demo.http.model.UserOutputModel
 import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Jdbi
 import org.springframework.stereotype.Component
 import java.lang.Exception
+import java.sql.Date
 import java.util.UUID
 
 @Component
@@ -14,7 +16,7 @@ class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
 
     override fun getUserById(id: Int): UserOutputModel? {
         return jdbi.withHandle<UserOutputModel?, Exception> { handle ->
-            handle.createQuery("select id, token, username, password from player where id = :id")
+            handle.createQuery("select id, username, password from player where id = :id")
                 .bind("id", id)
                 .mapTo(UserOutputModel::class.java)
                 .singleOrNull()
@@ -24,9 +26,10 @@ class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
 
     override fun createUser(username: String, password: String) {
         val token = UUID.randomUUID().toString()
+        val query = "INSERT INTO player(username, password) VALUES (:username, :password)"
+        //TODO("Create token")
 
         jdbi.useHandle<Exception> { handle ->
-            val query = "INSERT INTO player(username, password, token) VALUES (:username, :password, :token)"
             handle.createUpdate(query)
                 .bind("userName", username)
                 .bind("password", password)

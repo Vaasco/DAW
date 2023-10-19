@@ -1,8 +1,5 @@
 package com.example.demo.http
 
-
-import com.example.demo.domain.*
-import com.example.demo.http.model.GameInputModel
 import com.example.demo.http.model.PositionInputModel
 import com.example.demo.service.GamesService
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,10 +11,15 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class GameController(private val gamesService: GamesService) {
 
-    @PostMapping(PathTemplate.START)//Mudar o path tbm
-    fun createLobby() = gamesService.createLobby() // A tabela mudou então temos que mudar isto
+    @PostMapping(PathTemplate.START)
+    fun createLobby(
+        @RequestBody playerId: Int,
+        @RequestBody rules: String,
+        @RequestBody variant: String,
+        @RequestBody boardSize: Int
+    ) = gamesService.createLobby(playerId,rules,variant,boardSize)
 
-    @PostMapping(PathTemplate.CREATE_GAME)
+    /*@PostMapping(PathTemplate.CREATE_GAME)
     fun createGame(@RequestBody tg: GameInputModel) {
         gamesService.createGame(
             tg.state,
@@ -25,7 +27,7 @@ class GameController(private val gamesService: GamesService) {
             tg.variant,
             BoardRun(mapOf<Position, Player>("4A".toPosition() to Player.WHITE), turn = Player.WHITE)
         )
-    }
+    }*/
 
     @GetMapping(PathTemplate.GAME_STATE)
     fun getGameState(@PathVariable id: Int) = gamesService.getGameState(id)

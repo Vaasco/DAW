@@ -1,12 +1,11 @@
 package com.example.demo.service
 
-import com.example.demo.domain.Token
+import com.example.demo.domain.Authentication
 import com.example.demo.domain.UserDomain
 import com.example.demo.http.model.UserOutputModel
 import com.example.demo.repository.TransactionManager
 import com.example.demo.repository.UsersRepository
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 sealed class TokenResult {
     object ValidToken : TokenResult()
@@ -64,9 +63,10 @@ class UsersService(
             val userRepository = it.userRepository
             val user = userRepository.getUserById(id) ?: TODO()
 
-            val tokenValue = userDomain.generateTokenValue()
-            val now = Instant.now()
-            val newToken = Token(
+            if( user is TokenResult.InvalidToken ) return@run TokenResult.InvalidToken
+
+            val now = userRepository.getCurrDate()
+            val newToken = Authentication(
                 userDomain.generateTokenValue(),
                 user.id,
                 now,

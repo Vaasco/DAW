@@ -1,9 +1,17 @@
 create table player(
     id serial,
-    token varchar(36) unique not null,
     username varchar(30) unique not null,
     password varchar(30) not null,
     primary key (id)
+);
+
+create table authentication(
+    player_id integer,
+    token varchar(36) not null,
+    createdAt date not null,
+    lastUsedAt date not null,
+    primary key (player_id),
+    constraint player_id foreign key (player_id) references player(id)
 );
 
 create table game(

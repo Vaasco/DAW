@@ -1,6 +1,6 @@
-insert into Player(username, token, password) values 	('Vasco', 'token1', 'password1'),
-                                                        ('Jose', 'token2', 'password2'),
-                                                        ('Sergio', 'token3', 'password3');
+insert into Player(username, password) values   ('Vasco', 'password1'),
+                                                ('Jose', 'password2'),
+                                                ('Sergio', 'password3');
 
 insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) values (1, null, null, default, default, default);
 --update lobby set state = 'Left' where player1_id = 1;

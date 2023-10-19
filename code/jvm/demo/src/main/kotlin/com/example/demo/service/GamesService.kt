@@ -2,22 +2,27 @@ package com.example.demo.service
 
 import com.example.demo.domain.*
 import com.example.demo.repository.GamesRepository
+import com.example.demo.repository.UsersRepository
 import com.example.demo.service.exception.NotFoundException
 import org.springframework.stereotype.Component
 
 @Component
-class GamesService(private val gameRepository: GamesRepository) {
+class GamesService(private val gameRepository: GamesRepository, private val usersRepository: UsersRepository) {
     fun getById(id: Int) = gameRepository.getById(id)
 
-    fun createLobby() = gameRepository.createLobby()
+    private val validRules = listOf("Pro", "Long Pro")
+    private val validVariants = listOf("Freestyle", "Swap after 1st move")
 
-    fun createGame(state: String?, rules: String?, variant: String?, board: BoardRun?){
-        require(state != null) {"Invalid state"}
-        require(rules != null) {"Invalid rules"}
-        require(variant != null) {"Invalid variant"}
-        require(board != null) {"Invalid board"}
-        return gameRepository.createGame(state, rules, variant, board)
+    fun createLobby(playerId: Int?, rules: String?, variant: String?, boardSize: Int?) {
+        require(playerId != null && usersRepository.getUserById(playerId) != null) {"Invalid player"}
+        require(rules != null && validRules.contains(rules)) {"Invalid rules"}
+        require(variant != null && validVariants.contains(variant)) {"Invalid variant"}
+        require(boardSize != null) {"Invalid boardSize"}
+        gameRepository.createLobby(playerId, rules, variant, boardSize)
     }
+    /*fun createGame(rules: String, variant: String, boardSize: Int, board: BoardRun){
+        return gameRepository.createGame(rules, variant, boardSize, board)
+    }*/
 
     fun getGameState(id: Int) = gameRepository.getGameState(id)
 
