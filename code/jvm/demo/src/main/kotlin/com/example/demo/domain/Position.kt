@@ -1,6 +1,5 @@
 package com.example.demo.domain
 
-
 class Position private constructor(val row: Row, val col: Column) {
 
     val rowIndex: Int = row.index
@@ -12,13 +11,11 @@ class Position private constructor(val row: Row, val col: Column) {
         private val values =
             List(BOARD_DIM * BOARD_DIM) { Position((it / BOARD_DIM).indexToRow(), (it % BOARD_DIM).indexToColumn()) }
         val INVALID = Position(-1, 1)
-
         operator fun invoke(rowIndex: Int, colIndex: Int): Position {
             return if (rowIndex in 0 until BOARD_DIM && colIndex in 0 until BOARD_DIM) {
                 values[rowIndex * BOARD_DIM + colIndex]
             } else INVALID
         }
-
         operator fun invoke(row: Row, col: Column): Position = Position(row.index, col.index)
     }
 

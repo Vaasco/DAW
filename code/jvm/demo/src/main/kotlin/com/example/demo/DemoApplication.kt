@@ -17,7 +17,6 @@ class DemoApplication {
         val jdbcDbURl = "jdbc:postgresql://localhost/postgres?user=postgres&password=${password}"
         val dataSrc = PGSimpleDataSource()
         dataSrc.setUrl(jdbcDbURl)
-
         return Jdbi.create(dataSrc)
             .installPlugin(KotlinPlugin())
             .registerColumnMapper(BoardMapper())

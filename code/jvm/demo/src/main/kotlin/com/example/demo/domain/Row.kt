@@ -5,7 +5,6 @@ class Row private constructor(val number: Int) {
 
     companion object {
         val values = List(BOARD_DIM) { Row(it + 1) }
-
         operator fun invoke(number: Int) = values.first { it.number == number }
     }
 

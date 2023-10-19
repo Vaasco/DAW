@@ -42,7 +42,6 @@ class JbdiGamesRepository(private val jdbi: Jdbi) : GamesRepository {
         }
     }*/
 
-
     override fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int) {
     jdbi.useHandle<Exception> { handle ->
             val query = "insert into lobby (player1_id, rules, variant, board_size) values (:playerId, :rules, :variant, :boardSize)"
@@ -64,5 +63,4 @@ class JbdiGamesRepository(private val jdbi: Jdbi) : GamesRepository {
                 .singleOrNull()
         }
     }
-
 }

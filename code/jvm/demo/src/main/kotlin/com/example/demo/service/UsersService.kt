@@ -11,7 +11,6 @@ sealed class TokenResult {
     object ValidToken : TokenResult()
 
     object InvalidToken : TokenResult()
-
 }
 
 @Component

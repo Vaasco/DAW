@@ -7,9 +7,6 @@ package com.example.demo.domain
     val playerBlack: Int
 )*/
 
-
-
-
 data class Game(
     val id: Int,
     val board: Board,

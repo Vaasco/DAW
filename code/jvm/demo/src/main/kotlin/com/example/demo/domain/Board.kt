@@ -1,7 +1,6 @@
 package com.example.demo.domain
 
 
-import java.util.regex.Pattern
 import kotlin.IllegalStateException
 import kotlin.math.pow
 
@@ -35,13 +34,10 @@ sealed class Board(val moves: Moves) {
                 require(player == turn) { "Not your turn" }
                 require(position != Position.INVALID) { "Invalid position" }
                 require(moves[position] == null) { "Position already occupied" }
-
                 return isOver(this, position, moves + (position to player))
             }
-
             is BoardDraw, is BoardWin -> throw IllegalStateException()
         }
-
     }
 
 
@@ -55,11 +51,8 @@ sealed class Board(val moves: Moves) {
         }
         return BoardRun(newMoves, board.turn.other())
     }
-
-
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
-
     override fun toString() = moves.toString()
 
 }
@@ -95,7 +88,6 @@ class BoardDraw(moves: Moves) : Board(moves) {
 
 fun fromString(boardString: String): Board {
     val boardMap = mutableMapOf<Position, Player>()
-
     val newBoardString = boardString.substring(1, boardString.length - 1)
     val pairs = newBoardString.split(",")
     for (i in pairs) {
@@ -103,7 +95,6 @@ fun fromString(boardString: String): Board {
         val position = i.substring(0, i.length - 6).toPosition()
         boardMap[position] = player
     }
-
     return BoardRun(boardMap, Player.WHITE)
 }
 
