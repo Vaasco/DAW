@@ -4,7 +4,7 @@ import com.example.demo.http.model.StatisticsOutputModel
 import com.example.demo.http.model.UserOutputModel
 
 interface UsersRepository {
-    fun getById(id : Int) : String?
+    fun getUserById(id : Int) : UserOutputModel?
 
     fun createUser(username : String, password: String)
 

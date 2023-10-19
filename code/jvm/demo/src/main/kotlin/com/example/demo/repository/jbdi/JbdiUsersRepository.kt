@@ -12,9 +12,9 @@ import java.util.UUID
 class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     //converter a String em user
 
-    override fun getById(id: Int): String? {
-        return jdbi.withHandle<String?, Exception> { handle ->
-            handle.createQuery("select username from player where id = :id")
+    override fun getUserById(id: Int): UserOutputModel? {
+        return jdbi.withHandle<UserOutputModel?, Exception> { handle ->
+            handle.createQuery("select id, token, username, password from player where id = :id")
                 .bind("id", id)
                 .mapTo(UserOutputModel::class.java)
                 .singleOrNull()
