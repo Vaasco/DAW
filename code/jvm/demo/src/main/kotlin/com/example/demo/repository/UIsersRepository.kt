@@ -21,4 +21,6 @@ interface UsersRepository {
     fun createToken(token : Authentication)
 
     fun getCurrDate(): Date
+
+    fun getToken(token: String): String?
 }

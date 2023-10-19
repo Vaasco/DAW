@@ -6,11 +6,11 @@ object PathTemplate {
   users will enter a waiting lobby, where a matchmaking algorithm will select pairs of users and start games with them.
   POST
   */
-    const val START = "/games"
+    const val START_GAME = "/games"
 
     const val CREATE_GAME = "/games/start"
 
-    const val CHECK_GAME = "/check/{id}"
+    const val CHECK_GAME = "/games/check/{id}"
 
     //Allow an user to observe the game state. GET
 
@@ -20,6 +20,8 @@ object PathTemplate {
 
     const val PLAY = "/games/{id}"
 
+    const val GAME_STATE = "/games/state/{id}"
+
     //Obtain stats authors and login form.
     const val HOME = "/home"
 
@@ -28,9 +30,8 @@ object PathTemplate {
 
     const val GAMES_NUMBER = "/home/stats/games/{id}"
 
-    /*
-    Obtain information about the system, such as the system authors and the system version, by an unauthenticated user
-     */
+    //Obtain information about the system, such as the system authors and the system version, by an unauthenticated user
+
     const val AUTHORS = "/home/authors"
 
     const val USER_BY_ID = "/users/{id}"
@@ -40,7 +41,7 @@ object PathTemplate {
     // Register a new user.
     const val CREATE_USER = "/users"
 
-    const val GAME_STATE = "/games/state/{id}"
+
 
 
 }

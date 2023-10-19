@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class GameController(private val gamesService: GamesService) {
 
-    @PostMapping(PathTemplate.START)
+    @PostMapping(PathTemplate.START_GAME)
     fun createLobby(
         @RequestBody playerId: Int,
         @RequestBody rules: String,
