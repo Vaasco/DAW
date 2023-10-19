@@ -1,6 +1,7 @@
 package com.example.demo.repository.jbdi
 
 import com.example.demo.http.model.StatisticsOutputModel
+import com.example.demo.http.model.UserOutputModel
 import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Jdbi
 import org.springframework.stereotype.Component
@@ -15,14 +16,14 @@ class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
         return jdbi.withHandle<String?, Exception> { handle ->
             handle.createQuery("select username from player where id = :id")
                 .bind("id", id)
-                .mapTo(String::class.java)
+                .mapTo(UserOutputModel::class.java)
                 .singleOrNull()
 
         }
     }
 
     override fun createUser(username: String, password: String) {
-       val token =  UUID.randomUUID().toString()
+        val token = UUID.randomUUID().toString()
 
         jdbi.useHandle<Exception> { handle ->
             val query = "INSERT INTO player(username, password, token) VALUES (:username, :password, :token)"
@@ -34,23 +35,43 @@ class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
         }
     }
 
-    override fun getGameState(id: Int):String? {
-        return jdbi.withHandle<String?,Exception> { handle ->
-            val query = "select state from game where id = :id"
+    override fun getStatisticsById(id: Int): StatisticsOutputModel? {
+        return jdbi.withHandle<StatisticsOutputModel, Exception> { handle ->
+            val query = "select rank, played_games, won_games, lost_games from ranking where player_id = :id"
             handle.createQuery(query)
-                .bind("id",id)
-                .mapTo(String::class.java )
+                .bind("id", id)
+                .mapTo(StatisticsOutputModel::class.java)
                 .singleOrNull()
         }
     }
 
-    override fun getStatisticsById(id: Int):StatisticsOutputModel? {
-        return jdbi.withHandle<StatisticsOutputModel,Exception>{ handle ->
-            val query = "select rank, played_games, won_games, lost_games from ranking where player_id = :id"
+    override fun getGamesCount(id: Int): Int {
+        return jdbi.withHandle<Int?, Exception> { handle ->
+            val query = "select played_games from ranking where player_id = :id"
             handle.createQuery(query)
-                .bind("id",id)
-                .mapTo(StatisticsOutputModel::class.java)
+                .bind("id", id)
+                .mapTo(Int::class.java)
+                .single()
+        }
+    }
+
+    override fun getUserByUsername(username: String): Int? {
+        return jdbi.withHandle<Int?, Exception> { handle ->
+            val query = "select id from player where username = :username"
+            handle.createQuery(query)
+                .bind("username", username)
+                .mapTo(Int::class.java)
                 .singleOrNull()
+        }
+    }
+
+    override fun getUserPassword(username: String): String {
+        return jdbi.withHandle<String?, Exception> {handle ->
+            val query = "select password from player where username = :username"
+            handle.createQuery(query)
+                .bind("username", username)
+                .mapTo(String::class.java)
+                .single()
         }
     }
 }

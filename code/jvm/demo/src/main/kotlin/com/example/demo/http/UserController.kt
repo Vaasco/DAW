@@ -11,15 +11,20 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(private val usersService: UsersService) {
 
     @GetMapping(PathTemplate.USER_BY_ID)
-    fun getById(@PathVariable id: Int) = usersService.getById(id)
+    fun getById(@PathVariable id: Int?) = usersService.getUserById(id)
 
     @PostMapping(PathTemplate.CREATE_USER)
-    fun createUser(@RequestBody username: String, @RequestBody password: String) = usersService.createUser(username, password)
+    fun createUser(@RequestBody username: String?, @RequestBody password : String?) =
+        usersService.createUser(username, password)
 
-    @GetMapping(PathTemplate.GAME_STATE)
-    fun getGameState(@PathVariable id:Int) = usersService.getGameState(id)
 
     @GetMapping(PathTemplate.STATICS)
-    fun getStatisticsById( @PathVariable id:Int  ) = usersService.getStatisticsById(id)
+    fun getStatisticsById(@PathVariable id: Int?) = usersService.getStatisticsById(id)
+
+    @GetMapping(PathTemplate.GAMES_NUMBER)
+    fun getGamesNumber(@PathVariable id: Int?) = usersService.getGamesCount(id)
+
+    @GetMapping(PathTemplate.USER_BY_USERNAME)
+    fun getByUsername(@PathVariable username: String?) = usersService.getUserByUsername(username)
 }
 

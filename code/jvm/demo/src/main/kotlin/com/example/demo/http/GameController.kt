@@ -27,6 +27,9 @@ class GameController(private val gamesService: GamesService) {
         )
     }
 
+    @GetMapping(PathTemplate.GAME_STATE)
+    fun getGameState(@PathVariable id: Int) = gamesService.getGameState(id)
+
     @GetMapping(PathTemplate.CHECK_GAME)
     fun getById(@PathVariable id: Int) = gamesService.getById(id)
 

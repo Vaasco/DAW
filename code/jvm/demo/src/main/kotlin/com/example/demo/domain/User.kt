@@ -10,3 +10,4 @@ data class User(
 )
 
 data class TempUser(val name:String) //Class created so that the Json parse works correctly
+

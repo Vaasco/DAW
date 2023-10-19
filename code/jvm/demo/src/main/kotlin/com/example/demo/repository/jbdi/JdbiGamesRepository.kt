@@ -54,4 +54,14 @@ class JbdiGamesRepository(private val jdbi: Jdbi) : GamesRepository {
         }
     }
 
+    override fun getGameState(id: Int): String? {
+        return jdbi.withHandle<String?, java.lang.Exception> { handle ->
+            val query = "select state from game where id = :id"
+            handle.createQuery(query)
+                .bind("id", id)
+                .mapTo(String::class.java)
+                .singleOrNull()
+        }
+    }
+
 }

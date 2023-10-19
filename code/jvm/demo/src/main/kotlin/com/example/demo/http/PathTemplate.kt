@@ -24,7 +24,10 @@ object PathTemplate {
     const val HOME = "/home"
 
     //Obtain statistical and ranking information, such as number of played games and users ranking, by an unauthenticated user.
-    const val STATICS = "/home/stats{id}"
+    const val STATICS = "/home/stats/{id}"
+
+    const val GAMES_NUMBER = "/home/stats/games/{id}"
+
     /*
     Obtain information about the system, such as the system authors and the system version, by an unauthenticated user
      */
@@ -32,9 +35,12 @@ object PathTemplate {
 
     const val USER_BY_ID = "/users/{id}"
 
+    const val USER_BY_USERNAME = "/users/{username}"
+
     // Register a new user.
     const val CREATE_USER = "/users"
 
     const val GAME_STATE = "/games/state/{id}"
-    
+
+
 }

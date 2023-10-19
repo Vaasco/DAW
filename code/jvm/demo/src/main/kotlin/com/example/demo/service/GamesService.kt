@@ -11,8 +11,15 @@ class GamesService(private val gameRepository: GamesRepository) {
 
     fun createLobby() = gameRepository.createLobby()
 
-    fun createGame(state: String, rules: String, variant: String, board: BoardRun) =
-        gameRepository.createGame(state, rules, variant, board)
+    fun createGame(state: String?, rules: String?, variant: String?, board: BoardRun?){
+        require(state != null) {"Invalid state"}
+        require(rules != null) {"Invalid rules"}
+        require(variant != null) {"Invalid variant"}
+        require(board != null) {"Invalid board"}
+        return gameRepository.createGame(state, rules, variant, board)
+    }
+
+    fun getGameState(id: Int) = gameRepository.getGameState(id)
 
     fun play(gameId: Int, row: Int, col: Int) {
         val game = gameRepository.getById(gameId) ?: throw NotFoundException()

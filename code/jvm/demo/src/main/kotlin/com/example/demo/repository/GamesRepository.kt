@@ -8,5 +8,7 @@ interface GamesRepository {
     fun updateGame(game: Game)
     fun createGame(state:String,rules:String,variant:String,board:BoardRun)
 
+    fun getGameState(id : Int):String?
+
     fun createLobby()
 }
