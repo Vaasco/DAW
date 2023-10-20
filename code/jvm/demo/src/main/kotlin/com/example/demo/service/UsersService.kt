@@ -84,7 +84,9 @@ class UsersService(
 
     fun authenticate(token: String?): Boolean {
         require(token != null){ "Unexisting Token" }
-        //verificar se o token é de um user valido e se o user corresponde ao token devido a probabilidade de haver tokens repetidos
+
+
+
         return ( userRepository.getToken(token) != null)
     }
 

@@ -20,6 +20,7 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
             val token  = usersService.processAuthorizationHeaderValue(
                 request.getHeader(NAME_AUTHORIZATION_HEADER)
             )
+
             if (usersService.authenticate(token)) chain.doFilter(request, response)
             else response.status = HttpServletResponse.SC_UNAUTHORIZED
         }
@@ -32,7 +33,7 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
             PathTemplate.STATICS,
             PathTemplate.USER_BY_ID,
             PathTemplate.USER_BY_USERNAME
-        ).map { path -> path.dropLastWhile { it != '/' }}
+        ).map{ path -> path.dropLastWhile { it != '/' }}
         val unAuthPaths = listOf(
             PathTemplate.HOME,
             PathTemplate.AUTHORS,
