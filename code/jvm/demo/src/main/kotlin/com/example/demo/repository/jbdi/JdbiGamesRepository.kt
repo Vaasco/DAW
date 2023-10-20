@@ -12,7 +12,8 @@ import org.springframework.stereotype.Component
 @Component
 class JbdiGamesRepository(private val jdbi: Jdbi) : GamesRepository {
 
-    override fun updateGame(game: Game) {
+    override fun updateGame(game: Game, turn : Player, state: String) {
+        val query = "update game set board = :board, state = :state, turn = :turn where id = :id"
         jdbi.useHandle<Exception> { handle ->
             handle.createUpdate(query)
                 .bind("board", game.board.toString()) // Assuming you need to bind a string representation of the board.

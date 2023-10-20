@@ -56,7 +56,6 @@ sealed class Board(val moves: Moves) {
         is BoardRun -> turn.string + moves.toString()
         is BoardWin -> winner.string + moves.toString()
         is BoardDraw ->  moves.toString()
-
     }
 
 }

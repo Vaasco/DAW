@@ -4,6 +4,7 @@ import com.example.demo.domain.Authentication
 import com.example.demo.domain.UserDomain
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
+import com.example.demo.repository.TransactionManager
 import com.example.demo.repository.UsersRepository
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -19,12 +20,15 @@ private const val authors = "Vasco Branco - 48259\nJosé Borges - 48269\nSérgio
 @Component
 class UsersService(
     private val userRepository: UsersRepository,
-    private val userDomain: UserDomain
+    private val userDomain: UserDomain,
+    private val transactionManager: TransactionManager
 ) {
 
     fun getUserById(id: Int?): UserModel? {
-        require(id != null) { "Invalid id" }
-        return userRepository.getUserById(id)
+        return transactionManager.run {
+            require(id != null) { "Invalid id" }
+             userRepository.getUserById(id)
+        }
     }
 
     fun createUser(username: String?, password: String?) {
