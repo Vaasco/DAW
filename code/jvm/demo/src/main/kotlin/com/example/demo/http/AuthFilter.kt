@@ -1,6 +1,5 @@
 package com.example.demo.http
 
-import com.example.demo.service.GamesService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpFilter
 import jakarta.servlet.http.HttpServletRequest
@@ -28,12 +27,16 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
 
     }
     companion object{
+        val unAuthVariablePaths = listOf(
+            PathTemplate.GAMES_COUNT,
+            PathTemplate.STATICS,
+            PathTemplate.USER_BY_ID,
+            PathTemplate.USER_BY_USERNAME
+        ).map { path -> path.dropLastWhile { it != '/' }}
         val unAuthPaths = listOf(
-            // rever com o stor
-            PathTemplate.GAMES_NUMBER.dropLast(5),
-            PathTemplate.STATICS.dropLast(5),
             PathTemplate.HOME,
-            PathTemplate.AUTHORS
+            PathTemplate.AUTHORS,
+            PathTemplate.CREATE_USER
         )
         const val NAME_AUTHORIZATION_HEADER = "Authorization"
     }

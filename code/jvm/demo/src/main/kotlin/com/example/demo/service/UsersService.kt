@@ -88,13 +88,13 @@ class UsersService(
         if (parts.size != 2) {
             return null
         }
-//        if (parts[0].lowercase() != SCHEME) {
-//            return null
-//        }
+        if (parts[0].lowercase() != SCHEME) {
+            return null
+        }
         return parts[1]
     }
-//    companion object {
-//        const val SCHEME = "bearer"
-//    }
+    companion object {
+        const val SCHEME = "bearer"
+    }
 }
 

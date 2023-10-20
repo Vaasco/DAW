@@ -22,7 +22,7 @@ class UserController(private val usersService: UsersService) {
     @GetMapping(PathTemplate.STATICS)
     fun getStatisticsById(@PathVariable id: Int?) = usersService.getStatisticsById(id)
 
-    @GetMapping(PathTemplate.GAMES_NUMBER)
+    @GetMapping(PathTemplate.GAMES_COUNT)
     fun getGamesCount(@PathVariable id: Int?) = usersService.getGamesCount(id)
 
     @GetMapping(PathTemplate.USER_BY_USERNAME)
