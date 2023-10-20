@@ -27,5 +27,8 @@ class UserController(private val usersService: UsersService) {
 
     @GetMapping(PathTemplate.USER_BY_USERNAME)
     fun getByUsername(@PathVariable username: String?) = usersService.getUserByUsername(username)
+
+    @GetMapping(PathTemplate.AUTHORS)
+    fun getAuthors() = usersService.getAuthors()
 }
 

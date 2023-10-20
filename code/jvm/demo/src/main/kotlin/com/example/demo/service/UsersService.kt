@@ -14,6 +14,8 @@ sealed class TokenResult {
     object InvalidToken : TokenResult()
 }
 
+private const val authors = "Vasco Branco - 48259\nJosé Borges - 48269\nSérgio Capela - 48080"
+
 @Component
 class UsersService(
     private val userRepository: UsersRepository,
@@ -54,6 +56,13 @@ class UsersService(
         return userRepository.getUserPassword(username)
     }
 
+    fun getAuthors() = authors
+
+    fun createToken(id: Int){
+        val token = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
+        userRepository.createAuthentication(token)
+    }
+
     /*fun createToken(id: Int?): TokenResult {
         require(id != null) { "Invalid id" }
         require(getUserById(id) != null) { "Invalid user id" }
@@ -71,12 +80,11 @@ class UsersService(
             )
             userRepository.createToken(newToken)
             return TokenResult.ValidToken
-
     }*/
 
     fun authenticate(token: String?): Boolean {
-        require(token != null){ "Invalid token" }
-        //verificar se o token é de um user valido e se o user corresponde ao token devido a probabilidade de haver tokens repetidos 
+        require(token != null){ "Unexisting Token" }
+        //verificar se o token é de um user valido e se o user corresponde ao token devido a probabilidade de haver tokens repetidos
         return ( userRepository.getToken(token) != null)
     }
 

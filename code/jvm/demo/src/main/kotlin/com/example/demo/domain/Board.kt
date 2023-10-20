@@ -93,7 +93,7 @@ class BoardDraw(moves: Moves) : Board(moves) {
 fun fromString(boardString: String): Board {
     val turn = boardString[0].toString().toPlayer()
     val board = boardString.drop(1)
-    if(board == "{}") return BoardRun(emptyMap(), turn)  //TODO()
+    if(board == "{}") return BoardRun(emptyMap(), turn)
     val boardMap = mutableMapOf<Position, Player>()
     val newBoardString = boardString.substring(1, boardString.length - 1)
     val pairs = newBoardString.split(",")
