@@ -16,3 +16,5 @@ insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) 
 --Raise exception insert into lobby (player1_id, player2_id, game_id, rules, variant, board_size) values (3, null, null, default, default, default);
 update game set state = 'Ended B' where id = 1;
 
+insert into authentication (player_id, token, createdat, lastusedat) values (1,'aa7e4e1b-f248-41dc-8d4b-c0bd8e7281c5',now(),now());
+
