@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GamesService(private val gameRepository: GamesRepository, private val usersRepository: UsersRepository) {
-    fun getById(id: Int) = gameRepository.getById(id)
+    fun getById(id: Int) = gameRepository.getGameById(id)
 
     private val validRules = listOf("Pro", "Long Pro")
     private val validVariants = listOf("Freestyle", "Swap after 1st move")

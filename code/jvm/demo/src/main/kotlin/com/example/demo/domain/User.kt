@@ -9,5 +9,5 @@ data class User(
     val token: UUID
 )
 
-data class TempUser(val name:String) //Class created so that the Json parse works correctly
+data class TempUser(val name:String) //Class created so that the Json parse works correctly//TODO("Maybe delete")
 

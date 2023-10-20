@@ -9,6 +9,9 @@ declare pId integer;
         p2Rank integer;
         gId integer;
         pId_loop record;
+        r integer;
+        player_b integer;
+        player_w integer;
 begin
     for pId_loop in (select * from lobby l where (new.rules = l.rules and new.variant = l.variant and new.board_size = l.board_size and game_id is null and l.state = 'Waiting')) loop
             pId := pId_loop.player1_id;
@@ -16,7 +19,14 @@ begin
                 select rank into p1Rank from ranking where player_id = pId;
                 select rank into p2Rank from ranking where player_id = new.player1_id;
                 if (ABS(p1Rank - p2Rank) < 150) then
-                    insert into game (state, player_b, player_w, rules, variant, board_size) values(default, pId, new.player1_id, new.rules, new.variant, new.board_size) returning id into gId;
+                    if (r = 0) then
+                        player_b = pId;
+                        player_w = new.player1_id;
+                    else
+                        player_b = new.player1_id;
+                        player_w = pId;
+                    end if;
+                    insert into game (state, player_b, player_w, rules, variant, board_size) values (default, player_b, player_w, new.rules, new.variant, new.board_size) returning id into gId;
                     update lobby set player2_id = new.player1_id, game_id = gId, state = 'Playing' where player1_id = pId;
                     return old;
                 end if;

@@ -1,13 +1,6 @@
 package com.example.demo.domain
 
-/*data class Game(
-    val id: UUID,
-    val board: Board,
-    val playerWhite: Int,
-    val playerBlack: Int
-)*/
-
-data class Game(
+data class Game( //TODO("Maybe delete")
     val id: Int,
     val board: Board,
     val state: String,
