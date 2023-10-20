@@ -83,11 +83,9 @@ class UsersService(
     }*/
 
     fun authenticate(token: String?): Boolean {
-        require(token != null){ "Unexisting Token" }
+        require(token != null){ "Invalid token" }
 
-
-
-        return ( userRepository.getToken(token) != null)
+        return (userRepository.getToken(token) != null)
     }
 
     fun processAuthorizationHeaderValue(authorizationValue: String?): String? {

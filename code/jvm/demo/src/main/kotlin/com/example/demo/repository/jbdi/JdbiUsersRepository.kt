@@ -12,8 +12,6 @@ import java.time.Instant
 
 @Component
 class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
-    //converter a String em user
-
     override fun getUserById(id: Int): UserModel? {
         return jdbi.withHandle<UserModel?, Exception> { handle ->
             handle.createQuery("select id, username, password from player where id = :id")
@@ -24,7 +22,7 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     }
 
     override fun createUser(username: String, password: String): Int {
-        val query = "insert into player(username, password) VALUES (:username, :password)"
+        val query = "insert into player(username, password) values (:username, :password)"
         val query2 = "select id from player where username = :username"
         return jdbi.withHandle<Int, Exception> { handle ->
             handle.createUpdate(query)
@@ -39,8 +37,8 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     }
 
     override fun getStatisticsById(id: Int): StatisticsModel {
+        val query = "select rank, played_games, won_games, lost_games from ranking where player_id = :id"
         return jdbi.withHandle<StatisticsModel, Exception> { handle ->
-            val query = "select rank, played_games, won_games, lost_games from ranking where player_id = :id"
             handle.createQuery(query)
                 .bind("id", id)
                 .mapTo(StatisticsModel::class.java)
@@ -49,8 +47,8 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     }
 
     override fun getGamesCount(id: Int): Int {
+        val query = "select played_games from ranking where player_id = :id"
         return jdbi.withHandle<Int?, Exception> { handle ->
-            val query = "select played_games from ranking where player_id = :id"
             handle.createQuery(query)
                 .bind("id", id)
                 .mapTo(Int::class.java)
@@ -59,8 +57,8 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     }
 
     override fun getUserByUsername(username: String): UserModel? {
+        val query = "select id, username, password from player where username = :username"
         return jdbi.withHandle<UserModel?, Exception> { handle ->
-            val query = "select id, username, password from player where username = :username"
             handle.createQuery(query)
                 .bind("username", username)
                 .mapTo(UserModel::class.java)
@@ -69,8 +67,8 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     }
 
     override fun getUserPassword(username: String): String {
+        val query = "select password from player where username = :username"
         return jdbi.withHandle<String?, Exception> {handle ->
-            val query = "select password from player where username = :username"
             handle.createQuery(query)
                 .bind("username", username)
                 .mapTo(String::class.java)
@@ -109,5 +107,4 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
                 .singleOrNull()
         }
     }
-
 }

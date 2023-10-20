@@ -5,5 +5,3 @@ insert into Player(username, password) values   ('Vasco', 'password1'),
 insert into authentication  values (1, 'token1', NOW(), NOW()),
                                    (2, 'token2', NOW(), NOW()),
                                    (3, 'token3', NOW(), NOW());
-
-insert into Player(username, password) values ('Wazaaaaaa','scarymovie');

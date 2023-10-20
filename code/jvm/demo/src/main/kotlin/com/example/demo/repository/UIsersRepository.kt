@@ -23,5 +23,5 @@ interface UsersRepository {
 
     fun getCurrDate(): Date
 
-    fun getToken(authentication: String): String?
+    fun getToken(token: String): String?
 }

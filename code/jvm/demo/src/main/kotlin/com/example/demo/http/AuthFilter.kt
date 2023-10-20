@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 @Component
 class AuthFilter(private val usersService: UsersService) : HttpFilter() {
 
-
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val reqPath = request.requestURI.dropLastWhile { it != '/' }
         val isVariable = unAuthVariablePaths.contains(reqPath)
@@ -20,13 +19,11 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
             val token  = usersService.processAuthorizationHeaderValue(
                 request.getHeader(NAME_AUTHORIZATION_HEADER)
             )
-
             if (usersService.authenticate(token)) chain.doFilter(request, response)
             else response.status = HttpServletResponse.SC_UNAUTHORIZED
         }
-
-
     }
+
     companion object{
         val unAuthVariablePaths = listOf(
             PathTemplate.GAMES_COUNT,
@@ -41,5 +38,4 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
         )
         const val NAME_AUTHORIZATION_HEADER = "Authorization"
     }
-
 }

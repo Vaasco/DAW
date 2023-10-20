@@ -14,13 +14,11 @@ class JbdiGamesRepository(private val jdbi: Jdbi) : GamesRepository {
 
     override fun updateGame(game: Game) {
         jdbi.useHandle<Exception> { handle ->
-            val board = game.board as BoardRun
-            val id = game.id
-            val query = "UPDATE game SET board = :board, turn = :turn WHERE id = :id"
             handle.createUpdate(query)
-                .bind("board", board.toString()) // Assuming you need to bind a string representation of the board.
-                .bind("turn", game.board.turn.string) // Assuming 'turn' is a property in your 'Game' class.
-                .bind("id", id) // Assuming you have a unique identifier for the game.
+                .bind("board", game.board.toString()) // Assuming you need to bind a string representation of the board.
+                .bind("state", state)
+                .bind("turn", turn.string) // Assuming 'turn' is a property in your 'Game' class.
+                .bind("id", game.id) // Assuming you have a unique identifier for the game.
                 .execute()
         }
     }

@@ -19,14 +19,15 @@ class Position private constructor(val row: Row, val col: Column) {
 }
 
 fun String.toPosition():Position {
-    return if (this.length == 2) {
-        val row = this[0].digitToInt()
-        val col = this[1]
+    val str = this.trim()
+    return if (str.length == 2) {
+        val row = str[0].digitToInt()
+        val col = str[1]
         Position(row.toRow(),col.toColumn())
     }
     else{
-        val row = this.substring(0,2).toInt()
-        val col = this[2]
+        val row = str.substring(0,2).toInt()
+        val col = str[2]
         Position(row.toRow(),col.toColumn())
     }
 }

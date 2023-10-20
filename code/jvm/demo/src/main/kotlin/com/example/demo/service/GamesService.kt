@@ -4,12 +4,11 @@ import com.example.demo.domain.*
 import com.example.demo.http.model.GameModel
 import com.example.demo.repository.GamesRepository
 import com.example.demo.repository.UsersRepository
-import com.example.demo.service.exception.NotFoundException
 import org.springframework.stereotype.Component
 
 @Component
 class GamesService(private val gameRepository: GamesRepository, private val usersRepository: UsersRepository) {
-    fun getById(id: Int) = gameRepository.getGameById(id)
+    fun getGameById(id: Int) = gameRepository.getGameById(id)
 
     private val validRules = listOf("Pro", "Long Pro")
     private val validVariants = listOf("Freestyle", "Swap after 1st move")
@@ -23,15 +22,23 @@ class GamesService(private val gameRepository: GamesRepository, private val user
     }
 
     fun getGameState(id: Int?): GameModel? {
-        require(id != null && gameRepository.getGameById(id) != null) { "Invalid id" }
+        require(id != null && getGameById(id) != null) { "Invalid id" }
         return gameRepository.getGame(id)
     }
 
     fun play(gameId: Int, row: Int, col: Int) {
-        require(gameRepository.getGameById(gameId) != null) { "Invalid id" }
-        val game = gameRepository.getGameById(gameId) ?: throw NotFoundException()
+        val game = getGameById(gameId)
+        require(game != null) { "Invalid game id" }
+        require(game.state == "Playing") { "Game has already ended"}
         val position = Position(row.indexToRow(), col.indexToColumn())
-        val newBoard = game.board.play(position = position, (game.board as BoardRun).turn)
-        gameRepository.updateGame(Game(gameId, newBoard, game.state, game.rules, game.variant))
+        val turn = (game.board as BoardRun).turn
+        val newBoard = game.board.play(position, turn)
+        val state = when(newBoard){
+            is BoardDraw -> "Ended D"
+            is BoardWin -> "Ended $turn"
+            else -> game.state
+        }
+        val newGame = Game(game.id, newBoard, game.state, game.rules, game.variant)
+        gameRepository.updateGame(newGame, turn, state)
     }
 }

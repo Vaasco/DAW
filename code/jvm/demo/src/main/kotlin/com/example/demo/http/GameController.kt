@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 class GameController(private val gamesService: GamesService) {
 
     @GetMapping(PathTemplate.CHECK_GAME)
-    fun getById(@PathVariable id: Int) = gamesService.getById(id)
+    fun getById(@PathVariable id: Int) = gamesService.getGameById(id)
 
     @PostMapping(PathTemplate.START_GAME)
     fun createLobby(

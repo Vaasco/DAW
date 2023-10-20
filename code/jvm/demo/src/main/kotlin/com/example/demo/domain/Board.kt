@@ -40,7 +40,6 @@ sealed class Board(val moves: Moves) {
         }
     }
 
-
     private fun isOver(board: BoardRun, position: Position, newMoves: Moves): Board {
         if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves)
         Direction.values().forEach { dir ->
@@ -52,6 +51,7 @@ sealed class Board(val moves: Moves) {
     }
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
+
     override fun toString() = when (this){
         is BoardRun -> turn.string + moves.toString()
         is BoardWin -> winner.string + moves.toString()
@@ -92,14 +92,14 @@ class BoardDraw(moves: Moves) : Board(moves) {
 
 fun fromString(boardString: String): Board {
     val turn = boardString[0].toString().toPlayer()
-    val board = boardString.drop(1)
-    if(board == "{}") return BoardRun(emptyMap(), turn)
+    if (boardString == "{}") return BoardRun(emptyMap(), turn)
+    val board = boardString.substring(2, boardString.length - 1)
     val boardMap = mutableMapOf<Position, Player>()
-    val newBoardString = boardString.substring(1, boardString.length - 1)
-    val pairs = newBoardString.split(",")
+    val pairs = board.split(", ")
     for (i in pairs) {
-        val player = i.substring(i.length -1).toPlayer()
-        val position = i.substring(0, i.length - 6).toPosition()
+        val str = i.last()
+        val player = str.toString().toPlayer()
+        val position = i.substring(0, 2).toPosition()
         boardMap[position] = player
     }
     return BoardRun(boardMap, turn)
@@ -113,9 +113,8 @@ fun fromString(boardString: String): Board {
 fun createBoard(first: Player) = BoardRun(INITIALMAP, first)
 
 fun main() {
-    val board = BoardRun(INITIALMAP, Player.WHITE)
-    val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.WHITE)
+    val board = BoardRun(INITIALMAP, Player.W)
+    val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.W)
     println(b)
     //println(fromString("{2B:WHITE,4A:BLACK}").moves)
 }
-
