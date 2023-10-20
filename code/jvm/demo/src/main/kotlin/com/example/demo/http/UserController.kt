@@ -1,5 +1,6 @@
 package com.example.demo.http
 
+import com.example.demo.http.model.UserModel
 import com.example.demo.service.UsersService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(private val usersService: UsersService) {
 
     @GetMapping(PathTemplate.USER_BY_ID)
-    fun getById(@PathVariable id: Int?) = usersService.getUserById(id)
+    fun getUserById(@PathVariable id: Int?) = usersService.getUserById(id)
 
     @PostMapping(PathTemplate.CREATE_USER)
-    fun createUser(@RequestBody username: String?, @RequestBody password : String?) =
-        usersService.createUser(username, password)
+    fun createUser(@RequestBody userModel: UserModel) =
+        usersService.createUser(userModel.username, userModel.password)
 
 
     @GetMapping(PathTemplate.STATICS)

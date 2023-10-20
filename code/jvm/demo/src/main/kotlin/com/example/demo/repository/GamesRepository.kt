@@ -2,15 +2,14 @@ package com.example.demo.repository
 
 import com.example.demo.domain.BoardRun
 import com.example.demo.domain.Game
+import com.example.demo.http.model.GameModel
 
 interface GamesRepository {
-    fun getById(id: Int): Game?
 
     fun updateGame(game: Game)
 
-    //fun createGame(rules: String, variant: String, boardSize: Int, board: BoardRun)
-
-    fun getGameState(id : Int):String?
+    fun getGameById(id: Int): Game?
+    fun getGame(id : Int):GameModel?
 
     fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int)
 }

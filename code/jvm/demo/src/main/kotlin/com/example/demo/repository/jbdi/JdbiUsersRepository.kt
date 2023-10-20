@@ -2,7 +2,7 @@ package com.example.demo.repository.jbdi
 
 import com.example.demo.domain.Authentication
 import com.example.demo.http.model.StatisticsOutputModel
-import com.example.demo.http.model.UserOutputModel
+import com.example.demo.http.model.UserModel
 import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Jdbi
 import org.springframework.stereotype.Component
@@ -11,29 +11,25 @@ import java.sql.Date
 import java.util.UUID
 
 @Component
-class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
+class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     //converter a String em user
 
-    override fun getUserById(id: Int): UserOutputModel? {
-        return jdbi.withHandle<UserOutputModel?, Exception> { handle ->
+    override fun getUserById(id: Int): UserModel? {
+        return jdbi.withHandle<UserModel?, Exception> { handle ->
             handle.createQuery("select id, username, password from player where id = :id")
                 .bind("id", id)
-                .mapTo(UserOutputModel::class.java)
+                .mapTo(UserModel::class.java)
                 .singleOrNull()
-
         }
     }
 
     override fun createUser(username: String, password: String) {
-        val token = UUID.randomUUID().toString()
         val query = "INSERT INTO player(username, password) VALUES (:username, :password)"
-        //TODO("Create token")
 
         jdbi.useHandle<Exception> { handle ->
             handle.createUpdate(query)
-                .bind("userName", username)
+                .bind("username", username)
                 .bind("password", password)
-                .bind("token", token)
                 .execute()
         }
     }
@@ -58,12 +54,12 @@ class JbdiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
         }
     }
 
-    override fun getUserByUsername(username: String): Int? {
-        return jdbi.withHandle<Int?, Exception> { handle ->
-            val query = "select id from player where username = :username"
+    override fun getUserByUsername(username: String): UserModel? {
+        return jdbi.withHandle<UserModel?, Exception> { handle ->
+            val query = "select id, username, password from player where username = :username"
             handle.createQuery(query)
                 .bind("username", username)
-                .mapTo(Int::class.java)
+                .mapTo(UserModel::class.java)
                 .singleOrNull()
         }
     }

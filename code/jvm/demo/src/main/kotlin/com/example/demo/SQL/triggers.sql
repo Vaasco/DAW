@@ -13,7 +13,8 @@ declare pId integer;
         player_b integer;
         player_w integer;
 begin
-    for pId_loop in (select * from lobby l where (new.rules = l.rules and new.variant = l.variant and new.board_size = l.board_size and game_id is null and l.state = 'Waiting')) loop
+    r := floor(random() * 2);
+    for pId_loop in (select * from lobby l where (new.rules = l.rules and new.variant = l.variant and new.board_size = l.board_size and l.state = 'Waiting')) loop
             pId := pId_loop.player1_id;
             if(pId is not null) then
                 select rank into p1Rank from ranking where player_id = pId;

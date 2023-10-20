@@ -34,9 +34,9 @@ object PathTemplate {
 
     const val AUTHORS = "/home/authors"
 
-    const val USER_BY_ID = "/users/{id}"
+    const val USER_BY_ID = "/users/id/{id}"
 
-    const val USER_BY_USERNAME = "/users/{username}"
+    const val USER_BY_USERNAME = "/users/username/{username}"
 
     // Register a new user.
     const val CREATE_USER = "/users"

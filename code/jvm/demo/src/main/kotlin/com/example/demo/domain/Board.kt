@@ -53,7 +53,12 @@ sealed class Board(val moves: Moves) {
     }
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
-    override fun toString() = moves.toString()
+    override fun toString() = when (this){
+        is BoardRun -> turn.string + moves.toString()
+        is BoardWin -> winner.string + moves.toString()
+        is BoardDraw ->  moves.toString()
+
+    }
 
 }
 
@@ -87,15 +92,18 @@ class BoardDraw(moves: Moves) : Board(moves) {
 }
 
 fun fromString(boardString: String): Board {
+    val turn = boardString[0].toString().toPlayer()
+    val board = boardString.drop(1)
+    if(board == "{}") return BoardRun(emptyMap(), turn)  //TODO()
     val boardMap = mutableMapOf<Position, Player>()
     val newBoardString = boardString.substring(1, boardString.length - 1)
     val pairs = newBoardString.split(",")
     for (i in pairs) {
-        val player = i.substring(i.length - 5).toPlayer()
+        val player = i.substring(i.length -1).toPlayer()
         val position = i.substring(0, i.length - 6).toPosition()
         boardMap[position] = player
     }
-    return BoardRun(boardMap, Player.WHITE)
+    return BoardRun(boardMap, turn) //TODO()
 }
 
 /**

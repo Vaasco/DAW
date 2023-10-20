@@ -8,6 +8,6 @@ enum class Player(val string: String) {
 }
 
 fun String.toPlayer(): Player {
-    return if (this == "WHITE") Player.WHITE
+    return if (this == "W") Player.WHITE
     else Player.BLACK
 }
