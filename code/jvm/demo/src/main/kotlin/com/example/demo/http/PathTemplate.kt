@@ -22,23 +22,23 @@ object PathTemplate {
 
     const val GAME_STATE = "/games/state/{id}"
 
-    //Obtain stats authors and login form.
+    //unauth
     const val HOME = "/home"
 
-    //Obtain statistical and ranking information, such as number of played games and users ranking, by an unauthenticated user.
+    //unauth
     const val STATICS = "/home/stats/{id}"
 
+    //unauth
     const val GAMES_COUNT = "/home/stats/games/{id}"
 
-    //Obtain information about the system, such as the system authors and the system version, by an unauthenticated user
-
+    //unauth
     const val AUTHORS = "/home/authors"
-
+    //unauth
     const val USER_BY_ID = "/users/{id}"
-
+    //unauth
     const val USER_BY_USERNAME = "/users/username/{username}"
 
-    // Register a new user.
+    //unauth
     const val CREATE_USER = "/users"
 
 

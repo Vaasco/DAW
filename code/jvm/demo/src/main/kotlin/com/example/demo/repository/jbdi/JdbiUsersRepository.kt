@@ -101,7 +101,7 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
     }
 
     override fun getToken(token: String): String? {
-        val query = "select token from authentication where token = :token"
+        val query = "select player_id from authentication where token = :token"
         return jdbi.withHandle<String?, Exception> {handle  ->
             handle.createQuery(query)
                 .bind("token", token)
