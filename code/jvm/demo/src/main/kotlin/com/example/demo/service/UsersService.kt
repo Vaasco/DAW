@@ -2,10 +2,11 @@ package com.example.demo.service
 
 import com.example.demo.domain.Authentication
 import com.example.demo.domain.UserDomain
-import com.example.demo.http.model.StatisticsOutputModel
+import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.repository.UsersRepository
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 sealed class TokenResult {
     object ValidToken : TokenResult()
@@ -28,12 +29,13 @@ class UsersService(
         require(!username.isNullOrEmpty()) { "Invalid username" }
         require(!password.isNullOrEmpty()) { "Invalid Password" }
         require(getUserByUsername(username) == null) { "Username is already being used" }
-        return userRepository.createUser(username, password)
+        val userId = userRepository.createUser(username, password)
+        createToken(userId)
     }
 
-    fun getStatisticsById(id: Int?): StatisticsOutputModel? {
+    fun getStatisticsById(id: Int?): StatisticsModel {
         require(id != null) { "Invalid id" }
-       return userRepository.getStatisticsById(id) //TODO("Temos de dar return")
+        return userRepository.getStatisticsById(id)
     }
 
     fun getGamesCount(id: Int?): Int {
@@ -62,7 +64,7 @@ class UsersService(
 
             val now = userRepository.getCurrDate()
             val newToken = Authentication(
-                userDomain.generateTokenValue(),
+                userDomain.generateTokenValue()
                 (user as UserModel).id,
                 now,
                 now

@@ -41,7 +41,6 @@ sealed class Board(val moves: Moves) {
     }
 
 
-    //TODO FALTA O CASO DE SER EFETUADA A ÚLTIMA JOGADA PARA EMPATE!
     private fun isOver(board: BoardRun, position: Position, newMoves: Moves): Board {
         if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves)
         Direction.values().forEach { dir ->
@@ -103,7 +102,7 @@ fun fromString(boardString: String): Board {
         val position = i.substring(0, i.length - 6).toPosition()
         boardMap[position] = player
     }
-    return BoardRun(boardMap, turn) //TODO()
+    return BoardRun(boardMap, turn)
 }
 
 /**

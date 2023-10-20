@@ -1,10 +1,10 @@
 package com.example.demo.domain
 
-import java.sql.Date
+import java.time.Instant
 
 class Authentication(
     val token: String,
     val userId : Int,
-    val createdAt : Date,
-    val lastUsedAt : Date
+    val createdAt : Instant,
+    val lastUsedAt : Instant
 )

@@ -1,14 +1,14 @@
 package com.example.demo.repository.jbdi
 
 import com.example.demo.domain.Authentication
-import com.example.demo.http.model.StatisticsOutputModel
+import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Jdbi
 import org.springframework.stereotype.Component
 import java.lang.Exception
 import java.sql.Date
-import java.util.UUID
+import java.time.Instant
 
 @Component
 class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
@@ -23,24 +23,28 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
         }
     }
 
-    override fun createUser(username: String, password: String) {
-        val query = "INSERT INTO player(username, password) VALUES (:username, :password)"
-
-        jdbi.useHandle<Exception> { handle ->
+    override fun createUser(username: String, password: String): Int {
+        val query = "insert into player(username, password) VALUES (:username, :password)"
+        val query2 = "select id from player where username = :username"
+        return jdbi.withHandle<Int, Exception> { handle ->
             handle.createUpdate(query)
                 .bind("username", username)
                 .bind("password", password)
                 .execute()
+            handle.createQuery(query2)
+                .bind("username", username)
+                .mapTo(Int::class.java)
+                .single()
         }
     }
 
-    override fun getStatisticsById(id: Int): StatisticsOutputModel? {
-        return jdbi.withHandle<StatisticsOutputModel, Exception> { handle ->
+    override fun getStatisticsById(id: Int): StatisticsModel {
+        return jdbi.withHandle<StatisticsModel, Exception> { handle ->
             val query = "select rank, played_games, won_games, lost_games from ranking where player_id = :id"
             handle.createQuery(query)
                 .bind("id", id)
-                .mapTo(StatisticsOutputModel::class.java)
-                .singleOrNull()
+                .mapTo(StatisticsModel::class.java)
+                .single()
         }
     }
 
@@ -74,14 +78,15 @@ class JdbiUsersRepository(private val jdbi: Jdbi) : UsersRepository {
         }
     }
 
-    override fun createToken(authentication: Authentication) {
-        val query = "insert into authentication (player_id, token,createdAt,lastUsedAt) VALUES (:player_id, :token, :createdAt, :lastUsedAt)"
+    override fun createAuthentication(token: Authentication) {
+        val query = "insert into authentication (player_id, token,createdAt,lastUsedAt) values" +
+                        "(:player_id, :token, :createdAt, :lastUsedAt)"
         return jdbi.useHandle<Exception> { handle ->
-            handle.createUpdate( query)
-                .bind( "player_id",authentication.userId )
-                .bind("token",authentication.token)
-                .bind("createdAt",authentication.createdAt)
-                .bind("lastUsedAt",authentication.lastUsedAt)
+            handle.createUpdate(query)
+                .bind( "player_id", token.userId )
+                .bind("token", token.token)
+                .bind("createdAt", token.createdAt)
+                .bind("lastUsedAt", token.lastUsedAt)
                 .execute()
         }
     }

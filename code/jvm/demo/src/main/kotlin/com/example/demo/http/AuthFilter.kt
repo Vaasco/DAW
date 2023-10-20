@@ -13,8 +13,10 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
 
 
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        val path = request.requestURI.dropLastWhile { it != '/' }
-        if (unAuthPaths.contains(path) ) chain.doFilter(request, response)
+        val reqPath = request.requestURI.dropLastWhile { it != '/' }
+        val isVariable = unAuthVariablePaths.contains(reqPath)
+        val path =  if(isVariable) reqPath else request.requestURI
+        if (isVariable || unAuthPaths.contains(path) ) chain.doFilter(request, response)
         else{
             val token  = usersService.processAuthorizationHeaderValue(
                 request.getHeader(NAME_AUTHORIZATION_HEADER)
@@ -22,7 +24,6 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
             if (usersService.authenticate(token)) chain.doFilter(request, response)
             else response.status = HttpServletResponse.SC_UNAUTHORIZED
         }
-
 
 
     }

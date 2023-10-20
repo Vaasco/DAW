@@ -1,17 +1,17 @@
 package com.example.demo.repository
 
-import com.example.demo.http.model.StatisticsOutputModel
-import com.example.demo.http.model.UserModel
 import com.example.demo.domain.Authentication
+import com.example.demo.http.model.StatisticsModel
+import com.example.demo.http.model.UserModel
 import java.sql.Date
 
 
 interface UsersRepository {
     fun getUserById(id : Int) : UserModel?
 
-    fun createUser(username : String, password: String)
+    fun createUser(username : String, password: String): Int
 
-    fun getStatisticsById(id : Int):StatisticsOutputModel?
+    fun getStatisticsById(id : Int):StatisticsModel
 
     fun getGamesCount(id : Int): Int
 
@@ -19,9 +19,9 @@ interface UsersRepository {
 
     fun getUserPassword(username: String): String
 
-    fun createToken(token : Authentication)
+    fun createAuthentication(token: Authentication)
 
     fun getCurrDate(): Date
 
-    fun getToken(token: String): String?
+    fun getToken(authentication: String): String?
 }
