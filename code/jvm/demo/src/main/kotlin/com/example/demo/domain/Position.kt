@@ -2,10 +2,7 @@ package com.example.demo.domain
 
 class Position private constructor(val row: Row, val col: Column) {
 
-    val rowIndex: Int = row.index
-    val colIndex: Int = col.index
-
-    override fun toString(): String = if (this == INVALID) "INVALID Cell" else "${this.row.number}${this.col.symbol}"
+    override fun toString(): String = if (this == INVALID) "Invalid Cell" else "${this.row.number}${this.col.symbol}"
 
     companion object {
         private val values =
