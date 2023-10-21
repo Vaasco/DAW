@@ -14,20 +14,22 @@ class AuthenticationInterceptor(
     private val authorizationHeaderProcessor: RequestTokenProcessor
 ) : HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+
         if (handler is HandlerMethod && handler.methodParameters.any {
                 println(handler)
                 println(it)
                 it.parameterType == AuthenticatedUser::class.java
             }
         ) {
-            val user = authorizationHeaderProcessor.processAuthorizationHeaderValue(request.getHeader("NAME_AUTORIZATION_HEADER"))
+            println("inside if")
+            val user = authorizationHeaderProcessor.processAuthorizationHeaderValue(request.getHeader(NAME_AUTHORIZATION_HEADER))
             return if(user == null) {
                 response.status = 401
                 response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, RequestTokenProcessor.SCHEME)
                 false
             }
                 else{
-
+                    AuthenticatedUserArgumentResolver.addUserTo(user, request)
                     true
                 }
             }

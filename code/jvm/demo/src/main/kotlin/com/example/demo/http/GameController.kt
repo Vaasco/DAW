@@ -25,8 +25,8 @@ class GameController(private val gamesService: GamesService) {
 
 
     @PostMapping(PathTemplate.PLAY)
-    fun play(@PathVariable id: Int, @RequestBody pos: PlayModel) {
-        gamesService.play(id, pos.row, pos.col, pos.playerId)
+    fun play(@PathVariable id: Int, @RequestBody pl: PlayModel) {
+        gamesService.play(id, pl.row, pl.col, pl.playerId)
     }
 
 }
