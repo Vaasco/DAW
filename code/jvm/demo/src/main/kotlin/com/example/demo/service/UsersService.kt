@@ -63,7 +63,7 @@ class UsersService(
                 failure(GamesCountError.InvalidId)
             } else {
                 val user = it.usersRepository.getUserById(id)
-                if (user == null) failure(GamesCountError.InvalidId) //TODO("Change GamesCount")
+                if (user == null) failure(GamesCountError.InvalidId)
                 success(it.usersRepository.getGamesCount(id))
             }
 
@@ -103,8 +103,12 @@ class UsersService(
 
     fun getUserByToken(token: String?): UserModel? {
         return transactionManager.run {
-            require(token != null) { "Invalid token" }
-            it.usersRepository.getUserByToken(token)
+            if (token == null) failure(UsernameFetchError.InvalidToken)
+            else {
+                val tokenDb = it.usersRepository.getUserByToken(token)
+                if (tokenDb == null) failure(UsernameFetchError.NonExistingUser)
+                else success(tokenDb)
+            }
         }
     }
 }
