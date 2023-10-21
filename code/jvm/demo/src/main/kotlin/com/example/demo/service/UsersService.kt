@@ -3,7 +3,6 @@ package com.example.demo.service
 import com.example.demo.domain.*
 import com.example.demo.http.errors.*
 import com.example.demo.http.errors.UserIdFetchError
-import com.example.demo.http.model.UserModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -101,7 +100,7 @@ class UsersService(
         }
     }
 
-    fun getUserByToken(token: String?): UserModel? {
+    fun getUserByToken(token: String?): UsernameFetchResult {
         return transactionManager.run {
             if (token == null) failure(UsernameFetchError.InvalidToken)
             else {
