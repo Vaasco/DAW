@@ -4,110 +4,108 @@ info:
   description: API for Gomuku game.
   base_url: https://localhost:8080/
 
-components:
-  schemas:
-    Row:
-      type: object
-      properties:
-        number:
-          type: integer
-      description: Object representing a row in the game board.
-
-    Column:
-      type: object
-      properties:
-        symbol:
-          type: string
-      description: Object representing a column in the game board.
-
-    Position:
-      type: object
-      properties:
-        row:
-          $ref: '#/components/schemas/Row'
-        col:
-          $ref: '#/components/schemas/Column'
-      description: Object representing a position on the game board.
-
-    Player:
-      type: string
-      enum:
-        - "B"
-        - "W"
-      description: Player identifier ("B" for Black, "W" for White).
-
-    Moves:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/Player'
-      description: Mapping of positions to players.
-
-    Board:
-      type: object
-      properties:
-        moves:
-          $ref: '#/components/schemas/Moves'
-          description: Object representing moves made in the game.
-
-      UserModel:
-        type: object
-        properties:
-          id:
-            type: integer
-            description: Unique identifier for the user.
-          username:
-            type: string
-            description: User's username.
-          password:
-            type: string
-            description: User's password.
-        required:
-          - id
-          - username
-          - password
-
-    GameModel:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Unique identifier for the game.
-        board:
-          $ref: '#/components/schemas/Board'
-          description: The game board.
-        turn:
-          type: string
-          description: The current player's turn ("B" for Black, "W" for White).
-        state:
-          type: string
-          description: The state of the game (e.g., "pending", "ongoing", "finished").
-        playerB:
-          type: integer
-          description: Player B's unique identifier.
-        playerW:
-          type: integer
-          description: Player W's unique identifier.
-        rules:
-          type: string
-          description: Rules of the game.
-        variant:
-          type: string
-          description: Variant of the game.
-        boardSize:
-          type: integer
-          description: Size of the game board.
-      required:
-        - id
-        - board
-        - turn
-        - state
-        - playerB
-        - playerW
-        - rules
-        - variant
-        - boardSize
-
-
+#components:
+#  schemas:
+#    Row:
+#      type: object
+#      properties:
+#        number:
+#          type: integer
+#      description: Object representing a row in the game board.
+#
+#    Column:
+#      type: object
+#      properties:
+#        symbol:
+#          type: string
+#      description: Object representing a column in the game board.
+#
+#    Position:
+#      type: object
+#      properties:
+#        row:
+#          $ref: '#/components/schemas/Row'
+#        col:
+#          $ref: '#/components/schemas/Column'
+#      description: Object representing a position on the game board.
+#
+#    Player:
+#      type: string
+#      enum:
+#        - "B"
+#        - "W"
+#      description: Player identifier ("B" for Black, "W" for White).
+#
+#    Moves:
+#      type: object
+#      additionalProperties:
+#        $ref: '#/components/schemas/Player'
+#      description: Mapping of positions to players.
+#
+#    Board:
+#      type: object
+#      properties:
+#        moves:
+#          $ref: '#/components/schemas/Moves'
+#          description: Object representing moves made in the game.
+#
+#      UserModel:
+#        type: object
+#        properties:
+#          id:
+#            type: integer
+#            description: Unique identifier for the user.
+#          username:
+#            type: string
+#            description: User's username.
+#          password:
+#            type: string
+#            description: User's password.
+#        required:
+#          - id
+#          - username
+#          - password
+#
+#    GameModel:
+#      type: object
+#      properties:
+#        id:
+#          type: integer
+#          description: Unique identifier for the game.
+#        board:
+#          $ref: '#/components/schemas/Board'
+#          description: The game board.
+#        turn:
+#          type: string
+#          description: The current player's turn ("B" for Black, "W" for White).
+#        state:
+#          type: string
+#          description: The state of the game (e.g., "pending", "ongoing", "finished").
+#        playerB:
+#          type: integer
+#          description: Player B's unique identifier.
+#        playerW:
+#          type: integer
+#          description: Player W's unique identifier.
+#        rules:
+#          type: string
+#          description: Rules of the game.
+#        variant:
+#          type: string
+#          description: Variant of the game.
+#        boardSize:
+#          type: integer
+#          description: Size of the game board.
+#      required:
+#        - id
+#        - board
+#        - turn
+#        - state
+#        - playerB
+#        - playerW
+#        - rules
+#        - variant
+#        - boardSize
 
 paths:
   - name: Get Game by ID
@@ -125,10 +123,10 @@ paths:
     responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GameModel'
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/GameModel'
         '404':
           description: Game not found
         '500':
@@ -157,8 +155,6 @@ paths:
           description: Unauthorized - Invalid player
         '500':
           description: Internal Server Error
-        
-
     security:
       - BearerToken: [] 
 
@@ -177,10 +173,10 @@ paths:
     responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GameModel'
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/GameModel'
         '400':
           description: Bad Request - Invalid ID
         '404':
@@ -211,10 +207,10 @@ paths:
     responses:
       '200':
         description: Move successful, updated game 
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GameModel'
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/GameModel'
       '400':
         description: Bad Request - Invalid input or game state
       '401':
@@ -225,8 +221,8 @@ paths:
         description: Conflict - Invalid move, game ended, or not player's turn
       '500':
         description: Internal Server Error
-      security:
-      - BearerToken: [] 
+    security:
+      - BearerToken: []
 
   - name: Get User by ID
     path: /users/{id}
@@ -241,10 +237,10 @@ paths:
     responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserModel'
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/UserModel'
         '400':
           description: Bad Request - Invalid ID
         '404':
@@ -265,10 +261,10 @@ paths:
     responses:
         '201':
           description: User created successfully
-          content:
-            application/json:
-              schema:
-                type: string
+#          content:
+#            application/json:
+#              schema:
+#                type: string
         '400':
           description: Bad Request - Invalid username, password, or username already in use
         '500':
@@ -287,10 +283,10 @@ paths:
     responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StatisticsModel'
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/StatisticsModel'
         '400':
           description: Bad Request - Invalid ID
         '404':
@@ -311,10 +307,10 @@ paths:
     responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: integer
+#          content:
+#            application/json:
+#              schema:
+#                type: integer
         '400':
           description: Bad Request - Invalid ID
         '404':
@@ -336,9 +332,9 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserModel'
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/UserModel'
         '400':
           description: Bad Request - Invalid username
         '404':
@@ -353,9 +349,9 @@ paths:
     responses:
         '200':
           description: Successful response
-          content:
-            application/json:
-              schema:
-                type: string
+#          content:
+#            application/json:
+#              schema:
+#                type: string
         '500':
         description: Internal Server Error
