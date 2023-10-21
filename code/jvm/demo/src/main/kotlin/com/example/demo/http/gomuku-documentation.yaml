@@ -4,6 +4,7 @@ info:
   description: API for Gomuku game.
   base_url: https://localhost:8080/
 
+
 paths:
   - name: Get Game by ID
     path: /games/check/{id}
