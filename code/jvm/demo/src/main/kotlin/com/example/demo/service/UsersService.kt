@@ -1,19 +1,13 @@
 package com.example.demo.service
 
-import com.example.demo.domain.AuthenticatedUser
-import com.example.demo.domain.Authentication
-import com.example.demo.domain.UserDomain
-import com.example.demo.http.model.StatisticsModel
+import com.example.demo.domain.*
+import com.example.demo.http.errors.*
+import com.example.demo.http.errors.UserIdFetchError
 import com.example.demo.http.model.UserModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 import java.time.Instant
 
-sealed class TokenResult {
-    object ValidToken : TokenResult()
-
-    object InvalidToken : TokenResult()
-}
 
 private const val authors = "Vasco Branco - 48259\nJosé Borges - 48269\nSérgio Capela - 48080"
 
@@ -23,41 +17,69 @@ class UsersService(
     private val userDomain: UserDomain,
     private val transactionManager: TransactionManager
 ) {
-    fun getUserById(id: Int?): UserModel? {
+    fun getUserById(id: Int?): UserIdFetchResult {
         return transactionManager.run {
-            require(id != null) { "Invalid id" }
-            it.usersRepository.getUserById(id)
+            if(id == null){
+                failure(UserIdFetchError.InvalidId)
+            }
+            else {
+                val user = it.usersRepository.getUserById(id)
+                if( user == null ){
+                    failure(UserIdFetchError.NonExistingUser)
+                }
+                else success(user)
+            }
         }
     }
 
-    fun createUser(username: String?, password: String?) {
+    fun createUser(username: String?, password: String?): UserCreationResult {
         return transactionManager.run {
-            require(!username.isNullOrEmpty()) { "Invalid username" }
-            require(!password.isNullOrEmpty()) { "Invalid Password" }
-            require(getUserByUsername(username) == null) { "Username is already being used" }
-            val userId = it.usersRepository.createUser(username, password)
-            createToken(userId)
+            when{
+                username.isNullOrEmpty() -> failure(UserCreationError.InvalidUsername)
+                password.isNullOrEmpty() -> failure(UserCreationError.InvalidPassword)
+                getUserByUsername(username) is Success -> failure(UserCreationError.RepeatedUsername)
+                else -> {
+                    val userId = it.usersRepository.createUser(username, password)
+                    createToken(userId)
+                    success(userId)
+                }
+            }
         }
     }
 
-    fun getStatisticsById(id: Int?): StatisticsModel {
+    fun getStatisticsById(id: Int?): StatisticsFetchResult {
         return transactionManager.run {
-            require(id != null) { "Invalid id" }
-            it.usersRepository.getStatisticsById(id)
+            if (id == null) failure(StatisticsError.InvalidId)
+            else {
+                val user = it.usersRepository.getUserById(id)
+                if (user == null) failure(StatisticsError.InvalidId)//TODO("Change Statistics")
+                else success(it.usersRepository.getStatisticsById(id))
+            }
         }
     }
 
-    fun getGamesCount(id: Int?): Int {
+    fun getGamesCount(id: Int?): GamesCountFetchResult {
         return transactionManager.run {
-            require(id != null) { "Invalid id" }
-            it.usersRepository.getGamesCount(id)
+            if (id == null) {
+                failure(GamesCountError.InvalidId)
+            } else {
+                val user = it.usersRepository.getUserById(id)
+                if (user == null) failure(GamesCountError.InvalidId) //TODO("Change GamesCount")
+                success(it.usersRepository.getGamesCount(id))
+            }
+
         }
     }
 
-    fun getUserByUsername(username: String?): UserModel? {
+    fun getUserByUsername(username: String?): UsernameFetchResult {
         return transactionManager.run {
-            require(username != null) { "Invalid username" }
-            it.usersRepository.getUserByUsername(username)
+            if (username == null) {
+                failure(UsernameFetchError.InvalidUsername)
+            } else {
+                val user = it.usersRepository.getUserByUsername(username)
+                if (user != null) success(user)
+                else failure(UsernameFetchError.NonExistingUser)
+            }
         }
     }
 
@@ -69,7 +91,9 @@ class UsersService(
         }
     }
 
-    fun getAuthors() = transactionManager.run { authors }
+    fun getAuthors() = transactionManager.run {
+        authors
+    }
 
     fun createToken(id: Int) {
         return transactionManager.run {
@@ -110,7 +134,6 @@ class UsersService(
             (it.usersRepository.getUserByToken(token) != null)
         }
     }
-
     /*fun processAuthorizationHeaderValue(authorizationValue: String?): String? {
         if (authorizationValue == null) {
             return null

@@ -16,12 +16,9 @@ class AuthenticationInterceptor(
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
 
         if (handler is HandlerMethod && handler.methodParameters.any {
-                println(handler)
-                println(it)
                 it.parameterType == AuthenticatedUser::class.java
             }
         ) {
-            println("Inside if")
             val user = authorizationHeaderProcessor.processAuthorizationHeaderValue(request.getHeader(NAME_AUTHORIZATION_HEADER))
             return if(user == null) {
                 response.status = 401
