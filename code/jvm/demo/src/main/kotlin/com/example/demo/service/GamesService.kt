@@ -64,6 +64,8 @@ sealed class PlayError {
     object WrongAccount : PlayError()
 
     object NotYourTurn : PlayError()
+
+    object PositionOccupied : PlayError()
 }
 
 typealias PlayResult = Either<PlayError, Unit>

@@ -42,5 +42,6 @@ class Error{
         val gameEnded = Error()
         val invalidGameId = Error()
         val wrongAccount = Error()
+        val positionOccupied = Error()
     }
 }
