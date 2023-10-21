@@ -58,6 +58,7 @@ class GamesService(private val transactionManager: TransactionManager) {
                 is BoardWin -> "Ended $turn"
                 else -> game.state
             }
+            //TODO("O TURN PRECISA SER MUDADO ?")
             val newGame = Game(game.id, newBoard, game.state)
             it.gameRepository.updateGame(newGame, turn.other(), state)
         }
