@@ -20,7 +20,10 @@ class RequestTokenProcessor(
             return null
         }
         return usersService.getUserByToken(parts[1])?.let {
-            AuthenticatedUser(it, parts[1])
+            AuthenticatedUser(
+                it,
+                parts[1]
+            )
         }
     }
 

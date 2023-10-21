@@ -6,7 +6,7 @@ import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 
 @Component
-class GamesService(/*private val gameRepository: GamesRepository,*/ private val transactionManager: TransactionManager) {
+class GamesService(private val transactionManager: TransactionManager) {
     fun getGameById(id: Int): GameModel? {
         return transactionManager.run {
             it.gameRepository.getGameById(id)

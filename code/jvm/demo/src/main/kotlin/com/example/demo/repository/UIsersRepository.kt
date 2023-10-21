@@ -1,9 +1,9 @@
 package com.example.demo.repository
 
+import com.example.demo.domain.AuthenticatedUser
 import com.example.demo.domain.Authentication
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
-import com.example.demo.http.model.UserTemp
 import java.sql.Date
 
 
@@ -24,5 +24,5 @@ interface UsersRepository {
 
     fun getCurrDate(): Date
 
-    fun getUserByToken(token: String): UserTemp?
+    fun getUserByToken(token: String): UserModel?
 }

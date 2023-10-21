@@ -3,7 +3,6 @@ package com.example.demo.repository.jbdi
 import com.example.demo.domain.Authentication
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
-import com.example.demo.http.model.UserTemp
 import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Handle
 import java.sql.Date
@@ -91,12 +90,12 @@ class JdbiUsersRepository(/*private val jdbi: Jdbi*/private val handle: Handle) 
 
     }
 
-    override fun getUserByToken(token: String): UserTemp? {
-        val query = "select * from authentication where token = :token"
+    override fun getUserByToken(token: String): UserModel? {
+        val query = "select * from player p join authentication au on (p.id = au.player_id) where token = :token"
 
         return handle.createQuery(query)
             .bind("token", token)
-            .mapTo(UserTemp::class.java)
+            .mapTo(UserModel::class.java)
             .singleOrNull()
 
     }

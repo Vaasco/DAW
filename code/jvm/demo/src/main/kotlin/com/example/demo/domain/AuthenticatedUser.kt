@@ -1,8 +1,8 @@
 package com.example.demo.domain
 
-import com.example.demo.http.model.UserTemp
+import com.example.demo.http.model.UserModel
 
 class AuthenticatedUser(
-    val user: UserTemp,
+    val user : UserModel,
     val token: String
 )

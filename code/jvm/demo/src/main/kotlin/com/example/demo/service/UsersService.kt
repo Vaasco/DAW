@@ -1,10 +1,10 @@
 package com.example.demo.service
 
+import com.example.demo.domain.AuthenticatedUser
 import com.example.demo.domain.Authentication
 import com.example.demo.domain.UserDomain
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
-import com.example.demo.http.model.UserTemp
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -78,7 +78,7 @@ class UsersService(
         }
     }
 
-    fun getUserByToken(token: String?): UserTemp? {
+    fun getUserByToken(token: String?): UserModel? {
         return transactionManager.run {
             require(token != null) { "Invalid token" }
             it.usersRepository.getUserByToken(token)
