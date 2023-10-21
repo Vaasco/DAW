@@ -100,12 +100,12 @@ class UsersService(
         }
     }
 
-    fun getUserByToken(token: String?): UsernameFetchResult {
+    fun getUserByToken(token: String?): GetUserResult {
         return transactionManager.run {
-            if (token == null) failure(UsernameFetchError.InvalidToken)
+            if (token == null) failure(GetUserError.InvalidToken)
             else {
                 val tokenDb = it.usersRepository.getUserByToken(token)
-                if (tokenDb == null) failure(UsernameFetchError.NonExistingUser)
+                if (tokenDb == null) failure(GetUserError.NonExistingUser)
                 else success(tokenDb)
             }
         }
