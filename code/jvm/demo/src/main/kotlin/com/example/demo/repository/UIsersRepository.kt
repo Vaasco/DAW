@@ -23,5 +23,5 @@ interface UsersRepository {
 
     fun getCurrDate(): Date
 
-    fun getToken(token: String): String?
+    fun getUserByToken(token: String): UserTemp?
 }

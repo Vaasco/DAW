@@ -4,3 +4,9 @@ data class UserModel(
     val username : String,
     val password : String
 )
+
+data class UserTemp(//TODO("Delete later")
+    val id: Int,
+    val username : String,
+    val password : String
+)

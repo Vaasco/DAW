@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse
 import com.example.demo.service.UsersService
 import org.springframework.stereotype.Component
 
-@Component
+/*@Component
 class AuthFilter(private val usersService: UsersService) : HttpFilter() {
 
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
@@ -38,4 +38,4 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
         )
         const val NAME_AUTHORIZATION_HEADER = "Authorization"
     }
-}
+}*/

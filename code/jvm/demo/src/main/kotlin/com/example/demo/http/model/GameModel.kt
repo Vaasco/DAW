@@ -1,8 +1,10 @@
 package com.example.demo.http.model
 
+import com.example.demo.domain.Board
+
 data class GameModel(
     val id: Int,
-    val board: String,
+    val board: Board,
     val turn: String,
     val state: String,
     val playerB: Int,

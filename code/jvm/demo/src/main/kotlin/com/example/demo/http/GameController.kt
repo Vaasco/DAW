@@ -1,7 +1,7 @@
 package com.example.demo.http
 
 import com.example.demo.http.model.LobbyModel
-import com.example.demo.http.model.PositionModel
+import com.example.demo.http.model.PlayModel
 import com.example.demo.service.GamesService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,8 +25,8 @@ class GameController(private val gamesService: GamesService) {
 
 
     @PostMapping(PathTemplate.PLAY)
-    fun play(@PathVariable id: Int, @RequestBody pos: PositionModel) {
-        gamesService.play(id, pos.row, pos.col)
+    fun play(@PathVariable id: Int, @RequestBody pos: PlayModel) {
+        gamesService.play(id, pos.row, pos.col, pos.playerId)
     }
 
 }
