@@ -25,6 +25,7 @@ class GameController(private val gamesService: GamesService) {
                 .body(res.value)
             is Failure -> when(res.value) {
                 GameIdFetchError.NonExistingGame -> Error.response( 400 ,Error.nonExistingGame)
+
                 GameIdFetchError.InvalidId -> Error.response( 400 ,Error.invalidId)
             }
         }
