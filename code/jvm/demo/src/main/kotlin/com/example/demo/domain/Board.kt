@@ -29,14 +29,14 @@ sealed class Board(val moves: Moves) {
     }
 
     fun play(position: Position, player: Player): Board {
-        when (this) {
+        return when (this) {
             is BoardRun -> {
                 require(player == turn) { "Not your turn" }
                 require(position != Position.INVALID) { "Invalid position" }
                 require(moves[position] == null) { "Position already occupied" }
-                return isOver(this, position, moves + (position to player))
+                isOver(this, position, moves + (position to player))
             }
-            is BoardDraw, is BoardWin -> throw IllegalStateException()
+            is BoardDraw, is BoardWin -> this
         }
     }
 

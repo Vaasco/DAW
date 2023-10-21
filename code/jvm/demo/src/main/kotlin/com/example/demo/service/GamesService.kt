@@ -1,6 +1,16 @@
 package com.example.demo.service
 
-import com.example.demo.domain.*
+import com.example.demo.domain.AuthenticatedUser
+import com.example.demo.domain.BoardDraw
+import com.example.demo.domain.BoardRun
+import com.example.demo.domain.BoardWin
+import com.example.demo.domain.Either
+import com.example.demo.domain.GameUpdate
+import com.example.demo.domain.Position
+import com.example.demo.domain.failure
+import com.example.demo.domain.indexToColumn
+import com.example.demo.domain.indexToRow
+import com.example.demo.domain.success
 import com.example.demo.http.model.GameModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
@@ -47,7 +57,7 @@ sealed class PlayError {
 
     object NonExistingGame : PlayError()
 
-    object InvalidPosition: PlayError()
+    object InvalidPosition : PlayError()
 
     object GameEnded : PlayError()
 
@@ -74,7 +84,13 @@ class GamesService(private val transactionManager: TransactionManager) {
         }
     }
 
-    fun createLobby(playerId: Int?, rules: String?, variant: String?, boardSize: Int?, user: AuthenticatedUser): CreateLobbyResult {
+    fun createLobby(
+        playerId: Int?,
+        rules: String?,
+        variant: String?,
+        boardSize: Int?,
+        user: AuthenticatedUser
+    ): CreateLobbyResult {
         return transactionManager.run {
             when {
                 playerId == null || it.usersRepository.getUserById(playerId) == null -> failure(CreateLobbyError.InvalidId)
@@ -102,44 +118,34 @@ class GamesService(private val transactionManager: TransactionManager) {
 
     fun play(gameId: Int?, row: Int?, col: Int?, playerId: Int?, user: AuthenticatedUser): PlayResult {
         return transactionManager.run {
-            if (gameId == null) failure(PlayError.InvalidGameId)
-            else {
-                if (row == null) failure(PlayError.InvalidRow)
-                if (col == null) failure(PlayError.InvalidCol)
-                if (playerId == null) failure(PlayError.InvalidPlayerId)
-                else {
-                    val player = it.usersRepository.getUserById(playerId)
-                    if (player == null) failure(PlayError.NonExistingUser)
-                    val game = it.gameRepository.getGameById(gameId)
-                    if (game == null) failure(PlayError.NonExistingGame)
-                    else {
-                        if ((row!! > game.boardSize) || (col!! > game.boardSize)) failure(PlayError.InvalidPosition)
-                        if (game.state != "Playing") failure(PlayError.GameEnded)
-                        if (user.user.id != playerId) failure(PlayError.WrongAccount)
-                        if ((game.turn == "W" && playerId != game.playerW) || game.turn == "B" && playerId != game.playerB) {
-                            failure(PlayError.NotYourTurn)
-                        }
-                        val r = row.indexToRow()
-                        if (r.number == -1) failure(PlayError.InvalidRow)
-                        else {
-                            val c = col!!.indexToColumn()
-                            if (c.symbol == '?') failure(PlayError.InvalidCol)
-                            else {
-                                val position = Position(r, c)
-                                val turn = (game.board as BoardRun).turn
-                                val newBoard = game.board.play(position, turn)
-                                val state = when (newBoard) {
-                                    is BoardDraw -> "Ended D"
-                                    is BoardWin -> "Ended $turn"
-                                    else -> game.state
-                                }
-                                val newGame = GameUpdate(game.id, newBoard, game.state)
-                                success(it.gameRepository.updateGame(newGame, turn.other(), state))
-                            }
-                        }
-                    }
-                }
+            if (gameId == null) return@run failure(PlayError.InvalidGameId)
+            if (row == null) return@run failure(PlayError.InvalidRow)
+            if (col == null) failure(PlayError.InvalidCol)
+            if (playerId == null) return@run failure(PlayError.InvalidPlayerId)
+            val player = it.usersRepository.getUserById(playerId) ?: return@run failure(PlayError.NonExistingUser)
+            val game = it.gameRepository.getGameById(gameId) ?: return@run failure(PlayError.NonExistingGame)
+            val r = row.indexToRow()
+            if (r.number == -1) return@run failure(PlayError.InvalidRow)
+            val c = col!!.indexToColumn()
+            if (c.symbol == '?') return@run failure(PlayError.InvalidCol)
+            if ((row > game.boardSize) || (col > game.boardSize)) return@run failure(PlayError.InvalidPosition)
+            val position = Position(r, c)
+            if (game.board.moves[position] != null) return@run failure(PlayError.PositionOccupied)
+            if (game.state != "Playing") failure(PlayError.GameEnded)
+            if (user.user.id != playerId) failure(PlayError.WrongAccount)
+            if ((game.turn == "W" && playerId != game.playerW) || game.turn == "B" && playerId != game.playerB) {
+                return@run failure(PlayError.NotYourTurn)
             }
+            val turn = (game.board as BoardRun).turn
+            val newBoard = game.board.play(position, turn)
+            if (newBoard == game.board) failure(PlayError.GameEnded)
+            val state = when (newBoard) {
+                is BoardDraw -> "Ended D"
+                is BoardWin -> "Ended $turn"
+                else -> game.state
+            }
+            val newGame = GameUpdate(game.id, newBoard, game.state)
+            success(it.gameRepository.updateGame(newGame, turn.other(), state))
         }
     }
 }

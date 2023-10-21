@@ -75,6 +75,7 @@ class GameController(private val gamesService: GamesService) {
                 PlayError.NonExistingUser -> Error.response(404, Error.nonExistingUser)
                 PlayError.NotYourTurn -> Error.response(400, Error.notYourTurn)
                 PlayError.WrongAccount -> Error.response(401, Error.unauthorized)
+                PlayError.PositionOccupied -> Error.response(400, Error.positionOccupied)
             }
         }
     }
