@@ -24,8 +24,9 @@ class GameController(private val gamesService: GamesService) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when(res.value) {
-                GameIdFetchError.NonExistingGame -> Error.response( 400 ,Error.nonExistingGame)
-                GameIdFetchError.InvalidId -> Error.response( 400 ,Error.invalidId)
+                GameIdFetchError.NonExistingGame ->
+                    Error.response(Error.nonExistingGame.code, Error.nonExistingGame)
+                GameIdFetchError.InvalidId -> Error.response( Error.invalidId.code ,Error.invalidId)
             }
         }
     }
@@ -37,11 +38,14 @@ class GameController(private val gamesService: GamesService) {
             is Success -> ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when(res.value) {
-                CreateLobbyError.InvalidBoardSize -> Error.response(400,Error.invalidId)
-                CreateLobbyError.InvalidId -> Error.response(400,Error.invalidId)
-                CreateLobbyError.InvalidVariant -> Error.response(400,Error.invalidVariant)
-                CreateLobbyError.InvalidRules -> Error.response(400,Error.invalidRules)
-                CreateLobbyError.WrongAccount -> Error.response( 401,Error.wrongAccount)
+                CreateLobbyError.InvalidBoardSize -> {
+                    val error = Error.response(400, Error.invalidId)
+                    ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(error)
+                }
+                CreateLobbyError.InvalidId -> Error.response(Error.invalidId.code,Error.invalidId)
+                CreateLobbyError.InvalidVariant -> Error.response(Error.invalidVariant.code,Error.invalidVariant)
+                CreateLobbyError.InvalidRules -> Error.response(Error.invalidRules.code,Error.invalidRules)
+                CreateLobbyError.WrongAccount -> Error.response( Error.wrongAccount.code,Error.wrongAccount)
             }
         }
     }
@@ -52,8 +56,8 @@ class GameController(private val gamesService: GamesService) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when(res.value) {
-                GameStateFetchError.NonExistingGame -> Error.response(404,Error.nonExistingGame)
-                GameStateFetchError.InvalidId -> Error.response(400, Error.invalidId)
+                GameStateFetchError.NonExistingGame -> Error.response(Error.nonExistingGame.code,Error.nonExistingGame)
+                GameStateFetchError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
             }
         }
     }

@@ -51,8 +51,8 @@ class UserController(private val usersService: UsersService) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when (res.value) {
-                StatisticsError.InvalidId -> Error.response(400, Error.invalidId)
-                StatisticsError.NonExistingUser -> Error.response(404, Error.nonExistingUser)
+                StatisticsError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
+                StatisticsError.NonExistingUser -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
             }
         }
     }
@@ -64,7 +64,7 @@ class UserController(private val usersService: UsersService) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when (res.value) {
-                GamesCountError.InvalidId -> Error.response(404, Error.invalidId)
+                GamesCountError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
             }
         }
     }

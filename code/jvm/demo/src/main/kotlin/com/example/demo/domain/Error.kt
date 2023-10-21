@@ -2,7 +2,7 @@ package com.example.demo.domain
 
 import org.springframework.http.ResponseEntity
 
-class Error{
+class Error(val code: Int, val message: String) {
 
     companion object{
         fun response(status: Int,message : Error) = ResponseEntity

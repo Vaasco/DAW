@@ -140,7 +140,7 @@ class GamesService(private val transactionManager: TransactionManager) {
             }
             val turn = (game.board as BoardRun).turn
             val newBoard = game.board.play(position, turn)
-            if (newBoard == game.board) failure(PlayError.GameEnded)
+            if (newBoard == game.board) return@run failure(PlayError.GameEnded)
             val state = when (newBoard) {
                 is BoardDraw -> "Ended D"
                 is BoardWin -> "Ended $turn"
