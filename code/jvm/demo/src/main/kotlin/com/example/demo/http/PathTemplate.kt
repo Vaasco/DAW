@@ -13,7 +13,7 @@ object PathTemplate {
     //Allow a user to play a round.POST
     const val PLAY = "/games/{id}"
 
-    const val GAME_STATE = "/games/state/{id}"
+    const val GAME_STATE = "/games/{id}"
 
     //No authorization needed
     const val HOME = "/home"

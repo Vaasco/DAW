@@ -65,17 +65,17 @@ class GameController(private val gamesService: GamesService) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when(res.value) {
-                PlayError.GameEnded -> Error.response(400, Error.gameEnded)
-                PlayError.InvalidCol -> Error.response( 400, Error.invalidCol)
-                PlayError.InvalidGameId -> Error.response( 400, Error.invalidGameId)
-                PlayError.InvalidPlayerId -> Error.response(400, Error.invalidUserId)
-                PlayError.InvalidPosition -> Error.response(400, Error.invalidPosition)
-                PlayError.InvalidRow -> Error.response(400, Error.invalidRow)
-                PlayError.NonExistingGame -> Error.response(404, Error.nonExistingGame)
-                PlayError.NonExistingUser -> Error.response(404, Error.nonExistingUser)
-                PlayError.NotYourTurn -> Error.response(400, Error.notYourTurn)
-                PlayError.WrongAccount -> Error.response(401, Error.unauthorized)
-                PlayError.PositionOccupied -> Error.response(400, Error.positionOccupied)
+                PlayError.GameEnded -> Error.response(Error.gameEnded.code, Error.gameEnded)
+                PlayError.InvalidCol -> Error.response( Error.invalidCol.code, Error.invalidCol)
+                PlayError.InvalidGameId -> Error.response( Error.invalidGameId.code, Error.invalidGameId)
+                PlayError.InvalidPlayerId -> Error.response(Error.invalidUserId.code, Error.invalidUserId)
+                PlayError.InvalidPosition -> Error.response(Error.invalidPosition.code, Error.invalidPosition)
+                PlayError.InvalidRow -> Error.response(Error.invalidRow.code, Error.invalidRow)
+                PlayError.NonExistingGame -> Error.response(Error.nonExistingGame.code, Error.nonExistingGame)
+                PlayError.NonExistingUser -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
+                PlayError.NotYourTurn -> Error.response(Error.notYourTurn.code, Error.notYourTurn)
+                PlayError.WrongAccount -> Error.response(Error.unauthorized.code, Error.unauthorized)
+                PlayError.PositionOccupied -> Error.response(Error.positionOccupied.code, Error.positionOccupied)
             }
         }
     }

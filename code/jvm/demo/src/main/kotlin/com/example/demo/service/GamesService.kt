@@ -122,19 +122,19 @@ class GamesService(private val transactionManager: TransactionManager) {
         return transactionManager.run {
             if (gameId == null) return@run failure(PlayError.InvalidGameId)
             if (row == null) return@run failure(PlayError.InvalidRow)
-            if (col == null) failure(PlayError.InvalidCol)
+            if (col == null) return@run failure(PlayError.InvalidCol)
             if (playerId == null) return@run failure(PlayError.InvalidPlayerId)
             val player = it.usersRepository.getUserById(playerId) ?: return@run failure(PlayError.NonExistingUser)
             val game = it.gameRepository.getGameById(gameId) ?: return@run failure(PlayError.NonExistingGame)
             val r = row.indexToRow()
             if (r.number == -1) return@run failure(PlayError.InvalidRow)
-            val c = col!!.indexToColumn()
+            val c = col.indexToColumn()
             if (c.symbol == '?') return@run failure(PlayError.InvalidCol)
             if ((row > game.boardSize) || (col > game.boardSize)) return@run failure(PlayError.InvalidPosition)
             val position = Position(r, c)
             if (game.board.moves[position] != null) return@run failure(PlayError.PositionOccupied)
-            if (game.state != "Playing") failure(PlayError.GameEnded)
-            if (user.user.id != playerId) failure(PlayError.WrongAccount)
+            if (game.state != "Playing") return@run failure(PlayError.GameEnded)
+            if (user.user.id != playerId) return@run failure(PlayError.WrongAccount)
             if ((game.turn == "W" && playerId != game.playerW) || game.turn == "B" && playerId != game.playerB) {
                 return@run failure(PlayError.NotYourTurn)
             }

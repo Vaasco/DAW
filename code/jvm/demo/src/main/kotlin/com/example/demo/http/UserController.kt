@@ -24,8 +24,8 @@ class UserController(private val usersService: UsersService) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when (res.value) {
-                UserIdFetchError.InvalidId -> Error.response(400, Error.invalidId)
-                UserIdFetchError.NonExistingUser -> Error.response(400, Error.nonExistingUser)
+                UserIdFetchError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
+                UserIdFetchError.NonExistingUserId -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
             }
         }
     }
@@ -36,9 +36,9 @@ class UserController(private val usersService: UsersService) {
             is Success -> ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when (res.value) {
-                UserCreationError.InvalidPassword -> Error.response(400, Error.invalidPassword)
-                UserCreationError.InvalidUsername -> Error.response(400, Error.invalidUsername)
-                UserCreationError.RepeatedUsername -> Error.response(409, Error.repeatedUsername)
+                UserCreationError.InvalidPassword -> Error.response(Error.invalidPassword.code, Error.invalidPassword)
+                UserCreationError.InvalidUsername -> Error.response(Error.invalidUsername.code, Error.invalidUsername)
+                UserCreationError.RepeatedUsername -> Error.response(Error.repeatedUsername.code, Error.repeatedUsername)
             }
 
         }
@@ -72,11 +72,12 @@ class UserController(private val usersService: UsersService) {
     @GetMapping(PathTemplate.USER_BY_USERNAME)
     fun getByUsername(@PathVariable username: String?) :ResponseEntity<*>{
         return when(val res = usersService.getUserByUsername(username)){
-            is Success -> ResponseEntity.status( 200 ).contentType(MediaType.APPLICATION_JSON)
+            is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when(res.value){
-                UsernameFetchError.InvalidUsername -> Error.response(404,Error.invalidUsername)
-                UsernameFetchError.NonExistingUser -> Error.response( 404,Error.nonExistingUser )
+                UsernameFetchError.InvalidUsername -> Error.response(Error.invalidUsername.code, Error.invalidUsername)
+                UsernameFetchError.NonExistingUsername -> Error.response(Error.nonExistingUsername.code, Error.nonExistingUsername)
+                else -> Error.response(Error.internalServerError.code, Error.internalServerError)
             }
         }
     }
