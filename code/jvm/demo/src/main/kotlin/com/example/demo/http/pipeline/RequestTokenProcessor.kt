@@ -12,7 +12,7 @@ class RequestTokenProcessor(
         if (authorizationValue == null) {
             return null
         }
-        val parts = authorizationValue.trim().split(" ") //TODO verificar se de facto isto da parse como deve ser
+        val parts = authorizationValue.trim().split(" ")
         if (parts.size != 2) {
             return null
         }

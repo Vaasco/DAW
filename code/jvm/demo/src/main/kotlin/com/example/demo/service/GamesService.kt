@@ -33,7 +33,7 @@ class GamesService(private val transactionManager: TransactionManager) {
         }
     }
 
-    fun play(gameId: Int?, row: Int?, col: Int?, playerId: Int?) {
+    fun play(gameId: Int?, row: Int?, col: Int?, playerId: Int?, user: AuthenticatedUser) {
         return transactionManager.run {
             require(gameId != null) { "Invalid game id" }
             require(row != null) { "Invalid row" }
@@ -45,6 +45,7 @@ class GamesService(private val transactionManager: TransactionManager) {
             require(game != null) { "There's no game with the given id" }
             require(row < game.boardSize && col < game.boardSize) { "Invalid position" }
             require(game.state == "Playing") { "Game has already ended" }
+            require(user.user.id == playerId) { "That's not your account" }
             if (game.turn == "W")
                 require(playerId == game.playerW) {"It's not your turn"}
             else

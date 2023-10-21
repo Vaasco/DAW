@@ -21,7 +21,7 @@ class AuthenticationInterceptor(
                 it.parameterType == AuthenticatedUser::class.java
             }
         ) {
-            println("inside if")
+            println("Inside if")
             val user = authorizationHeaderProcessor.processAuthorizationHeaderValue(request.getHeader(NAME_AUTHORIZATION_HEADER))
             return if(user == null) {
                 response.status = 401
@@ -35,6 +35,7 @@ class AuthenticationInterceptor(
             }
         return true
     }
+
     companion object {
         private val logger = LoggerFactory.getLogger(AuthenticationInterceptor::class.java)
         const val NAME_AUTHORIZATION_HEADER = "Authorization"
