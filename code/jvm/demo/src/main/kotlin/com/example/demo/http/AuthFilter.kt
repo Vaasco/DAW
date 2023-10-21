@@ -16,10 +16,10 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
         }
         val reqPath = request.requestURI.dropLastWhile { it != '/' }
         val isVariable = unAuthVariablePaths.contains(reqPath)
-        val path =  if(isVariable) reqPath else request.requestURI
-        if (isVariable || unAuthPaths.contains(path) ) chain.doFilter(request, response)
-        else{
-            val token  = usersService.processAuthorizationHeaderValue(
+        val path = if (isVariable) reqPath else request.requestURI
+        if (isVariable || unAuthPaths.contains(path)) chain.doFilter(request, response)
+        else {
+            val token = usersService.processAuthorizationHeaderValue(
                 request.getHeader(NAME_AUTHORIZATION_HEADER)
             )
             if (usersService.authenticate(token)) chain.doFilter(request, response)
@@ -27,13 +27,14 @@ class AuthFilter(private val usersService: UsersService) : HttpFilter() {
         }
     }
 
-    companion object{
+
+    companion object {
         val unAuthVariablePaths = listOf(
             PathTemplate.GAMES_COUNT,
             PathTemplate.STATICS,
             PathTemplate.USER_BY_ID,
             PathTemplate.USER_BY_USERNAME
-        ).map{ path -> path.dropLastWhile { it != '/' }}
+        ).map { path -> path.dropLastWhile { it != '/' } }
         val unAuthPaths = listOf(
             PathTemplate.HOME,
             PathTemplate.AUTHORS,
