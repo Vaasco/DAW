@@ -66,9 +66,7 @@ sealed class Board(val moves: Moves) {
  * @property turn representa o turno do jogador que é a jogar ou não.
  * @return Board representa o Board que representa o nosso BoardRun.
  */
-class BoardRun(moves: Moves, val turn: Player) : Board(moves) {
-
-}
+class BoardRun(moves: Moves, val turn: Player) : Board(moves)
 
 /**
  * Classe "BoardWin" que representa o tabuleiro de jogo quando existe um vencedor desse jogo.
@@ -76,18 +74,14 @@ class BoardRun(moves: Moves, val turn: Player) : Board(moves) {
  * @property winner representa o vencedor desse jogo.
  * @return Board representa o Board quando este acabou com um vencedor.
  */
-class BoardWin(moves: Moves, val winner: Player) : Board(moves) {
-
-}
+class BoardWin(moves: Moves, val winner: Player) : Board(moves)
 
 /**
  * Classe "BoardDraw" que representa o tabuleiro de jogo quando este empatou.
  * @property moves representa os movimentos efetuados nesse tabuleiro.
  * @return Board representa o board quando este acabou em empate.
  */
-class BoardDraw(moves: Moves) : Board(moves) {
-
-}
+class BoardDraw(moves: Moves) : Board(moves)
 
 fun fromString(boardString: String): Board {
     val turn = boardString[0].toString().toPlayer()
@@ -115,5 +109,4 @@ fun main() {
     val board = BoardRun(INITIALMAP, Player.W)
     val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.W)
     println(b)
-    //println(fromString("{2B:WHITE,4A:BLACK}").moves)
 }

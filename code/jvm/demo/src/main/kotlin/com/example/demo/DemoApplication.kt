@@ -1,6 +1,6 @@
 package com.example.demo
 
-import BoardMapper
+import com.example.demo.repository.jbdi.mappers.BoardMapper
 import com.example.demo.http.pipeline.AuthenticatedUserArgumentResolver
 import com.example.demo.http.pipeline.AuthenticationInterceptor
 import org.postgresql.ds.PGSimpleDataSource

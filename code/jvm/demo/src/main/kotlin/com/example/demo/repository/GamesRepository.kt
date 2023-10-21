@@ -1,12 +1,11 @@
 package com.example.demo.repository
 
-import com.example.demo.domain.BoardRun
-import com.example.demo.domain.Game
+import com.example.demo.domain.GameUpdate
 import com.example.demo.domain.Player
 import com.example.demo.http.model.GameModel
 
 interface GamesRepository {
-    fun updateGame(game: Game, turn: Player, state: String)
+    fun updateGame(game: GameUpdate, turn: Player, state: String)
 
     fun getGameById(id: Int): GameModel?
 

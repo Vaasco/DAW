@@ -1,3 +1,5 @@
+package com.example.demo.repository.jbdi.mappers
+
 import com.example.demo.domain.Board
 import com.example.demo.domain.fromString
 import org.jdbi.v3.core.mapper.ColumnMapper

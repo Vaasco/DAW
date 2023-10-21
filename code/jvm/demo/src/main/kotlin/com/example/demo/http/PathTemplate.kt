@@ -8,16 +8,9 @@ object PathTemplate {
   */
     const val START_GAME = "/games"
 
-    const val CREATE_GAME = "/games/start"
-
     const val CHECK_GAME = "/games/check/{id}"
 
-    //Allow a user to observe the game state. GET
-
-    const val GAME_BY_ID = "/games/{id}"
-
     //Allow a user to play a round.POST
-
     const val PLAY = "/games/{id}"
 
     const val GAME_STATE = "/games/state/{id}"
@@ -26,7 +19,7 @@ object PathTemplate {
     const val HOME = "/home"
 
     //No authorization needed
-    const val STATICS = "/home/stats/{id}"
+    const val STATISTICS = "/home/stats/{id}"
 
     //No authorization needed
     const val GAMES_COUNT = "/home/stats/games/{id}"

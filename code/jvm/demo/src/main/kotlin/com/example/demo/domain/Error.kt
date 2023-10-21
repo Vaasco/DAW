@@ -1,6 +1,5 @@
 package com.example.demo.domain
 
-import com.example.demo.service.PlayError
 import org.springframework.http.ResponseEntity
 
 class Error{
@@ -8,8 +7,8 @@ class Error{
     companion object{
         fun response(status: Int,message : Error) = ResponseEntity
             .status(status)
-            //TODO() passamos o header?
             .body<Any>(message)
+
         //Create User
         val invalidPassword = Error()
         val invalidUsername = Error()
