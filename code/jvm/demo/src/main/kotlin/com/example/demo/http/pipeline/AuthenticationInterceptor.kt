@@ -15,6 +15,8 @@ class AuthenticationInterceptor(
 ) : HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler is HandlerMethod && handler.methodParameters.any {
+                println(handler)
+                println(it)
                 it.parameterType == AuthenticatedUser::class.java
             }
         ) {

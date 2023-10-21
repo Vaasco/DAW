@@ -8,5 +8,5 @@ data class UserModel(
 data class UserTemp(//TODO("Delete later")
     val id: Int,
     val username : String,
-    val password : String
+    val password : PasswordValidationInfo
 )

@@ -39,11 +39,16 @@ class GamesService(/*private val gameRepository: GamesRepository,*/ private val 
             require(row != null) { "Invalid row" }
             require(col != null) { "Invalid column" }
             require(playerId != null) { "Invalid player id" }
+            val player = it.usersRepository.getUserById(playerId)
+            require(player != null) { "There's no player with the given id" }
             val game = getGameById(gameId)
             require(game != null) { "There's no game with the given id" }
             require(row < game.boardSize && col < game.boardSize) { "Invalid position" }
             require(game.state == "Playing") { "Game has already ended" }
-            //TODO()require(playerId == game.turn.toPlayer().id)
+            if (game.turn == "W")
+                require(playerId == game.playerW) {"It's not your turn"}
+            else
+                require(playerId == game.playerB) {"It's not your turn"}
             val position = Position(row.indexToRow(), col.indexToColumn())
             val turn = (game.board as BoardRun).turn
             val newBoard = game.board.play(position, turn)
@@ -53,7 +58,7 @@ class GamesService(/*private val gameRepository: GamesRepository,*/ private val 
                 else -> game.state
             }
             val newGame = Game(game.id, newBoard, game.state)
-            it.gameRepository.updateGame(newGame, turn, state)
+            it.gameRepository.updateGame(newGame, turn.other(), state)
         }
     }
 }
