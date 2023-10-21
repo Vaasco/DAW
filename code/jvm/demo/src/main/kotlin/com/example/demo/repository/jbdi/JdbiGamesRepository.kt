@@ -1,14 +1,14 @@
 package com.example.demo.repository.jbdi
 
-import com.example.demo.domain.Game
+import com.example.demo.domain.GameUpdate
 import com.example.demo.domain.Player
 import com.example.demo.http.model.GameModel
 import com.example.demo.repository.GamesRepository
 import org.jdbi.v3.core.Handle
 
-class JdbiGamesRepository(/*private val jdbi: Jdbi*/private val handle: Handle) : GamesRepository {
+class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
 
-    override fun updateGame(game: Game, turn: Player, state: String) {
+    override fun updateGame(game: GameUpdate, turn: Player, state: String) {
         val query = "update game set board = :board, state = :state, turn = :turn where id = :id"
 
         handle.createUpdate(query)

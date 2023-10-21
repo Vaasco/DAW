@@ -7,19 +7,19 @@ import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Handle
 import java.sql.Date
 
-class JdbiUsersRepository(/*private val jdbi: Jdbi*/private val handle: Handle) : UsersRepository {
+class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
+
     override fun getUserById(id: Int): UserModel? {
-        return handle.createQuery("select id, username, password from player where id = :id")
+        val query = "select id, username, password from player where id = :id"
+        return handle.createQuery(query)
             .bind("id", id)
             .mapTo(UserModel::class.java)
             .singleOrNull()
-
     }
 
     override fun createUser(username: String, password: String): Int {
         val query = "insert into player(username, password) values (:username, :password)"
         val query2 = "select id from player where username = :username"
-
         handle.createUpdate(query)
             .bind("username", username)
             .bind("password", password)
@@ -33,7 +33,6 @@ class JdbiUsersRepository(/*private val jdbi: Jdbi*/private val handle: Handle) 
 
     override fun getStatisticsById(id: Int): StatisticsModel {
         val query = "select rank, played_games, won_games, lost_games from ranking where player_id = :id"
-
         return handle.createQuery(query)
             .bind("id", id)
             .mapTo(StatisticsModel::class.java)
@@ -42,32 +41,26 @@ class JdbiUsersRepository(/*private val jdbi: Jdbi*/private val handle: Handle) 
 
     override fun getGamesCount(id: Int): Int {
         val query = "select played_games from ranking where player_id = :id"
-
         return handle.createQuery(query)
             .bind("id", id)
             .mapTo(Int::class.java)
             .single()
-
     }
 
     override fun getUserByUsername(username: String): UserModel? {
         val query = "select id, username, password from player where username = :username"
-
         return handle.createQuery(query)
             .bind("username", username)
             .mapTo(UserModel::class.java)
             .singleOrNull()
-
     }
 
     override fun getUserPassword(username: String): String {
         val query = "select password from player where username = :username"
-
         return handle.createQuery(query)
             .bind("username", username)
             .mapTo(String::class.java)
             .single()
-
     }
 
     override fun createAuthentication(token: Authentication) {
@@ -83,20 +76,16 @@ class JdbiUsersRepository(/*private val jdbi: Jdbi*/private val handle: Handle) 
 
     override fun getCurrDate(): Date {
         val query = "select CURRENT_DATE;"
-
         return handle.createQuery(query)
             .mapTo(Date::class.java)
             .single()
-
     }
 
     override fun getUserByToken(token: String): UserModel? {
         val query = "select * from player p join authentication au on (p.id = au.player_id) where token = :token"
-
         return handle.createQuery(query)
             .bind("token", token)
             .mapTo(UserModel::class.java)
             .singleOrNull()
-
     }
 }

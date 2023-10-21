@@ -7,5 +7,4 @@ interface Transaction{
     val usersRepository : UsersRepository
     val gameRepository : JdbiGamesRepository
     fun rollback()
-
 }

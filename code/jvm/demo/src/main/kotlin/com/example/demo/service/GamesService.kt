@@ -102,45 +102,41 @@ class GamesService(private val transactionManager: TransactionManager) {
 
     fun play(gameId: Int?, row: Int?, col: Int?, playerId: Int?, user: AuthenticatedUser): PlayResult {
         return transactionManager.run {
-            //require(gameId != null) { "Invalid game id" }
             if (gameId == null) failure(PlayError.InvalidGameId)
             else {
                 if (row == null) failure(PlayError.InvalidRow)
-                //require(col != null) { "Invalid column" }
                 if (col == null) failure(PlayError.InvalidCol)
-                //require(playerId != null) { "Invalid player id" }
                 if (playerId == null) failure(PlayError.InvalidPlayerId)
                 else {
                     val player = it.usersRepository.getUserById(playerId)
-                    //require(player != null) { "There's no player with the given id" }
                     if (player == null) failure(PlayError.NonExistingUser)
                     val game = it.gameRepository.getGameById(gameId)
                     if (game == null) failure(PlayError.NonExistingGame)
                     else {
                         if ((row!! > game.boardSize) || (col!! > game.boardSize)) failure(PlayError.InvalidPosition)
-                        //require(row < game.boardSize && col < game.boardSize) { "Invalid position" }
-                        //require(game.state == "Playing") { "Game has already ended" }
                         if (game.state != "Playing") failure(PlayError.GameEnded)
                         if (user.user.id != playerId) failure(PlayError.WrongAccount)
-                        //require(user.user.id == playerId) { "That's not your account" }
                         if ((game.turn == "W" && playerId != game.playerW) || game.turn == "B" && playerId != game.playerB) {
                             failure(PlayError.NotYourTurn)
                         }
-                        /*if (game.turn == "W")
-                            require(playerId == game.playerW) { "It's not your turn" }
-                        else
-                            require(playerId == game.playerB) { "It's not your turn" }*/
-
-                        val position = Position(row.indexToRow(), col!!.indexToColumn())
-                        val turn = (game.board as BoardRun).turn
-                        val newBoard = game.board.play(position, turn)
-                        val state = when (newBoard) {
-                            is BoardDraw -> "Ended D"
-                            is BoardWin -> "Ended $turn"
-                            else -> game.state
+                        val r = row.indexToRow()
+                        if (r.number == -1) failure(PlayError.InvalidRow)
+                        else {
+                            val c = col!!.indexToColumn()
+                            if (c.symbol == '?') failure(PlayError.InvalidCol)
+                            else {
+                                val position = Position(r, c)
+                                val turn = (game.board as BoardRun).turn
+                                val newBoard = game.board.play(position, turn)
+                                val state = when (newBoard) {
+                                    is BoardDraw -> "Ended D"
+                                    is BoardWin -> "Ended $turn"
+                                    else -> game.state
+                                }
+                                val newGame = GameUpdate(game.id, newBoard, game.state)
+                                success(it.gameRepository.updateGame(newGame, turn.other(), state))
+                            }
                         }
-                        val newGame = Game(game.id, newBoard, game.state)
-                        success(it.gameRepository.updateGame(newGame, turn.other(), state))
                     }
                 }
             }

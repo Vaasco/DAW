@@ -8,7 +8,6 @@ sealed class UserCreationError {
     object InvalidPassword : UserCreationError()
 
     object RepeatedUsername : UserCreationError()
-
 }
 
 typealias UserCreationResult = Either<UserCreationError, Int>

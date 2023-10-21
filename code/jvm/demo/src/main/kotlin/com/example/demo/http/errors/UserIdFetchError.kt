@@ -10,6 +10,4 @@ sealed class UserIdFetchError{
     object InvalidId : UserIdFetchError()
 
     object NonExistingUser : UserIdFetchError()
-
-    object InvalidToken : UserIdFetchError()
 }

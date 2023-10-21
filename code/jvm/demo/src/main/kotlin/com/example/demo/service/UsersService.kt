@@ -107,48 +107,5 @@ class UsersService(
             it.usersRepository.getUserByToken(token)
         }
     }
-
-    /*fun createToken(id: Int?): TokenResult {
-        require(id != null) { "Invalid id" }
-        require(getUserById(id) != null) { "Invalid user id" }
-
-            val user = userRepository.getUserById(id) ?: TokenResult.InvalidToken
-
-            if (user is TokenResult.InvalidToken) return TokenResult.InvalidToken
-
-            val now = userRepository.getCurrDate()
-            val newToken = Authentication(
-                userDomain.generateTokenValue()
-                (user as UserModel).id,
-                now,
-                now
-            )
-            userRepository.createToken(newToken)
-            return TokenResult.ValidToken
-    }*/
-
-    fun authenticate(token: String?): Boolean {
-        return transactionManager.run {
-            require(token != null) { "Invalid token" }
-            (it.usersRepository.getUserByToken(token) != null)
-        }
-    }
-    /*fun processAuthorizationHeaderValue(authorizationValue: String?): String? {
-        if (authorizationValue == null) {
-            return null
-        }
-        val parts = authorizationValue.trim().split(" ")
-        if (parts.size != 2) {
-            return null
-        }
-        if (parts[0].lowercase() != SCHEME) {
-            return null
-        }
-        return parts[1]
-    }
-
-    companion object {
-        const val SCHEME = "bearer"
-    }*/
 }
 

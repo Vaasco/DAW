@@ -26,7 +26,6 @@ class UserController(private val usersService: UsersService) {
             is Failure -> when (res.value) {
                 UserIdFetchError.InvalidId -> Error.response(400, Error.invalidId)
                 UserIdFetchError.NonExistingUser -> Error.response(400, Error.nonExistingUser)
-                else -> Error.response(500, Error.internalServerError)
             }
         }
     }
@@ -36,7 +35,6 @@ class UserController(private val usersService: UsersService) {
         return when (val res = usersService.createUser(userModel.username, userModel.password)) {
             is Success -> ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
-
             is Failure -> when (res.value) {
                 UserCreationError.InvalidPassword -> Error.response(400, Error.invalidPassword)
                 UserCreationError.InvalidUsername -> Error.response(400, Error.invalidUsername)
@@ -47,12 +45,11 @@ class UserController(private val usersService: UsersService) {
     }
 
 
-    @GetMapping(PathTemplate.STATICS)
+    @GetMapping(PathTemplate.STATISTICS)
     fun getStatisticsById(@PathVariable id: Int?): ResponseEntity<*> {
         return when (val res = usersService.getStatisticsById(id)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
-
             is Failure -> when (res.value) {
                 StatisticsError.InvalidId -> Error.response(400, Error.invalidId)
                 StatisticsError.NonExistingUser -> Error.response(404, Error.nonExistingUser)
@@ -66,7 +63,6 @@ class UserController(private val usersService: UsersService) {
         return when (val res = usersService.getGamesCount(id)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
-
             is Failure -> when (res.value) {
                 GamesCountError.InvalidId -> Error.response(404, Error.invalidId)
             }
@@ -86,7 +82,5 @@ class UserController(private val usersService: UsersService) {
     }
     @GetMapping(PathTemplate.AUTHORS)
     fun getAuthors() = usersService.getAuthors()
-
-
 }
 
