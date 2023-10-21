@@ -49,6 +49,23 @@ components:
           $ref: '#/components/schemas/Moves'
           description: Object representing moves made in the game.
 
+      UserModel:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Unique identifier for the user.
+          username:
+            type: string
+            description: User's username.
+          password:
+            type: string
+            description: User's password.
+        required:
+          - id
+          - username
+          - password
+
     GameModel:
       type: object
       properties:
@@ -90,9 +107,7 @@ components:
         - variant
         - boardSize
 
-    Board:
-      type: object
-      properties: 
+
 
 paths:
   - name: Get Game by ID
@@ -132,8 +147,10 @@ paths:
     responses:
         '200':
           description: Lobby created successfully
-        '400':
-          description: Bad Request
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/LobbyModel'
         '400':
           description: Invalid rules, variant or boardSize
         '401':
@@ -315,7 +332,7 @@ paths:
         type: string
         required: true
         description: User username.
-     responses:
+    responses:
         '200':
           description: Successful response
           content:
@@ -333,7 +350,7 @@ paths:
     path: /users/authors
     method: GET
     description: Get information about authors.
-     responses:
+    responses:
         '200':
           description: Successful response
           content:
