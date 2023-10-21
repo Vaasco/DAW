@@ -1,0 +1,357 @@
+info:
+  title: Gomuku
+  version: 1.0
+  description: API for Gomuku game.
+  base_url: https://localhost:8080/
+
+#components:
+#  schemas:
+#    Row:
+#      type: object
+#      properties:
+#        number:
+#          type: integer
+#      description: Object representing a row in the game board.
+#
+#    Column:
+#      type: object
+#      properties:
+#        symbol:
+#          type: string
+#      description: Object representing a column in the game board.
+#
+#    Position:
+#      type: object
+#      properties:
+#        row:
+#          $ref: '#/components/schemas/Row'
+#        col:
+#          $ref: '#/components/schemas/Column'
+#      description: Object representing a position on the game board.
+#
+#    Player:
+#      type: string
+#      enum:
+#        - "B"
+#        - "W"
+#      description: Player identifier ("B" for Black, "W" for White).
+#
+#    Moves:
+#      type: object
+#      additionalProperties:
+#        $ref: '#/components/schemas/Player'
+#      description: Mapping of positions to players.
+#
+#    Board:
+#      type: object
+#      properties:
+#        moves:
+#          $ref: '#/components/schemas/Moves'
+#          description: Object representing moves made in the game.
+#
+#      UserModel:
+#        type: object
+#        properties:
+#          id:
+#            type: integer
+#            description: Unique identifier for the user.
+#          username:
+#            type: string
+#            description: User's username.
+#          password:
+#            type: string
+#            description: User's password.
+#        required:
+#          - id
+#          - username
+#          - password
+#
+#    GameModel:
+#      type: object
+#      properties:
+#        id:
+#          type: integer
+#          description: Unique identifier for the game.
+#        board:
+#          $ref: '#/components/schemas/Board'
+#          description: The game board.
+#        turn:
+#          type: string
+#          description: The current player's turn ("B" for Black, "W" for White).
+#        state:
+#          type: string
+#          description: The state of the game (e.g., "pending", "ongoing", "finished").
+#        playerB:
+#          type: integer
+#          description: Player B's unique identifier.
+#        playerW:
+#          type: integer
+#          description: Player W's unique identifier.
+#        rules:
+#          type: string
+#          description: Rules of the game.
+#        variant:
+#          type: string
+#          description: Variant of the game.
+#        boardSize:
+#          type: integer
+#          description: Size of the game board.
+#      required:
+#        - id
+#        - board
+#        - turn
+#        - state
+#        - playerB
+#        - playerW
+#        - rules
+#        - variant
+#        - boardSize
+
+paths:
+  - name: Get Game by ID
+    path: /games/check/{id}
+    method: GET
+    description: Get game information by ID.
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+        description: Game ID.
+    security:
+      - BearerToken: [] 
+    responses:
+        '200':
+          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/GameModel'
+        '404':
+          description: Game not found
+        '500':
+          description: Internal Server Error
+
+  - name: Create Lobby
+    path: /games
+    method: POST
+    description: Create a new game lobby.
+    parameters:
+      - name: lobbyModel
+        in: body
+        type: object
+        required: true
+        description: Lobby model containing playerId, rules, variant, and boardSize.
+    responses:
+        '200':
+          description: Lobby created successfully
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/LobbyModel'
+        '400':
+          description: Invalid rules, variant or boardSize
+        '401':
+          description: Unauthorized - Invalid player
+        '500':
+          description: Internal Server Error
+    security:
+      - BearerToken: [] 
+
+  - name: Get Game State
+    path: /games/state/{id}
+    method: GET
+    description: Get the state of the game by ID.
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+        description: Game ID.
+    security:
+      - BearerToken: [] 
+    responses:
+        '200':
+          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/GameModel'
+        '400':
+          description: Bad Request - Invalid ID
+        '404':
+          description: Game not found
+        '500':
+          description: Internal Server Error
+
+  - name: Play Move
+    path: /games/{id}
+    method: POST
+    description: Make a move in the game.
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+        description: Game ID.
+      - name: pl
+        in: body
+        type: object
+        required: true
+        description: Play model containing row, col, and playerId.
+      - name: user
+        in: header
+        type: object
+        required: true
+        description: Authenticated user information.
+    responses:
+      '200':
+        description: Move successful, updated game 
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/GameModel'
+      '400':
+        description: Bad Request - Invalid input or game state
+      '401':
+        description: Unauthorized - Invalid player or user account
+      '404':
+        description: Game not found
+      '409':
+        description: Conflict - Invalid move, game ended, or not player's turn
+      '500':
+        description: Internal Server Error
+    security:
+      - BearerToken: []
+
+  - name: Get User by ID
+    path: /users/{id}
+    method: GET
+    description: Get user information by ID.
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+        description: User ID.
+    responses:
+        '200':
+          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/UserModel'
+        '400':
+          description: Bad Request - Invalid ID
+        '404':
+          description: User not found
+        '500':
+        description: Internal Server Error
+
+  - name: Create User
+    path: /users
+    method: POST
+    description: Create a new user.
+    parameters:
+      - name: userModel
+        in: body
+        type: object
+        required: true
+        description: User model containing username and password.
+    responses:
+        '201':
+          description: User created successfully
+#          content:
+#            application/json:
+#              schema:
+#                type: string
+        '400':
+          description: Bad Request - Invalid username, password, or username already in use
+        '500':
+        description: Internal Server Error
+
+  - name: Get Statistics by ID
+    path: /home/stats/{id}
+    method: GET
+    description: Get statistics for a user by ID.
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+        description: User ID.
+    responses:
+        '200':
+          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/StatisticsModel'
+        '400':
+          description: Bad Request - Invalid ID
+        '404':
+          description: User not found
+        '500':
+        description: Internal Server Error
+
+  - name: Get Games Count
+    path: /home/stats/games/{id}
+    method: GET
+    description: Get the count of games played by a user.
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+        description: User ID.
+    responses:
+        '200':
+          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                type: integer
+        '400':
+          description: Bad Request - Invalid ID
+        '404':
+          description: User not found
+        '500':
+        description: Internal Server Error
+
+  - name: Get User by Username
+    path: /users/username/{username}
+    method: GET
+    description: Get user information by username.
+    parameters:
+      - name: username
+        in: path
+        type: string
+        required: true
+        description: User username.
+    responses:
+        '200':
+          description: Successful response
+          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/UserModel'
+        '400':
+          description: Bad Request - Invalid username
+        '404':
+          description: User not found
+        '500':
+        description: Internal Server Error
+
+  - name: Get Authors
+    path: /users/authors
+    method: GET
+    description: Get information about authors.
+    responses:
+        '200':
+          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                type: string
+        '500':
+        description: Internal Server Error
