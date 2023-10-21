@@ -63,7 +63,6 @@ paths:
     responses:
         '200':
           description: Successful response
-
         '400':
           description: Bad Request - Invalid ID
         '404':

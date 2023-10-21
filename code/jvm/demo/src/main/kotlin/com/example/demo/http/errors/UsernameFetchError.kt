@@ -7,8 +7,6 @@ sealed class UsernameFetchError {
     object InvalidUsername : UsernameFetchError()
 
     object NonExistingUser : UsernameFetchError()
-
-    object InvalidToken : UsernameFetchError()
 }
 
 typealias UsernameFetchResult = Either<UsernameFetchError, UserModel?>

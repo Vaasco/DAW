@@ -83,4 +83,3 @@ class UserController(private val usersService: UsersService) {
     @GetMapping(PathTemplate.AUTHORS)
     fun getAuthors() = usersService.getAuthors()
 }
-
