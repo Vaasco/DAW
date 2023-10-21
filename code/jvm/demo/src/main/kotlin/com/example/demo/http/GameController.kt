@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-
-
 @RestController
 class GameController(private val gamesService: GamesService) {
 
@@ -32,9 +30,4 @@ class GameController(private val gamesService: GamesService) {
         gamesService.play(id, pl.row, pl.col, pl.playerId, user)
     }
 
-    @PostMapping("/test")
-    fun play(@RequestBody au: AuthenticatedUser) {
-        println(au.user.id)
-        println(au.token)
-    }
 }
