@@ -9,5 +9,6 @@ typealias UserIdFetchResult = Either<UserIdFetchError, UserModel>
 sealed class UserIdFetchError{
     object InvalidId : UserIdFetchError()
 
-    object NonExistingUser : UserIdFetchError()
+    object NonExistingUserId : UserIdFetchError()
+
 }

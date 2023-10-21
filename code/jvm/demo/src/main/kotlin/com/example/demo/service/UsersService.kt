@@ -3,6 +3,7 @@ package com.example.demo.service
 import com.example.demo.domain.*
 import com.example.demo.http.errors.*
 import com.example.demo.http.errors.UserIdFetchError
+import com.example.demo.http.model.UserModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -23,7 +24,7 @@ class UsersService(
             else {
                 val user = it.usersRepository.getUserById(id)
                 if( user == null ){
-                    failure(UserIdFetchError.NonExistingUser)
+                    failure(UserIdFetchError.NonExistingUserId)
                 }
                 else success(user)
             }
@@ -76,7 +77,7 @@ class UsersService(
             } else {
                 val user = it.usersRepository.getUserByUsername(username)
                 if (user != null) success(user)
-                else failure(UsernameFetchError.NonExistingUser)
+                else failure(UsernameFetchError.NonExistingUsername)
             }
         }
     }
@@ -100,14 +101,9 @@ class UsersService(
         }
     }
 
-    fun getUserByToken(token: String?): GetUserResult {
+    fun getUserByToken(token: String): UserModel? {
         return transactionManager.run {
-            if (token == null) failure(GetUserError.InvalidToken)
-            else {
-                val tokenDb = it.usersRepository.getUserByToken(token)
-                if (tokenDb == null) failure(GetUserError.NonExistingUser)
-                else success(tokenDb)
-            }
+            it.usersRepository.getUserByToken(token)
         }
     }
 }
