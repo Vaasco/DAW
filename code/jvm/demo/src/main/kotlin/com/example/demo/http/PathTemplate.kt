@@ -2,7 +2,7 @@ package com.example.demo.http
 
 object PathTemplate {
     /*
-  Allow an user to express their desire to start a new game
+  Allow a user to express their desire to start a new game
   users will enter a waiting lobby, where a matchmaking algorithm will select pairs of users and start games with them.
   POST
   */
@@ -12,33 +12,35 @@ object PathTemplate {
 
     const val CHECK_GAME = "/games/check/{id}"
 
-    //Allow an user to observe the game state. GET
+    //Allow a user to observe the game state. GET
 
     const val GAME_BY_ID = "/games/{id}"
 
-    //Allow an user to play a round.POST
+    //Allow a user to play a round.POST
 
     const val PLAY = "/games/{id}"
 
     const val GAME_STATE = "/games/state/{id}"
 
-    //unauth
+    //No authorization needed
     const val HOME = "/home"
 
-    //unauth
+    //No authorization needed
     const val STATICS = "/home/stats/{id}"
 
-    //unauth
+    //No authorization needed
     const val GAMES_COUNT = "/home/stats/games/{id}"
 
-    //unauth
+    //No authorization needed
     const val AUTHORS = "/home/authors"
-    //unauth
+
+    //No authorization needed
     const val USER_BY_ID = "/users/{id}"
-    //unauth
+
+    //No authorization needed
     const val USER_BY_USERNAME = "/users/username/{username}"
 
-    //unauth
+    //No authorization needed
     const val CREATE_USER = "/users"
 
 
