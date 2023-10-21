@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component
 class AuthFilter(private val usersService: UsersService) : HttpFilter() {
 
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+        val bufferedRequest = HttpServletRequestWrapper(request).apply {
+            inputStream = request.inputStream.buffered()
+        }
         val reqPath = request.requestURI.dropLastWhile { it != '/' }
         val isVariable = unAuthVariablePaths.contains(reqPath)
         val path =  if(isVariable) reqPath else request.requestURI

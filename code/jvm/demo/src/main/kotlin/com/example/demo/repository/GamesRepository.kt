@@ -8,7 +8,7 @@ import com.example.demo.http.model.GameModel
 interface GamesRepository {
     fun updateGame(game: Game, turn: Player, state: String)
 
-    fun getGameById(id: Int): Game?
+    fun getGameById(id: Int): GameModel?
 
     fun getGame(id : Int):GameModel?
 

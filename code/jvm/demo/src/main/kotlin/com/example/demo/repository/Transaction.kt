@@ -1,8 +1,11 @@
 package com.example.demo.repository
 
-import org.springframework.stereotype.Component
+import com.example.demo.repository.jbdi.JdbiGamesRepository
 
 
 interface Transaction{
-    val userRepository : UsersRepository
+    val usersRepository : UsersRepository
+    val gameRepository : JdbiGamesRepository
+    fun rollback()
+
 }

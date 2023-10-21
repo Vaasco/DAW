@@ -3,6 +3,7 @@ package com.example.demo.repository.jbdi
 import com.example.demo.domain.Authentication
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
+import com.example.demo.http.model.UserTemp
 import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Handle
 import java.sql.Date
