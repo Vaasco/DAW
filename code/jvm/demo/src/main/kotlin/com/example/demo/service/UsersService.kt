@@ -13,7 +13,6 @@ private const val authors = "Vasco Branco - 48259\nJosé Borges - 48269\nSérgio
 
 @Component
 class UsersService(
-    //private val userRepository: UsersRepository,
     private val userDomain: UserDomain,
     private val transactionManager: TransactionManager
 ) {

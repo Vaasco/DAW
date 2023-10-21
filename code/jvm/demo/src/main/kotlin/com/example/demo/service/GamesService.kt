@@ -60,7 +60,10 @@ typealias PlayResult = Either<PlayError, Unit>
 
 @Component
 class GamesService(private val transactionManager: TransactionManager) {
-    fun getGameById(id: Int): GameModel? {
+    private val validRules = listOf("Pro", "Long Pro")
+    private val validVariants = listOf("Freestyle", "Swap after 1st move")
+
+    fun getGameById(id: Int?): GameIdFetchResult {
         return transactionManager.run {
             if (id == null) failure(GameIdFetchError.InvalidId)
             else {
@@ -70,9 +73,6 @@ class GamesService(private val transactionManager: TransactionManager) {
             }
         }
     }
-
-    private val validRules = listOf("Pro", "Long Pro")
-    private val validVariants = listOf("Freestyle", "Swap after 1st move")
 
     fun createLobby(playerId: Int?, rules: String?, variant: String?, boardSize: Int?, user: AuthenticatedUser): CreateLobbyResult {
         return transactionManager.run {
