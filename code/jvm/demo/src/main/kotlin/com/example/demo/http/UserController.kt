@@ -77,7 +77,6 @@ class UserController(private val usersService: UsersService) {
             is Failure -> when(res.value){
                 UsernameFetchError.InvalidUsername -> Error.response(Error.invalidUsername.code, Error.invalidUsername)
                 UsernameFetchError.NonExistingUsername -> Error.response(Error.nonExistingUsername.code, Error.nonExistingUsername)
-                else -> Error.response(Error.internalServerError.code, Error.internalServerError)
             }
         }
     }
