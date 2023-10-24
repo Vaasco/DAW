@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @SpringBootApplication
-class DemoApplication {
+class GomokuApp {
 
     @Bean
     fun jdbi(): Jdbi {
@@ -44,5 +44,5 @@ class PipelineConfigurer(
 }
 
 fun main(args: Array<String>) {
-    runApplication<DemoApplication>(*args)
+    runApplication<GomokuApp>(*args)
 }
