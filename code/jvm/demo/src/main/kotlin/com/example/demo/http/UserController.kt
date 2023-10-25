@@ -20,12 +20,16 @@ class UserController(private val usersService: UsersService) {
 
     @GetMapping(PathTemplate.USER_BY_ID)
     fun getUserById(@PathVariable id: Int?): ResponseEntity<*> {
-        return when(val res = usersService.getUserById(id)) {
+        return when (val res = usersService.getUserById(id)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
+
             is Failure -> when (res.value) {
                 UserIdFetchError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
-                UserIdFetchError.NonExistingUserId -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
+                UserIdFetchError.NonExistingUserId -> Error.response(
+                    Error.nonExistingUserId.code,
+                    Error.nonExistingUserId
+                )
             }
         }
     }
@@ -35,10 +39,14 @@ class UserController(private val usersService: UsersService) {
         return when (val res = usersService.createUser(userModel.username, userModel.password)) {
             is Success -> ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
+
             is Failure -> when (res.value) {
                 UserCreationError.InvalidPassword -> Error.response(Error.invalidPassword.code, Error.invalidPassword)
                 UserCreationError.InvalidUsername -> Error.response(Error.invalidUsername.code, Error.invalidUsername)
-                UserCreationError.RepeatedUsername -> Error.response(Error.repeatedUsername.code, Error.repeatedUsername)
+                UserCreationError.RepeatedUsername -> Error.response(
+                    Error.repeatedUsername.code,
+                    Error.repeatedUsername
+                )
             }
 
         }
@@ -50,6 +58,7 @@ class UserController(private val usersService: UsersService) {
         return when (val res = usersService.getStatisticsById(id)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
+
             is Failure -> when (res.value) {
                 StatisticsError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
                 StatisticsError.NonExistingUser -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
@@ -63,6 +72,7 @@ class UserController(private val usersService: UsersService) {
         return when (val res = usersService.getGamesCount(id)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
+
             is Failure -> when (res.value) {
                 GamesCountError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
             }
@@ -70,17 +80,23 @@ class UserController(private val usersService: UsersService) {
     }
 
     @GetMapping(PathTemplate.USER_BY_USERNAME)
-    fun getByUsername(@PathVariable username: String?) :ResponseEntity<*>{
-        return when(val res = usersService.getUserByUsername(username)){
+    fun getByUsername(@PathVariable username: String?): ResponseEntity<*> {
+        return when (val res = usersService.getUserByUsername(username)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
-            is Failure -> when(res.value){
+
+            is Failure -> when (res.value) {
                 UsernameFetchError.InvalidUsername -> Error.response(Error.invalidUsername.code, Error.invalidUsername)
-                UsernameFetchError.NonExistingUsername -> Error.response(Error.nonExistingUsername.code, Error.nonExistingUsername)
+                UsernameFetchError.NonExistingUsername -> Error.response(
+                    Error.nonExistingUsername.code,
+                    Error.nonExistingUsername
+                )
+
                 else -> Error.response(Error.internalServerError.code, Error.internalServerError)
             }
         }
     }
+
     @GetMapping(PathTemplate.AUTHORS)
     fun getAuthors() = usersService.getAuthors()
 }

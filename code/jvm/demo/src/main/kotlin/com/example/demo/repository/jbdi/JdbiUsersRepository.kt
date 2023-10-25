@@ -3,18 +3,27 @@ package com.example.demo.repository.jbdi
 import com.example.demo.domain.Authentication
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
+import com.example.demo.http.model.UserOutputModel
 import com.example.demo.repository.UsersRepository
 import org.jdbi.v3.core.Handle
 import java.sql.Date
 
 class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
 
-    override fun getUserById(id: Int): UserModel? {
+    override fun getUserById(id: Int): UserOutputModel? {
         val query = "select id, username, password from player where id = :id"
         return handle.createQuery(query)
             .bind("id", id)
             .mapTo(UserModel::class.java)
             .singleOrNull()
+            ?.let { user ->
+                val query2 = "select token from authentication where player_id = :id"
+                val token = handle.createQuery(query2)
+                    .bind("id", id)
+                    .mapTo(String::class.java)
+                    .singleOrNull()
+                UserOutputModel(user.id, user.username, token!!)
+            }
     }
 
     override fun createUser(username: String, password: String): Int {
@@ -47,12 +56,20 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .single()
     }
 
-    override fun getUserByUsername(username: String): UserModel? {
+    override fun getUserByUsername(username: String): UserOutputModel? {
         val query = "select id, username, password from player where username = :username"
         return handle.createQuery(query)
             .bind("username", username)
             .mapTo(UserModel::class.java)
             .singleOrNull()
+            ?.let { user ->
+                val query2 = "select token from authentication where player_id = :id"
+                val token = handle.createQuery(query2)
+                    .bind("id", user.id)
+                    .mapTo(String::class.java)
+                    .singleOrNull()
+                UserOutputModel(user.id, user.username, token!!)//TODO() Coloquei double bang pq efetivamente se chega aqui é pq obrigatoriamente ira encontrar um token diferente de null
+            }
     }
 
     override fun getUserPassword(username: String): String {
