@@ -1,10 +1,18 @@
 # DAW project
+----
+The goal of this project is the development of a Web-based system allowing multiple players to play the Gomoku game.
 
-Please edit this document with an introduction to your project, including links to all the existing documentation.
+# Documentation
+----
+Yaml documentation:\
+[Yaml file](https://raw.githubusercontent.com/isel-leic-daw/2023-daw-leic52d-g09-52d/main/docs/gomuku-documentation.yaml?token=GHSAT0AAAAAACJDXQNMIE6SPLLIBJBV3EIKZJUM2HA)
 
-In addition, please add a [`.mailmap`](https://git-scm.com/docs/gitmailmap) file, mapping the emails used in the commits to your ISEL email and student number
-Example:
 
-```
-12345 <a12345@alunos.isel.pt> <mygithubuser@whatever.com>
-```
+Documentation report:\
+[Report](https://github.com/isel-leic-daw/2023-daw-leic52d-g09-52d/blob/main/docs/Relatorio.pdf)
+
+# Authors
+----
+- Vasco Branco 48259
+- José Borges 48269
+- Sérgio Capela 46080
