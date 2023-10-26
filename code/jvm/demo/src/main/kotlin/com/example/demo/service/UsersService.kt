@@ -39,8 +39,23 @@ class UsersService(
                 getUserByUsername(username) is Success -> failure(UserCreationError.RepeatedUsername)
                 else -> {
                     val userId = it.usersRepository.createUser(username, password)
-                    createToken(userId)
-                    success(userId)
+                    val token = createToken(userId)
+                    success(token)
+                }
+            }
+        }
+    }
+
+    fun logIn(username: String?, password: String?): UserLoginResult {
+        return transactionManager.run {
+            when {
+                username.isNullOrEmpty() -> failure(UserLoginError.InvalidUsername)
+                password.isNullOrEmpty() -> failure(UserLoginError.InvalidPassword)
+                getUserByUsername(username) is Failure -> failure(UserLoginError.NonExistentUsername)
+                it.usersRepository.getUserPassword(username) != password -> failure(UserLoginError.WrongPassword)
+                else -> {
+                    val token = it.usersRepository.getUserToken(username)
+                    success(token)
                 }
             }
         }
@@ -82,22 +97,15 @@ class UsersService(
         }
     }
 
-    fun getUserPassword(username: String?): String {
-        return transactionManager.run {
-            require(username != null) { "Invalid username" }
-            require(it.usersRepository.getUserByUsername(username) != null) { "There's no user with the given username" }
-            it.usersRepository.getUserPassword(username)
-        }
-    }
-
     fun getAuthors() = transactionManager.run {
         authors
     }
 
-    fun createToken(id: Int) {
+    fun createToken(id: Int): String {
         return transactionManager.run {
-            val token = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
-            it.usersRepository.createAuthentication(token)
+            val authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
+            it.usersRepository.createAuthentication(authentication)
+            authentication.token
         }
     }
 

@@ -36,7 +36,7 @@ object PathTemplate {
     //No authorization needed
     const val CREATE_USER = "/users"
 
+    const val LOGIN = "/users/login"
 
-
-
+    const val TEST = "/test"
 }

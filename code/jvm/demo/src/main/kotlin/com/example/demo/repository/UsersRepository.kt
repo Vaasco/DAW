@@ -4,7 +4,6 @@ import com.example.demo.domain.Authentication
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.http.model.UserOutputModel
-import org.apache.catalina.User
 import java.sql.Date
 
 
@@ -26,4 +25,6 @@ interface UsersRepository {
     fun getCurrDate(): Date
 
     fun getUserByToken(token: String): UserModel?
+
+    fun getUserToken(username: String): String
 }

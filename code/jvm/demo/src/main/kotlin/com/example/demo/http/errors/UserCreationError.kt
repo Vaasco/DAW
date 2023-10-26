@@ -10,4 +10,4 @@ sealed class UserCreationError {
     object RepeatedUsername : UserCreationError()
 }
 
-typealias UserCreationResult = Either<UserCreationError, Int>
+typealias UserCreationResult = Either<UserCreationError, String>

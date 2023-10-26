@@ -9,10 +9,11 @@ class Error(val code: Int, val message: String) {
             .status(status)
             .body<Any>(message)
 
-        //Create User
+        //Create User or Login
         val invalidPassword = Error(400, "Invalid password")
         val invalidUsername = Error(400, "Invalid username")
         val repeatedUsername = Error(400, "There's is already a user with that username")
+        val wrongPassword = Error(400, "Wrong Password")
 
         //Statistics by id
         val invalidId = Error(400, "Invalid id")

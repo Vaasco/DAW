@@ -27,7 +27,7 @@ sealed class CreateLobbyError {
     object WrongAccount : CreateLobbyError()
 }
 
-typealias CreateLobbyResult = Either<CreateLobbyError, Unit>
+typealias CreateLobbyResult = Either<CreateLobbyError, String?>
 
 sealed class GameIdFetchError {
     object InvalidId : GameIdFetchError()
@@ -101,7 +101,10 @@ class GamesService(private val transactionManager: TransactionManager) {
                 boardSize == null -> failure(CreateLobbyError.InvalidBoardSize)
                 it.usersRepository.getUserByToken(user.token)!!.id != playerId -> failure(CreateLobbyError.WrongAccount)
                 else -> {
-                    success(it.gameRepository.createLobby(playerId, rules, variant, boardSize))
+                    val x = it.gameRepository.createLobby(playerId, rules, variant, boardSize)
+                    success(
+                        x ?: "Waiting for an opponent"
+                    )
                 }
             }
         }
@@ -124,7 +127,7 @@ class GamesService(private val transactionManager: TransactionManager) {
             if (row == null) return@run failure(PlayError.InvalidRow)
             if (col == null) return@run failure(PlayError.InvalidCol)
             if (playerId == null) return@run failure(PlayError.InvalidPlayerId)
-            val player = it.usersRepository.getUserById(playerId) ?: return@run failure(PlayError.NonExistingUser)
+            if (it.usersRepository.getUserById(playerId) == null) return@run failure(PlayError.NonExistingUser)
             val game = it.gameRepository.getGameById(gameId) ?: return@run failure(PlayError.NonExistingGame)
             val r = row.indexToRow()
             if (r.number == -1) return@run failure(PlayError.InvalidRow)

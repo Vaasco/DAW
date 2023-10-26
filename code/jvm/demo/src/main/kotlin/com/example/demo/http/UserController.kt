@@ -44,6 +44,20 @@ class UserController(private val usersService: UsersService) {
         }
     }
 
+    @PostMapping(PathTemplate.LOGIN)
+    fun login(@RequestBody userModel: UserModel): ResponseEntity<*> {
+        return when (val res = usersService.logIn(userModel.username, userModel.password)) {
+            is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
+                .body(res.value)
+            is Failure -> when (res.value) {
+                UserLoginError.InvalidPassword -> Error.response(Error.invalidPassword.code, Error.invalidPassword)
+                UserLoginError.InvalidUsername -> Error.response(Error.invalidUsername.code, Error.invalidUsername)
+                UserLoginError.NonExistentUsername -> Error.response(Error.nonExistingUsername.code, Error.nonExistingUsername)
+                UserLoginError.WrongPassword -> Error.response(Error.wrongPassword.code, Error.wrongPassword)
+            }
+        }
+    }
+
 
     @GetMapping(PathTemplate.STATISTICS)
     fun getStatisticsById(@PathVariable id: Int?): ResponseEntity<*> {
@@ -82,4 +96,5 @@ class UserController(private val usersService: UsersService) {
     }
     @GetMapping(PathTemplate.AUTHORS)
     fun getAuthors() = usersService.getAuthors()
+
 }

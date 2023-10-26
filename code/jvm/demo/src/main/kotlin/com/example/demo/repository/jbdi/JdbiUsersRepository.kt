@@ -11,19 +11,11 @@ import java.sql.Date
 class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
 
     override fun getUserById(id: Int): UserOutputModel? {
-        val query = "select id, username, password from player where id = :id"
+        val query = "select id, username from player where id = :id"
         return handle.createQuery(query)
             .bind("id", id)
-            .mapTo(UserModel::class.java)
+            .mapTo(UserOutputModel::class.java)
             .singleOrNull()
-            ?.let { user ->
-                val query2 = "select token from authentication where player_id = :id"
-                val token = handle.createQuery(query2)
-                    .bind("id", id)
-                    .mapTo(String::class.java)
-                    .singleOrNull()
-                UserOutputModel(user.id, user.username, token!!)
-            }
     }
 
     override fun createUser(username: String, password: String): Int {
@@ -57,19 +49,11 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
     }
 
     override fun getUserByUsername(username: String): UserOutputModel? {
-        val query = "select id, username, password from player where username = :username"
+        val query = "select id, username from player where username = :username"
         return handle.createQuery(query)
             .bind("username", username)
-            .mapTo(UserModel::class.java)
+            .mapTo(UserOutputModel::class.java)
             .singleOrNull()
-            ?.let { user ->
-                val query2 = "select token from authentication where player_id = :id"
-                val token = handle.createQuery(query2)
-                    .bind("id", user.id)
-                    .mapTo(String::class.java)
-                    .singleOrNull()
-                UserOutputModel(user.id, user.username, token!!)//TODO() Coloquei double bang pq efetivamente se chega aqui é pq obrigatoriamente ira encontrar um token diferente de null
-            }
     }
 
     override fun getUserPassword(username: String): String {
@@ -104,5 +88,13 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .bind("token", token)
             .mapTo(UserModel::class.java)
             .singleOrNull()
+    }
+
+    override fun getUserToken(username: String): String {
+        val query = "select token from authentication join player on (id = player_id) where username = :username"
+        return handle.createQuery(query)
+            .bind("username", username)
+            .mapTo(String::class.java)
+            .single()
     }
 }
