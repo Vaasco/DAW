@@ -11,5 +11,7 @@ interface GamesRepository {
 
     fun getGame(id : Int):GameModel?
 
-    fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int): String?//TODO("Change the return type")
+    fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int)
+
+    fun getGameId(playerId: Int): String?
 }

@@ -1,6 +1,7 @@
 package com.example.demo.repository
 
 import com.example.demo.domain.Authentication
+import com.example.demo.domain.Token
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.http.model.UserOutputModel
@@ -26,5 +27,5 @@ interface UsersRepository {
 
     fun getUserByToken(token: String): UserModel?
 
-    fun getUserToken(username: String): String
+    fun getUserToken(username: String): Token
 }

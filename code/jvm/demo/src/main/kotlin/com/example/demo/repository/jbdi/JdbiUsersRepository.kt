@@ -1,6 +1,7 @@
 package com.example.demo.repository.jbdi
 
 import com.example.demo.domain.Authentication
+import com.example.demo.domain.Token
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.http.model.UserOutputModel
@@ -90,11 +91,11 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .singleOrNull()
     }
 
-    override fun getUserToken(username: String): String {
+    override fun getUserToken(username: String): Token {
         val query = "select token from authentication join player on (id = player_id) where username = :username"
         return handle.createQuery(query)
             .bind("username", username)
-            .mapTo(String::class.java)
+            .mapTo(Token::class.java)
             .single()
     }
 }

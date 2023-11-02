@@ -101,11 +101,11 @@ class UsersService(
         authors
     }
 
-    fun createToken(id: Int): String {
+    fun createToken(id: Int): Token {
         return transactionManager.run {
             val authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
             it.usersRepository.createAuthentication(authentication)
-            authentication.token
+            Token(authentication.token)
         }
     }
 

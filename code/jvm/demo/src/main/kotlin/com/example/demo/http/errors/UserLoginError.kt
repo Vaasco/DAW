@@ -1,6 +1,7 @@
 package com.example.demo.http.errors
 
 import com.example.demo.domain.Either
+import com.example.demo.domain.Token
 
 sealed class UserLoginError {
     object InvalidUsername: UserLoginError()
@@ -12,4 +13,4 @@ sealed class UserLoginError {
     object WrongPassword: UserLoginError()
 }
 
-typealias UserLoginResult = Either<UserLoginError, String>
+typealias UserLoginResult = Either<UserLoginError, Token>

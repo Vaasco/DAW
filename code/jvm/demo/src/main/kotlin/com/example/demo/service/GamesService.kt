@@ -6,6 +6,7 @@ import com.example.demo.domain.BoardRun
 import com.example.demo.domain.BoardWin
 import com.example.demo.domain.Either
 import com.example.demo.domain.GameUpdate
+import com.example.demo.domain.Message
 import com.example.demo.domain.Position
 import com.example.demo.domain.failure
 import com.example.demo.domain.indexToColumn
@@ -27,7 +28,7 @@ sealed class CreateLobbyError {
     object WrongAccount : CreateLobbyError()
 }
 
-typealias CreateLobbyResult = Either<CreateLobbyError, String?>
+typealias CreateLobbyResult = Either<CreateLobbyError, Message>
 
 sealed class GameIdFetchError {
     object InvalidId : GameIdFetchError()
@@ -101,9 +102,10 @@ class GamesService(private val transactionManager: TransactionManager) {
                 boardSize == null -> failure(CreateLobbyError.InvalidBoardSize)
                 it.usersRepository.getUserByToken(user.token)!!.id != playerId -> failure(CreateLobbyError.WrongAccount)
                 else -> {
-                    val x = it.gameRepository.createLobby(playerId, rules, variant, boardSize)
+                    it.gameRepository.createLobby(playerId, rules, variant, boardSize)
+                    val gameId = it.gameRepository.getGameId(playerId)
                     success(
-                        x ?: "Waiting for an opponent"
+                        Message(gameId ?: "Waiting for an opponent")
                     )
                 }
             }

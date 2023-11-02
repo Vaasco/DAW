@@ -28,24 +28,34 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
             .singleOrNull()
     }
 
-    override fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int): String? {
+    override fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int) {
         val query =
             "insert into lobby (player1_id, rules, variant, board_size) " +
-                    "values (:playerId, :rules, :variant, :boardSize) returning id"
+                    "values (:playerId, :rules, :variant, :boardSize)"
 
-        val query2 = "select game_id from lobby where id = :id"// order by id desc limit 1"
-        val x = handle.createQuery(query)
+        //val query2 = "select game_id from lobby where id = :id"
+        handle.createUpdate(query)
             .bind("playerId", playerId)
             .bind("rules", rules)
             .bind("variant", variant)
             .bind("boardSize", boardSize)
-            .mapTo(Int::class.java)
-            .singleOrNull()
-        val y = handle.createQuery(query2)
+            .execute()
+            /*.mapTo(Int::class.java)
+            .single()*/
+        //return x
+        /*val y = handle.createQuery(query2)
             .bind("id", x)
             .mapTo(String::class.java)
+            .singleOrNull()*/
+        //return y
+    }
+
+    override fun getGameId(playerId: Int): String? {
+        val query = "select game_id from lobby where player2_id = :playerId order by id desc limit 1"
+        return handle.createQuery(query)
+            .bind("playerId", playerId)
+            .mapTo(String::class.java)
             .singleOrNull()
-        return y
     }
 
     override fun getGame(id: Int): GameModel? {

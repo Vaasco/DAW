@@ -1,6 +1,7 @@
 package com.example.demo.http.errors
 
 import com.example.demo.domain.Either
+import com.example.demo.domain.Token
 
 sealed class UserCreationError {
     object InvalidUsername : UserCreationError()
@@ -10,4 +11,4 @@ sealed class UserCreationError {
     object RepeatedUsername : UserCreationError()
 }
 
-typealias UserCreationResult = Either<UserCreationError, String>
+typealias UserCreationResult = Either<UserCreationError, Token>
