@@ -9,7 +9,7 @@ import org.jdbi.v3.core.Handle
 class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
 
     override fun updateGame(game: GameUpdate, turn: Player, state: String) {
-        val query = "update game set board = :board, state = :state, turn = :turn where id = :id"
+        val query = "update game set board = :board, state = :state where id = :id"
         handle.createUpdate(query)
             .bind("board", game.board.toString())
             .bind("state", state)
@@ -20,7 +20,7 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
 
     override fun getGameById(id: Int): GameModel? {
         return handle.createQuery(
-            "select id, board, turn, state, player_b, player_w, rules, variant, board_size " +
+            "select id, board, state, player_b, player_w, rules, variant, board_size " +
                     "from game where id = :id"
         )
             .bind("id", id)
@@ -60,7 +60,7 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
 
     override fun getGame(id: Int): GameModel? {
         val query =
-            "select id, board, turn, state, player_b, player_w, rules, variant, board_size from game where id = :id"
+            "select id, board, state, player_b, player_w, rules, variant, board_size from game where id = :id"
         return handle.createQuery(query)
             .bind("id", id)
             .mapTo(GameModel::class.java)

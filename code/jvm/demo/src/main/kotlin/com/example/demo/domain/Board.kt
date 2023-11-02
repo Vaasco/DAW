@@ -1,7 +1,6 @@
 package com.example.demo.domain
 
 
-import kotlin.IllegalStateException
 import kotlin.math.pow
 
 const val SQUARE_DIM = 14
@@ -28,14 +27,15 @@ sealed class Board(val moves: Moves) {
         return moves.size == other.moves.size
     }
 
-    fun play(position: Position, player: Player): Board {
+    fun play(position: Position, player: Player): Board { //TODO adicionar parâmetros variant and rules
         return when (this) {
             is BoardRun -> {
-                require(player == turn) { "Not your turn" }
+                /*require(player == turn) { "Not your turn" }
                 require(position != Position.INVALID) { "Invalid position" }
-                require(moves[position] == null) { "Position already occupied" }
+                require(moves[position] == null) { "Position already occupied" }*/
                 isOver(this, position, moves + (position to player))
             }
+
             is BoardDraw, is BoardWin -> this
         }
     }
@@ -49,13 +49,14 @@ sealed class Board(val moves: Moves) {
         }
         return BoardRun(newMoves, board.turn.other())
     }
+
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
 
-    override fun toString() = when (this){
+    override fun toString() = when (this) {
         is BoardRun -> turn.string + moves.toString()
         is BoardWin -> winner.string + moves.toString()
-        is BoardDraw ->  moves.toString()
+        is BoardDraw -> moves.toString()
     }
 
 }
@@ -105,8 +106,22 @@ fun fromString(boardString: String): Board {
  */
 fun createBoard(first: Player) = BoardRun(INITIALMAP, first)
 
+fun getCentralPosition(boardSize: Int): Position {
+    val row = (boardSize / 2).indexToRow()
+    val col = (boardSize / 2).indexToColumn()
+    return Position(row, col)
+}
+
+fun isPositionsAway(piece1: Position, piece2: Position,distance:Int): Boolean {
+    val rowDifference = Math.abs(piece1.row.index - piece2.row.index)
+    val colDifference = Math.abs(piece1.col.index - piece2.col.index)
+
+    return rowDifference > distance || colDifference > distance
+}
+
 fun main() {
-    val board = BoardRun(INITIALMAP, Player.W)
+    /*val board = BoardRun(INITIALMAP, Player.W)
     val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.W)
-    println(b)
+    println(b)*/
+    println(isPositionsAway(Position(7.indexToRow(),7.indexToColumn()),Position(9.indexToRow(),9.indexToColumn()),3))
 }

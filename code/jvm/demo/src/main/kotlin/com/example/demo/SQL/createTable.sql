@@ -17,7 +17,6 @@ create table authentication(
 create table game(
     id serial,
     board varchar(1350) not null default '{}',
-    turn char(1) not null default 'B',
     state varchar(7) not null default 'Playing',
     player_B integer not null,
     player_W integer not null,
