@@ -1,8 +1,7 @@
 import com.example.demo.domain.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.testng.Assert
-import kotlin.math.pow
+import org.testng.Assert.assertTrue
 
 class BoardTest {
 
@@ -10,13 +9,13 @@ class BoardTest {
 
     @BeforeEach
     fun setupBoard() {
-        board = createBoard()
+        board = createBoard(Player.B, 15, "Pro", "Freestyle")
     }
 
     @Test
     fun `Make a play`() {
         board = board.play(Position(0.indexToRow(), 0.indexToColumn()), Player.B)
-        Assert.assertTrue(board.moves[Position(0.indexToRow(), 0.indexToColumn())] == Player.B)
+        assertTrue(board.moves[Position(0.indexToRow(), 0.indexToColumn())] == Player.B)
     }
 
     @Test
@@ -30,7 +29,7 @@ class BoardTest {
         board = board.play(Position(0.indexToRow(), 3.indexToColumn()), Player.B)
         board = board.play(Position(1.indexToRow(), 3.indexToColumn()), Player.W)
         board = board.play(Position(0.indexToRow(), 4.indexToColumn()), Player.B)
-        Assert.assertTrue(board is BoardWin && (board as BoardWin).winner == Player.B)
+        assertTrue(board is BoardWin && (board as BoardWin).winner == Player.B)
     }
 
 }

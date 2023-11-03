@@ -45,5 +45,6 @@ class Error(val code: Int, val message: String) {
         val invalidGameId = Error(400, "Invalid game id")
         val wrongAccount = Error(401, "That's not your account")
         val positionOccupied = Error(400, "Position is already occupied")
+        val wrongGame = Error(401, "You can't play in this game")
     }
 }
