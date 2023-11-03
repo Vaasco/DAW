@@ -56,6 +56,8 @@ sealed class PlayError {
     object NotYourTurn : PlayError()
 
     object PositionOccupied : PlayError()
+
+    object WrongGame : PlayError()
 }
 
 typealias PlayResult = Either<PlayError, Unit>
@@ -112,7 +114,7 @@ class GamesService(private val transactionManager: TransactionManager) {
         }
     }
 
-    fun play(gameId: Int?, row: Int?, col: Int?, playerId: Int?, user: AuthenticatedUser): PlayResult {
+    fun play(gameId: Int?, play: PlayModel?, user: AuthenticatedUser): PlayResult {
         return transactionManager.run {
             if (gameId == null) return@run failure(PlayError.InvalidGameId)
             if (row == null) return@run failure(PlayError.InvalidRow)
@@ -127,8 +129,9 @@ class GamesService(private val transactionManager: TransactionManager) {
             val position = Position(row.indexToRow(), col.indexToColumn())
             if (game.board.moves[position] != null) return@run failure(PlayError.PositionOccupied)
             if (game.state != "Playing") return@run failure(PlayError.GameEnded)
-            if (user.user.id != playerId) return@run failure(PlayError.WrongAccount)
-            if ((board.turn.string == "W" && playerId != game.playerW) || board.turn.string == "B" && playerId != game.playerB) {
+            if (user.user.id != play.playerId) return@run failure(PlayError.WrongAccount)
+            if (play.playerId != game.playerW && play.playerId != game.playerB) return@run failure(PlayError.WrongGame)
+            if ((board.turn.string == "W" && play.playerId != game.playerW) || board.turn.string == "B" && play.playerId != game.playerB) {
                 return@run failure(PlayError.NotYourTurn)
             }
 

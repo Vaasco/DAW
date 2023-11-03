@@ -12,6 +12,7 @@ declare pId integer;
         r integer;
         player_b integer;
         player_w integer;
+        newBoard varchar(100);
 begin
     r := floor(random() * 2);
     for pId_loop in (select * from lobby l where (new.rules = l.rules and new.variant = l.variant and new.board_size = l.board_size and l.state = 'Waiting')) loop
@@ -27,7 +28,9 @@ begin
                         player_b = new.player1_id;
                         player_w = pId;
                     end if;
-                    insert into game (state, player_b, player_w, rules, variant, board_size) values (default, player_b, player_w, new.rules, new.variant, new.board_size) returning id into gId;
+                    newBoard := 'B' || new.board_size || new.rules || new.variant || E'\n{}';
+                    insert into game (board, state, player_b, player_w, rules, variant, board_size) values
+                        (newBoard,default, player_b, player_w, new.rules, new.variant, new.board_size) returning id into gId;
                     update lobby set player2_id = new.player1_id, game_id = gId, state = 'Playing' where player1_id = pId;
                     return old;
                 end if;

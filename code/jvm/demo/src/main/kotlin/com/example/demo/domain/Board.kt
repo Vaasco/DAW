@@ -1,6 +1,8 @@
 package com.example.demo.domain
 
 
+import com.example.demo.service.PlayError
+import kotlin.math.abs
 import kotlin.math.pow
 
 const val SQUARE_DIM = 14
@@ -11,7 +13,7 @@ typealias Moves = Map<Position, Player>
 
 private val MAX_MOVES = (BOARD_DIM + 1).toDouble().pow(2)
 
-val INITIALMAP: Moves get() = mapOf()
+val INITIAL_MAP: Moves get() = mapOf()
 
 sealed class Board(val moves: Moves) {
 
@@ -27,38 +29,38 @@ sealed class Board(val moves: Moves) {
         return moves.size == other.moves.size
     }
 
-    fun play(position: Position, player: Player): Board { //TODO adicionar parâmetros variant and rules
+    fun play(position: Position, player: Player): Board {
         return when (this) {
             is BoardRun -> {
                 /*require(player == turn) { "Not your turn" }
                 require(position != Position.INVALID) { "Invalid position" }
                 require(moves[position] == null) { "Position already occupied" }*/
-                isOver(this, position, moves + (position to player))
             }
 
             is BoardDraw, is BoardWin -> this
         }
     }
 
-    private fun isOver(board: BoardRun, position: Position, newMoves: Moves): Board {
-        if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves)
+    private fun isOver(position: Position, newMoves: Moves): Board {
+        if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves, this.size, this.rules, this.variant)
+        val board = this as BoardRun
         Direction.values().forEach { dir ->
             //Ver as peças numa certa direção
-            if (cellsInDirection(moves, board.turn, position, dir) >= 5) return BoardWin(newMoves, board.turn)
+            if (cellsInDirection(moves, this.turn, position, dir) >= 5)
+                return BoardWin(newMoves, this.size, this.rules, this.variant, board.turn)
             //Ver se estão 5 peças em linha da cor que se quer
         }
-        return BoardRun(newMoves, board.turn.other())
+        return BoardRun(newMoves, this.size, this.rules, this.variant, board.turn.other())
     }
 
     //Função "hashCode" que será igual ao valor do hashcode de moves.
     override fun hashCode(): Int = moves.hashCode()
 
     override fun toString() = when (this) {
-        is BoardRun -> turn.string + moves.toString()
-        is BoardWin -> winner.string + moves.toString()
+        is BoardRun -> turn.string + size.toString() + rules + variant + '\n'+ moves.toString()
+        is BoardWin -> winner.string + size.toString() + rules + variant + '\n' + moves.toString()
         is BoardDraw -> moves.toString()
     }
-
 }
 
 /**
@@ -86,8 +88,14 @@ class BoardDraw(moves: Moves) : Board(moves)
 
 fun fromString(boardString: String): Board {
     val turn = boardString[0].toString().toPlayer()
-    if (boardString == "{}") return BoardRun(emptyMap(), turn)
-    val board = boardString.substring(2, boardString.length - 1)
+    val size = boardString.substring(1, 3).toInt()
+    val regex = Regex("(Pro|Long Pro)")
+    val regex2 = Regex("Freestyle|Swap after 1st move")
+    val rules = regex.find(boardString)!!.value
+    val variant = regex2.find(boardString)!!.value
+    if (boardString == "$turn$size$rules$variant\n{}") return BoardRun(emptyMap(), size, rules, variant, turn)
+    val idx = boardString.indexOf('\n')
+    val board = boardString.substring(idx + 2, boardString.length - 1)
     val boardMap = mutableMapOf<Position, Player>()
     val pairs = board.split(", ")
     for (i in pairs) {
@@ -96,7 +104,7 @@ fun fromString(boardString: String): Board {
         val position = i.substring(0, 2).toPosition()
         boardMap[position] = player
     }
-    return BoardRun(boardMap, turn)
+    return BoardRun(boardMap, size, rules, variant, turn)
 }
 
 /**

@@ -75,8 +75,8 @@ class GameController(private val gamesService: GamesService) {
 
 
     @PostMapping(PathTemplate.PLAY)
-    fun play(@PathVariable id: Int, @RequestBody pl: PlayModel, user: AuthenticatedUser): ResponseEntity<*> {
-        return when (val res = gamesService.play(id, pl.row, pl.col, pl.playerId, user)) {
+    fun play(@PathVariable id: Int, @RequestBody play: PlayModel?, user: AuthenticatedUser): ResponseEntity<*> {
+        return when (val res = gamesService.play(id, play, user)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
 
@@ -92,6 +92,7 @@ class GameController(private val gamesService: GamesService) {
                 PlayError.NotYourTurn -> Error.response(Error.notYourTurn.code, Error.notYourTurn)
                 PlayError.WrongAccount -> Error.response(Error.unauthorized.code, Error.unauthorized)
                 PlayError.PositionOccupied -> Error.response(Error.positionOccupied.code, Error.positionOccupied)
+                PlayError.WrongGame -> Error.response(Error.wrongGame.code, Error.wrongGame)
             }
         }
     }

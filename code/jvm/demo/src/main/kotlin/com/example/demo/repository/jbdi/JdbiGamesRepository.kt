@@ -66,4 +66,11 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
             .mapTo(GameModel::class.java)
             .singleOrNull()
     }
+
+    override fun swapPlayers(gameId: Int) {
+        val query = "update game g set player_b = g.player_w, player_w = g.player_b where id = :id"
+        handle.createUpdate(query)
+            .bind("id", gameId)
+            .execute()
+    }
 }

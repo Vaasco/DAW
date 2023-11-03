@@ -16,7 +16,7 @@ create table authentication(
 
 create table game(
     id serial,
-    board varchar(1350) not null default '{}',
+    board varchar(1350) not null,
     state varchar(7) not null default 'Playing',
     player_B integer not null,
     player_W integer not null,
@@ -26,7 +26,7 @@ create table game(
     primary key (id),
     constraint invalid_state check(state in ('Playing', 'Ended B', 'Ended W', 'Ended D')),
     constraint invalid_player_B foreign key (player_B) references player(id),
-constraint invalid_player_W foreign key (player_W) references player(id)
+    constraint invalid_player_W foreign key (player_W) references player(id)
 );
 
 create table lobby(
@@ -43,7 +43,7 @@ create table lobby(
     constraint player2_id foreign key (player2_id) references player(id),
     constraint game_id foreign key (game_id) references game(id),
     constraint same_player check(player1_id <> player2_id),
-    constraint invalid_rules check(rules in ('Pro', 'Long Pro')),--TODO("Add more rules maybe?")
+    constraint invalid_rules check(rules in ('Default', 'Pro', 'Long Pro')),--TODO("Add more rules maybe?")
     constraint invalid_variant check(variant in ('Freestyle', 'Swap after 1st move')),--TODO("Add more variants maybe?"
     constraint invalid_player_state check (state in ('Waiting', 'Playing', 'Played', 'Left'))
 );
