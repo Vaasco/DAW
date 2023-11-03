@@ -104,7 +104,7 @@ fun fromString(boardString: String): Board {
  * @param first representa o jogador que o utilizador irá ser nesse board.
  * @return BoardRun representa o nosso tabuleiro durante um jogo.
  */
-fun createBoard(first: Player) = BoardRun(INITIALMAP, first)
+fun createBoard() = BoardRun(INITIALMAP, Player.B)
 
 fun getCentralPosition(boardSize: Int): Position {
     val row = (boardSize / 2).indexToRow()
