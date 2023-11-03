@@ -15,7 +15,7 @@ private val MAX_MOVES = (BOARD_DIM + 1).toDouble().pow(2)
 
 val INITIAL_MAP: Moves get() = mapOf()
 
-sealed class Board(val moves: Moves) {
+sealed class Board(val moves: Moves, private val size: Int, val rules: String, val variant: String) {
 
     /**
      * Função "equals" em que servirá para verificar se o objeto é o mesmo e efetuar a verificação de que se trata do mesmo objeto ou não.
@@ -32,6 +32,16 @@ sealed class Board(val moves: Moves) {
     fun play(position: Position, player: Player): Board {
         return when (this) {
             is BoardRun -> {
+                if(rules != "Default") {
+                    val distance = if(rules == "Pro") 3 else 4 //If it isn't "Pro" it's Long Pro
+                    val centralPiece = getCentralPosition(size)
+                    when (this.moves.size) {
+                        0 -> if (centralPiece != position) return this
+                        2 -> if (!isPositionsAway(centralPiece, position, distance)) return this
+                    }
+                }
+                isOver(position, moves + (position to player))
+
                 /*require(player == turn) { "Not your turn" }
                 require(position != Position.INVALID) { "Invalid position" }
                 require(moves[position] == null) { "Position already occupied" }*/
@@ -69,7 +79,8 @@ sealed class Board(val moves: Moves) {
  * @property turn representa o turno do jogador que é a jogar ou não.
  * @return Board representa o Board que representa o nosso BoardRun.
  */
-class BoardRun(moves: Moves, val turn: Player) : Board(moves)
+class BoardRun(moves: Moves, size: Int, rules: String, variant: String, val turn: Player) :
+    Board(moves, size, rules, variant)
 
 /**
  * Classe "BoardWin" que representa o tabuleiro de jogo quando existe um vencedor desse jogo.
@@ -77,14 +88,15 @@ class BoardRun(moves: Moves, val turn: Player) : Board(moves)
  * @property winner representa o vencedor desse jogo.
  * @return Board representa o Board quando este acabou com um vencedor.
  */
-class BoardWin(moves: Moves, val winner: Player) : Board(moves)
+class BoardWin(moves: Moves, size: Int, rules: String, variant: String, val winner: Player) :
+    Board(moves, size, rules, variant)
 
 /**
  * Classe "BoardDraw" que representa o tabuleiro de jogo quando este empatou.
  * @property moves representa os movimentos efetuados nesse tabuleiro.
  * @return Board representa o board quando este acabou em empate.
  */
-class BoardDraw(moves: Moves) : Board(moves)
+class BoardDraw(moves: Moves, size: Int, rules: String, variant: String) : Board(moves, size, rules, variant)
 
 fun fromString(boardString: String): Board {
     val turn = boardString[0].toString().toPlayer()
@@ -112,7 +124,7 @@ fun fromString(boardString: String): Board {
  * @param first representa o jogador que o utilizador irá ser nesse board.
  * @return BoardRun representa o nosso tabuleiro durante um jogo.
  */
-fun createBoard(first: Player) = BoardRun(INITIALMAP, first)
+fun createBoard(first: Player, size: Int,rules: String,variant: String) = BoardRun(INITIAL_MAP, size,rules,variant,first)
 
 fun getCentralPosition(boardSize: Int): Position {
     val row = (boardSize / 2).indexToRow()
@@ -120,16 +132,16 @@ fun getCentralPosition(boardSize: Int): Position {
     return Position(row, col)
 }
 
-fun isPositionsAway(piece1: Position, piece2: Position,distance:Int): Boolean {
-    val rowDifference = Math.abs(piece1.row.index - piece2.row.index)
-    val colDifference = Math.abs(piece1.col.index - piece2.col.index)
+fun isPositionsAway(piece1: Position, piece2: Position, distance: Int): Boolean {
+    val rowDifference = abs(piece1.row.index - piece2.row.index)
+    val colDifference = abs(piece1.col.index - piece2.col.index)
 
-    return rowDifference > distance || colDifference > distance
+    return rowDifference >= distance || colDifference >= distance
 }
 
 fun main() {
     /*val board = BoardRun(INITIALMAP, Player.W)
     val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.W)
     println(b)*/
-    println(isPositionsAway(Position(7.indexToRow(),7.indexToColumn()),Position(9.indexToRow(),9.indexToColumn()),3))
+    println(fromString("W15ProFreestyle\n{2B=B, 2C=W, 6F=B}"))
 }

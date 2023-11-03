@@ -2,6 +2,7 @@ package com.example.demo.service
 
 import com.example.demo.domain.*
 import com.example.demo.http.model.GameModel
+import com.example.demo.http.model.PlayModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 
@@ -117,16 +118,21 @@ class GamesService(private val transactionManager: TransactionManager) {
     fun play(gameId: Int?, play: PlayModel?, user: AuthenticatedUser): PlayResult {
         return transactionManager.run {
             if (gameId == null) return@run failure(PlayError.InvalidGameId)
-            if (row == null) return@run failure(PlayError.InvalidRow)
-            if (col == null) return@run failure(PlayError.InvalidCol)
-            if (playerId == null) return@run failure(PlayError.InvalidPlayerId)
-            if (it.usersRepository.getUserById(playerId) == null) return@run failure(PlayError.NonExistingUser)
+            if (play == null) return@run failure(PlayError.InvalidPosition)
+            if (play.row == null) return@run failure(PlayError.InvalidRow)
+            if (play.col == null) return@run failure(PlayError.InvalidCol)
+            if (play.playerId == null) return@run failure(PlayError.InvalidPlayerId)
+            if (it.usersRepository.getUserById(play.playerId) == null) return@run failure(PlayError.NonExistingUser)
+
             val game = it.gameRepository.getGameById(gameId) ?: return@run failure(PlayError.NonExistingGame)
             val board = game.board as BoardRun
-            if (row.indexToRow().number == -1) return@run failure(PlayError.InvalidRow)
-            if (col.indexToColumn().symbol == '?') return@run failure(PlayError.InvalidCol)
-            if ((row > game.boardSize) || (col > game.boardSize)) return@run failure(PlayError.InvalidPosition)
-            val position = Position(row.indexToRow(), col.indexToColumn())
+
+            if (play.row.indexToRow().number == -1) return@run failure(PlayError.InvalidRow)
+            if (play.col.indexToColumn().symbol == '?') return@run failure(PlayError.InvalidCol)
+            if ((play.row > game.boardSize) || (play.col > game.boardSize)) return@run failure(PlayError.InvalidPosition)
+
+            val position = Position(play.row.indexToRow(), play.col.indexToColumn())
+
             if (game.board.moves[position] != null) return@run failure(PlayError.PositionOccupied)
             if (game.state != "Playing") return@run failure(PlayError.GameEnded)
             if (user.user.id != play.playerId) return@run failure(PlayError.WrongAccount)
@@ -135,24 +141,18 @@ class GamesService(private val transactionManager: TransactionManager) {
                 return@run failure(PlayError.NotYourTurn)
             }
 
-            val distance = if(game.rules == "Pro") 3 else 4
-            val centralPiece = getCentralPosition(game.boardSize)
-            when (game.board.moves.size) {
-                0 -> if (centralPiece != position) return@run failure(PlayError.InvalidPosition)
-                2 -> if (isPositionsAway(
-                        centralPiece,
-                        position,
-                        distance
-                    )
-                ) return@run failure(PlayError.InvalidPosition)
-            }
+            val turn =  if (play.swap != null && board.moves.size == 2 && board.variant == "Swap after 1st move") {
+                            it.gameRepository.swapPlayers(gameId)
+                            board.turn.other()
+                        } else board.turn
 
+            val newBoard = game.board.play(position, turn)
+            if (newBoard is BoardRun && newBoard.moves == board.moves) return@run failure(PlayError.InvalidPosition)
 
-            val newBoard = game.board.play(position, board.turn)
             if (newBoard == game.board) return@run failure(PlayError.GameEnded)
             val state = when (newBoard) {
                 is BoardDraw -> "Ended D"
-                is BoardWin -> "Ended $board.turn"
+                is BoardWin -> "Ended ${board.turn}"
                 else -> game.state
             }
             val newGame = GameUpdate(game.id, newBoard, game.state)

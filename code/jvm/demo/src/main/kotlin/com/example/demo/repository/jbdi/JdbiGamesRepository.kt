@@ -18,6 +18,9 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
             .execute()
     }
 
+
+
+
     override fun getGameById(id: Int): GameModel? {
         return handle.createQuery(
             "select id, board, state, player_b, player_w, rules, variant, board_size " +
