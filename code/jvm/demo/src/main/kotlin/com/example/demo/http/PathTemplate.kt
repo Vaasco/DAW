@@ -22,9 +22,6 @@ object PathTemplate {
     const val STATISTICS = "/home/stats/{id}"
 
     //No authorization needed
-    const val GAMES_COUNT = "/home/stats/games/{id}"
-
-    //No authorization needed
     const val AUTHORS = "/home/authors"
 
     //No authorization needed

@@ -8,7 +8,5 @@ data class GameModel(
     val state: String,
     val playerB: Int,
     val playerW: Int,
-    val rules: String,
-    val variant: String,
     val boardSize: Int
 )

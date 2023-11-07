@@ -66,22 +66,9 @@ class UsersService(
             if (id == null) failure(StatisticsError.InvalidId)
             else {
                 val user = it.usersRepository.getUserById(id)
-                if (user == null) failure(StatisticsError.InvalidId)//TODO("Change Statistics")
+                if (user == null) failure(StatisticsError.InvalidId)
                 else success(it.usersRepository.getStatisticsById(id))
             }
-        }
-    }
-
-    fun getGamesCount(id: Int?): GamesCountFetchResult {
-        return transactionManager.run {
-            if (id == null) {
-                failure(GamesCountError.InvalidId)
-            } else {
-                val user = it.usersRepository.getUserById(id)
-                if (user == null) failure(GamesCountError.InvalidId)
-                success(it.usersRepository.getGamesCount(id))
-            }
-
         }
     }
 

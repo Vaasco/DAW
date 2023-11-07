@@ -1,11 +1,11 @@
 package com.example.demo.repository
 
-import com.example.demo.domain.GameUpdate
+import com.example.demo.domain.Board
 import com.example.demo.domain.Player
 import com.example.demo.http.model.GameModel
 
 interface GamesRepository {
-    fun updateGame(game: GameUpdate, turn: Player, state: String)
+    fun updateGame(id: Int, board: Board, turn: Player, state: String)
 
     fun swapPlayers(gameId : Int)
 

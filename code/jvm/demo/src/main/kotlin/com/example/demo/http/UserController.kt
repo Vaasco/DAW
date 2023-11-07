@@ -71,18 +71,6 @@ class UserController(private val usersService: UsersService) {
         }
     }
 
-
-    @GetMapping(PathTemplate.GAMES_COUNT)
-    fun getGamesCount(@PathVariable id: Int?): ResponseEntity<*> {
-        return when (val res = usersService.getGamesCount(id)) {
-            is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(res.value)
-            is Failure -> when (res.value) {
-                GamesCountError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
-            }
-        }
-    }
-
     @GetMapping(PathTemplate.USER_BY_USERNAME)
     fun getByUsername(@PathVariable username: String?) :ResponseEntity<*>{
         return when(val res = usersService.getUserByUsername(username)){

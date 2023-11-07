@@ -61,7 +61,7 @@ sealed class PlayError {
     object WrongGame : PlayError()
 }
 
-typealias PlayResult = Either<PlayError, Unit>
+typealias PlayResult = Either<PlayError, GameModel?>
 
 @Component
 class GamesService(private val transactionManager: TransactionManager) {
@@ -155,8 +155,8 @@ class GamesService(private val transactionManager: TransactionManager) {
                 is BoardWin -> "Ended ${board.turn}"
                 else -> game.state
             }
-            val newGame = GameUpdate(game.id, newBoard, game.state)
-            success(it.gameRepository.updateGame(newGame, board.turn.other(), state))
+            it.gameRepository.updateGame(game.id, newBoard, board.turn.other(), state)
+            success(it.gameRepository.getGame(game.id))
         }
     }
 }

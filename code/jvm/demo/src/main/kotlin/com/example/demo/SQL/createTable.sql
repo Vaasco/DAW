@@ -20,8 +20,6 @@ create table game(
     state varchar(7) not null default 'Playing',
     player_B integer not null,
     player_W integer not null,
-    rules varchar(8) not null,
-    variant varchar(30) not null,
     board_size integer not null,
     primary key (id),
     constraint invalid_state check(state in ('Playing', 'Ended B', 'Ended W', 'Ended D')),

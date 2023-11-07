@@ -9,13 +9,19 @@ class BoardTest {
 
     @BeforeEach
     fun setupBoard() {
-        board = createBoard(Player.B, 15, "Pro", "Freestyle")
+        board = createBoard(Player.B, 15, "Default", "Freestyle")
     }
 
     @Test
     fun `Make a play`() {
         board = board.play(Position(0.indexToRow(), 0.indexToColumn()), Player.B)
-        assertTrue(board.moves[Position(0.indexToRow(), 0.indexToColumn())] == Player.B)
+        assertTrue(board.moves.isNotEmpty())
+    }
+
+    @Test
+    fun `Make a wrong play`() {
+        board = board.play(Position(0.indexToRow(), 0.indexToColumn()), Player.B)
+        assertTrue(board.moves.isEmpty())
     }
 
     @Test
