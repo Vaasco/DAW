@@ -15,7 +15,7 @@ private val MAX_MOVES = (BOARD_DIM + 1).toDouble().pow(2)
 
 val INITIAL_MAP: Moves get() = mapOf()
 
-sealed class Board(val moves: Moves, private val size: Int, val rules: String, val variant: String) {
+sealed class Board(val moves: Moves, val size: Int, private val rules: String, val variant: String) {
 
     /**
      * Função "equals" em que servirá para verificar se o objeto é o mesmo e efetuar a verificação de que se trata do mesmo objeto ou não.
@@ -33,34 +33,35 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
         return when (this) {
             is BoardRun -> {
                 if(rules != "Default") {
-                    val distance = if(rules == "Pro") 3 else 4 //If it isn't "Pro" it's Long Pro
+                    val distance = if(rules == "Pro") 3 else 4 //If it isn't "Pro" it's "Long Pro"
                     val centralPiece = getCentralPosition(size)
                     when (this.moves.size) {
                         0 -> if (centralPiece != position) return this
                         2 -> if (!isPositionsAway(centralPiece, position, distance)) return this
                     }
                 }
-                isOver(position, moves + (position to player))
+                isOver(position, moves + (position to player), turn)
 
-                /*require(player == turn) { "Not your turn" }
+                /*
+                require(player == turn) { "Not your turn" }
                 require(position != Position.INVALID) { "Invalid position" }
-                require(moves[position] == null) { "Position already occupied" }*/
+                require(moves[position] == null) { "Position already occupied" }
+                */
             }
-
             is BoardDraw, is BoardWin -> this
         }
     }
 
-    private fun isOver(position: Position, newMoves: Moves): Board {
-        if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves, this.size, this.rules, this.variant)
-        val board = this as BoardRun
+    private fun isOver(position: Position, newMoves: Moves, turn: Player): Board {
+        if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves, size, rules, variant)
+        //val board = this as BoardRun
         Direction.values().forEach { dir ->
             //Ver as peças numa certa direção
-            if (cellsInDirection(moves, this.turn, position, dir) >= 5)
-                return BoardWin(newMoves, this.size, this.rules, this.variant, board.turn)
+            if (cellsInDirection(moves, turn, position, dir) >= 5)
+                return BoardWin(newMoves, size, rules, variant, turn)
             //Ver se estão 5 peças em linha da cor que se quer
         }
-        return BoardRun(newMoves, this.size, this.rules, this.variant, board.turn.other())
+        return BoardRun(newMoves, size, rules, variant, turn.other())
     }
 
     //Função "hashCode" que será igual ao valor do hashcode de moves.
@@ -79,7 +80,7 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
  * @property turn representa o turno do jogador que é a jogar ou não.
  * @return Board representa o Board que representa o nosso BoardRun.
  */
-class BoardRun(moves: Moves, size: Int, rules: String, variant: String, val turn: Player) :
+class BoardRun(moves: Moves, size: Int, rules: String, variant: String, val turn: Player):
     Board(moves, size, rules, variant)
 
 /**
@@ -88,7 +89,7 @@ class BoardRun(moves: Moves, size: Int, rules: String, variant: String, val turn
  * @property winner representa o vencedor desse jogo.
  * @return Board representa o Board quando este acabou com um vencedor.
  */
-class BoardWin(moves: Moves, size: Int, rules: String, variant: String, val winner: Player) :
+class BoardWin(moves: Moves, size: Int, rules: String, variant: String, val winner: Player):
     Board(moves, size, rules, variant)
 
 /**
@@ -124,7 +125,7 @@ fun fromString(boardString: String): Board {
  * @param first representa o jogador que o utilizador irá ser nesse board.
  * @return BoardRun representa o nosso tabuleiro durante um jogo.
  */
-fun createBoard(first: Player, size: Int,rules: String,variant: String) = BoardRun(INITIAL_MAP, size,rules,variant,first)
+fun createBoard(first: Player, size: Int,rules: String,variant: String) = BoardRun(INITIAL_MAP, size, rules, variant, first)
 
 fun getCentralPosition(boardSize: Int): Position {
     val row = (boardSize / 2).indexToRow()
