@@ -30,9 +30,9 @@ class Error(val code: Int, val message: String) {
         val nonExistingGame = Error(404,"There's no game with the given id")
 
         //Create lobby
-        val invalidBoardSize = Error()
         val invalidRules = Error(400, "Invalid rules")
         val invalidVariant = Error(400, "Invalid variant")
+        val invalidBoardSize = Error(400, "The board size must be either 15 or 19")
 
         //Play
         val notYourTurn = Error(401, "It's not your turn")

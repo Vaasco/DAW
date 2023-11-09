@@ -47,11 +47,7 @@ class GameController(private val gamesService: GamesService) {
                 .body(res.value)
 
             is Failure -> when (res.value) {
-                CreateLobbyError.InvalidBoardSize -> {
-                    val error = Error.response(400, Error.invalidId)
-                    ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(error)
-                }
-
+                CreateLobbyError.InvalidBoardSize -> Error.response(Error.invalidBoardSize.code, Error.invalidBoardSize)
                 CreateLobbyError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
                 CreateLobbyError.InvalidVariant -> Error.response(Error.invalidVariant.code, Error.invalidVariant)
                 CreateLobbyError.InvalidRules -> Error.response(Error.invalidRules.code, Error.invalidRules)

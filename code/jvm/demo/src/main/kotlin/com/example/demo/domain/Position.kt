@@ -32,7 +32,7 @@ fun String.toPosition():Position {
     }
 }
 
-operator fun Position.plus(dir: Direction): Position = Position(row.index + dir.difRow, col.index + dir.difCol)
+operator fun Position.plus(dir: Direction): Position = Position(row.index + dir.difRow, col.index + dir.difCol, row.boardSize)
 
 
 fun cellsInDirection(moves: Moves, player: Player, from: Position, dir: Direction): Int {

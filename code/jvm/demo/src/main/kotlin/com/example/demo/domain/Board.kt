@@ -1,21 +1,27 @@
 package com.example.demo.domain
 
-
-import com.example.demo.service.PlayError
 import kotlin.math.abs
 import kotlin.math.pow
 
-const val SQUARE_DIM = 14
-
-const val BOARD_DIM = SQUARE_DIM + 1
+enum class BoardSize(val size: Int) {
+    SMALL(15),
+    BIG(19)
+}
 
 typealias Moves = Map<Position, Player>
 
-private val MAX_MOVES = (BOARD_DIM + 1).toDouble().pow(2)
+fun whichSize(size: Int) = if (size == 15) BoardSize.SMALL else BoardSize.BIG
+
+//private val MAX_MOVES get() = (whichSize(?) + 1).toDouble().pow(2)
+
+fun maxMoves(size: Int): Double {
+    val boardSize = whichSize(size)
+    return (boardSize.size + 1).toDouble().pow(2)
+}
 
 val INITIAL_MAP: Moves get() = mapOf()
 
-sealed class Board(val moves: Moves, val size: Int, private val rules: String, val variant: String) {
+sealed class Board(val moves: Moves, private val size: Int, val rules: String, val variant: String) {
 
     /**
      * Função "equals" em que servirá para verificar se o objeto é o mesmo e efetuar a verificação de que se trata do mesmo objeto ou não.
@@ -32,15 +38,15 @@ sealed class Board(val moves: Moves, val size: Int, private val rules: String, v
     fun play(position: Position, player: Player): Board {
         return when (this) {
             is BoardRun -> {
-                if(rules != "Default") {
-                    val distance = if(rules == "Pro") 3 else 4 //If it isn't "Pro" it's "Long Pro"
+                if (rules != "Default") {
+                    val distance = if (rules == "Pro") 3 else 4 //If it isn't "Pro" it's "Long Pro"
                     val centralPiece = getCentralPosition(size)
                     when (this.moves.size) {
                         0 -> if (centralPiece != position) return this
                         2 -> if (!isPositionsAway(centralPiece, position, distance)) return this
                     }
                 }
-                isOver(position, moves + (position to player), turn)
+                isOver(position, moves + (position to player), turn, size)
 
                 /*
                 require(player == turn) { "Not your turn" }
@@ -48,12 +54,13 @@ sealed class Board(val moves: Moves, val size: Int, private val rules: String, v
                 require(moves[position] == null) { "Position already occupied" }
                 */
             }
+
             is BoardDraw, is BoardWin -> this
         }
     }
 
-    private fun isOver(position: Position, newMoves: Moves, turn: Player): Board {
-        if (newMoves.size.toDouble() == MAX_MOVES) return BoardDraw(newMoves, size, rules, variant)
+    private fun isOver(position: Position, newMoves: Moves, turn: Player, boardSize: Int): Board {
+        if (newMoves.size.toDouble() == maxMoves(boardSize)) return BoardDraw(newMoves, size, rules, variant)
         //val board = this as BoardRun
         Direction.values().forEach { dir ->
             //Ver as peças numa certa direção
@@ -64,14 +71,14 @@ sealed class Board(val moves: Moves, val size: Int, private val rules: String, v
         return BoardRun(newMoves, size, rules, variant, turn.other())
     }
 
-    //Função "hashCode" que será igual ao valor do hashcode de moves.
-    override fun hashCode(): Int = moves.hashCode()
+        //Função "hashCode" que será igual ao valor do hashcode de moves.
+        override fun hashCode(): Int = moves.hashCode()
 
-    override fun toString() = when (this) {
-        is BoardRun -> turn.string + size.toString() + rules + variant + '\n'+ moves.toString()
-        is BoardWin -> winner.string + size.toString() + rules + variant + '\n' + moves.toString()
-        is BoardDraw -> moves.toString()
-    }
+        override fun toString() = when (this) {
+            is BoardRun -> turn.string + size.toString() + rules + variant + '\n' + moves.toString()
+            is BoardWin -> winner.string + size.toString() + rules + variant + '\n' + moves.toString()
+            is BoardDraw -> moves.toString()
+        }
 }
 
 /**
@@ -80,7 +87,7 @@ sealed class Board(val moves: Moves, val size: Int, private val rules: String, v
  * @property turn representa o turno do jogador que é a jogar ou não.
  * @return Board representa o Board que representa o nosso BoardRun.
  */
-class BoardRun(moves: Moves, size: Int, rules: String, variant: String, val turn: Player):
+class BoardRun(moves: Moves, size: Int, rules: String, variant: String, val turn: Player) :
     Board(moves, size, rules, variant)
 
 /**
@@ -89,7 +96,7 @@ class BoardRun(moves: Moves, size: Int, rules: String, variant: String, val turn
  * @property winner representa o vencedor desse jogo.
  * @return Board representa o Board quando este acabou com um vencedor.
  */
-class BoardWin(moves: Moves, size: Int, rules: String, variant: String, val winner: Player):
+class BoardWin(moves: Moves, size: Int, rules: String, variant: String, val winner: Player) :
     Board(moves, size, rules, variant)
 
 /**
@@ -102,6 +109,9 @@ class BoardDraw(moves: Moves, size: Int, rules: String, variant: String) : Board
 fun fromString(boardString: String): Board {
     val turn = boardString[0].toString().toPlayer()
     val size = boardString.substring(1, 3).toInt()
+
+    Position.Factory(size).createPositions()
+
     val regex = Regex("(Pro|Long Pro)")
     val regex2 = Regex("Freestyle|Swap after 1st move")
     val rules = regex.find(boardString)!!.value
@@ -125,12 +135,13 @@ fun fromString(boardString: String): Board {
  * @param first representa o jogador que o utilizador irá ser nesse board.
  * @return BoardRun representa o nosso tabuleiro durante um jogo.
  */
-fun createBoard(first: Player, size: Int,rules: String,variant: String) = BoardRun(INITIAL_MAP, size, rules, variant, first)
+fun createBoard(first: Player, size: Int, rules: String, variant: String) =
+    BoardRun(INITIAL_MAP, size, rules, variant, first)
 
 fun getCentralPosition(boardSize: Int): Position {
     val row = (boardSize / 2).indexToRow()
     val col = (boardSize / 2).indexToColumn()
-    return Position(row, col)
+    return Position(row, col, boardSize)
 }
 
 fun isPositionsAway(piece1: Position, piece2: Position, distance: Int): Boolean {
@@ -138,11 +149,4 @@ fun isPositionsAway(piece1: Position, piece2: Position, distance: Int): Boolean 
     val colDifference = abs(piece1.col.index - piece2.col.index)
 
     return rowDifference >= distance || colDifference >= distance
-}
-
-fun main() {
-    /*val board = BoardRun(INITIALMAP, Player.W)
-    val b = board.play(Position(1.indexToRow(), 1.indexToColumn()), Player.W)
-    println(b)*/
-    println(fromString("W15ProFreestyle\n{2B=B, 2C=W, 6F=B}"))
 }
