@@ -59,12 +59,12 @@ class UsersService(
         }
     }
 
-    fun getStatisticsById(id: Int?): StatisticsFetchResult {
+    fun getStatisticsById(id: Int?): StatisticsByIdFetchResult {
         return transactionManager.run {
-            if (id == null) failure(StatisticsError.InvalidId)
+            if (id == null) failure(StatisticsByIdError.InvalidId)
             else {
                 val user = it.usersRepository.getUserById(id)
-                if (user == null) failure(StatisticsError.InvalidId)
+                if (user == null) failure(StatisticsByIdError.NonExistingUser)
                 else success(it.usersRepository.getStatisticsById(id))
             }
         }
@@ -88,9 +88,7 @@ class UsersService(
         }
     }
 
-    fun getAuthors() = transactionManager.run {
-        authors
-    }
+    fun getAuthors() = authors
 
     fun createToken(id: Int): Token {
         return transactionManager.run {

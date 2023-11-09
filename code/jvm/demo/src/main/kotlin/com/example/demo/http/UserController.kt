@@ -65,8 +65,8 @@ class UserController(private val usersService: UsersService) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
             is Failure -> when (res.value) {
-                StatisticsError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
-                StatisticsError.NonExistingUser -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
+                StatisticsByIdError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
+                StatisticsByIdError.NonExistingUser -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
             }
         }
     }

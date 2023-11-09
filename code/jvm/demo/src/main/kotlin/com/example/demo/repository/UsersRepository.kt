@@ -2,6 +2,7 @@ package com.example.demo.repository
 
 import com.example.demo.domain.Authentication
 import com.example.demo.domain.Token
+import com.example.demo.http.model.StatisticsByIdModel
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.http.model.UserOutputModel
@@ -13,9 +14,9 @@ interface UsersRepository {
 
     fun createUser(username : String, password: String): Int
 
-    fun getStatisticsById(id : Int):StatisticsModel
+    fun getStatisticsById(id : Int): StatisticsByIdModel
 
-    fun getStatistics(): StatisticsModel
+    fun getStatistics(): List<StatisticsModel>
 
     fun getGamesCount(id : Int): Int
 

@@ -1,6 +1,6 @@
 package com.example.demo.http.model
 
-data class StatisticsModel(
+data class StatisticsByIdModel(
     val username: String,
     val rank: Int,
     val playedGames: Int,

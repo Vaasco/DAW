@@ -2,6 +2,7 @@ package com.example.demo.repository.jbdi
 
 import com.example.demo.domain.Authentication
 import com.example.demo.domain.Token
+import com.example.demo.http.model.StatisticsByIdModel
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.http.model.UserOutputModel
@@ -33,19 +34,21 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
 
     }
 
-    override fun getStatisticsById(id: Int): StatisticsModel {
-        val query = "select rank, played_games, won_games, lost_games from ranking where player_id = :id"
+    override fun getStatisticsById(id: Int): StatisticsByIdModel {
+        val query = "select username, rank, played_games, won_games, lost_games from ranking " +
+                "join player on (player_id = id) where player_id = :id"
         return handle.createQuery(query)
             .bind("id", id)
-            .mapTo(StatisticsModel::class.java)
+            .mapTo(StatisticsByIdModel::class.java)
             .single()
     }
 
-    override fun getStatistics(): StatisticsModel {
-        val query = "select rank, played_games, won_games, lost_games from ranking"
+    override fun getStatistics(): List<StatisticsModel> {
+        val query = "select username, rank, played_games, won_games, lost_games from ranking " +
+                "join player on (player_id = id) order by username"
         return handle.createQuery(query)
             .mapTo(StatisticsModel::class.java)
-            .single()
+            .toList()
     }
 
     override fun getGamesCount(id: Int): Int {
