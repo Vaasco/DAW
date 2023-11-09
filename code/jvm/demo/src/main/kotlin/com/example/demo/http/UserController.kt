@@ -59,7 +59,7 @@ class UserController(private val usersService: UsersService) {
     }
 
 
-    @GetMapping(PathTemplate.STATISTICS)
+    @GetMapping(PathTemplate.STATISTICS_BY_ID)
     fun getStatisticsById(@PathVariable id: Int?): ResponseEntity<*> {
         return when (val res = usersService.getStatisticsById(id)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
@@ -68,6 +68,15 @@ class UserController(private val usersService: UsersService) {
                 StatisticsError.InvalidId -> Error.response(Error.invalidId.code, Error.invalidId)
                 StatisticsError.NonExistingUser -> Error.response(Error.nonExistingUserId.code, Error.nonExistingUserId)
             }
+        }
+    }
+
+    @GetMapping(PathTemplate.STATISTICS)
+    fun getStatistics():ResponseEntity<*>{
+        return when(val res = usersService.getStatistics()){
+            is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
+                .body(res.value)
+            is Failure -> Error.response(Error.internalServerError.code, Error.internalServerError)
         }
     }
 

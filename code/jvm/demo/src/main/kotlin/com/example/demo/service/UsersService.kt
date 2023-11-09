@@ -18,22 +18,20 @@ class UsersService(
 ) {
     fun getUserById(id: Int?): UserIdFetchResult {
         return transactionManager.run {
-            if(id == null){
+            if (id == null) {
                 failure(UserIdFetchError.InvalidId)
-            }
-            else {
+            } else {
                 val user = it.usersRepository.getUserById(id)
-                if( user == null ){
+                if (user == null) {
                     failure(UserIdFetchError.NonExistingUserId)
-                }
-                else success(user)
+                } else success(user)
             }
         }
     }
 
     fun createUser(username: String?, password: String?): UserCreationResult {
         return transactionManager.run {
-            when{
+            when {
                 username.isNullOrEmpty() -> failure(UserCreationError.InvalidUsername)
                 password.isNullOrEmpty() -> failure(UserCreationError.InvalidPassword)
                 getUserByUsername(username) is Success -> failure(UserCreationError.RepeatedUsername)
@@ -69,6 +67,12 @@ class UsersService(
                 if (user == null) failure(StatisticsError.InvalidId)
                 else success(it.usersRepository.getStatisticsById(id))
             }
+        }
+    }
+
+    fun getStatistics(): StatisticsFetchResult {
+        return transactionManager.run {
+            success(it.usersRepository.getStatistics())
         }
     }
 

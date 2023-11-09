@@ -41,6 +41,13 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .single()
     }
 
+    override fun getStatistics(): StatisticsModel {
+        val query = "select rank, played_games, won_games, lost_games from ranking"
+        return handle.createQuery(query)
+            .mapTo(StatisticsModel::class.java)
+            .single()
+    }
+
     override fun getGamesCount(id: Int): Int {
         val query = "select played_games from ranking where player_id = :id"
         return handle.createQuery(query)

@@ -15,6 +15,8 @@ interface UsersRepository {
 
     fun getStatisticsById(id : Int):StatisticsModel
 
+    fun getStatistics(): StatisticsModel
+
     fun getGamesCount(id : Int): Int
 
     fun getUserByUsername(username : String): UserOutputModel?
