@@ -1,14 +1,22 @@
 package com.example.demo.domain
 
-class Row private constructor(val number: Int) {
-    val index = number - 1
+class Row private constructor(val number: Int, val boardSize: Int) {
+    val index get() = number - 1
 
     companion object {
-        val values = List(BOARD_DIM) { Row(it + 1) } + Row(-1)
+        lateinit var values: List<Row>
+
         operator fun invoke(number: Int) = values.first { it.number == number }
     }
 
     override fun toString() = "Row $number"
+
+    class Factory(private val boardSize: Int) {
+        fun createRows(): List<Row> {
+            values = List(boardSize) { Row(it + 1, boardSize) } + Row(-1, boardSize)
+            return values
+        }
+    }
 }
 
 fun Int.toRowOrNull() = Row.values.find { it.number == this }

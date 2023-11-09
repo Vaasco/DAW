@@ -68,7 +68,7 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
                 return BoardWin(newMoves, size, rules, variant, turn)
             //Ver se estão 5 peças em linha da cor que se quer
         }
-        return BoardRun(newMoves, size, rules, variant, turn.other())
+           return BoardRun(newMoves, size, rules, variant, turn.other())
     }
 
         //Função "hashCode" que será igual ao valor do hashcode de moves.
@@ -124,7 +124,7 @@ fun fromString(boardString: String): Board {
     for (i in pairs) {
         val str = i.last()
         val player = str.toString().toPlayer()
-        val position = i.substring(0, 2).toPosition()
+        val position = i.substring(0, 2).toPosition(size)
         boardMap[position] = player
     }
     return BoardRun(boardMap, size, rules, variant, turn)

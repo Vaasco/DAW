@@ -5,7 +5,7 @@ enum class Direction(val difRow: Int, val difCol: Int) {
     UP_LEFT(-1, -1), UP_RIGHT(-1, 1), DOWN_LEFT(1, -1),
     DOWN_RIGHT(1, 1);
 
-    fun invertDirection() = when(this) {
+    fun reverse() = when(this) {
         UP -> DOWN
         DOWN -> UP
         LEFT -> RIGHT

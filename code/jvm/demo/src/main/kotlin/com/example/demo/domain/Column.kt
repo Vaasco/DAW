@@ -1,16 +1,24 @@
 package com.example.demo.domain
 
-class Column private constructor(val symbol: Char) {
+class Column private constructor(val symbol: Char, val boardSize: Int) {
     val index get() = values.indexOf(this)
 
     companion object {
-        val values = List(BOARD_DIM) { Column('A' + it) } + Column('?')
+        lateinit var values: List<Column>
 
         operator fun invoke(symbol: Char) = values.first { it.symbol == symbol }
     }
 
     override fun toString() = "Column $symbol"
+
+    class Factory(private val boardSize: Int){
+        fun createColumns(): List<Column>  {
+            values = List(boardSize) { Column('A' + it, boardSize) } + Column('?', boardSize)
+            return values
+        }
+    }
 }
+
 
 fun Char.toColumnOrNull() = Column.values.find { it.symbol == this }
 fun Char.toColumn() = this.toColumnOrNull() ?: Column('?') //throw IllegalArgumentException("Invalid column $this")
