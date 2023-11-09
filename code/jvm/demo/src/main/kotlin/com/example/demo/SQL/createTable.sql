@@ -22,6 +22,7 @@ create table game(
     player_W integer not null,
     board_size integer not null,
     primary key (id),
+    constraint invalid_board_size check(board_size in (15, 19)),
     constraint invalid_state check(state in ('Playing', 'Ended B', 'Ended W', 'Ended D')),
     constraint invalid_player_B foreign key (player_B) references player(id),
     constraint invalid_player_W foreign key (player_W) references player(id)

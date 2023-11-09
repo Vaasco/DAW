@@ -91,7 +91,7 @@ class GamesService(private val transactionManager: TransactionManager) {
                 playerId == null || it.usersRepository.getUserById(playerId) == null -> failure(CreateLobbyError.InvalidId)
                 rules == null || !validRules.contains(rules) -> failure(CreateLobbyError.InvalidRules)
                 variant == null || !validVariants.contains(variant) -> failure(CreateLobbyError.InvalidVariant)
-                boardSize == null -> failure(CreateLobbyError.InvalidBoardSize)
+                boardSize == null || boardSize != 15 || boardSize != 19 -> failure(CreateLobbyError.InvalidBoardSize)
                 it.usersRepository.getUserByToken(user.token)!!.id != playerId -> failure(CreateLobbyError.WrongAccount)
                 else -> {
                     it.gameRepository.createLobby(playerId, rules, variant, boardSize)
@@ -131,7 +131,7 @@ class GamesService(private val transactionManager: TransactionManager) {
             if (play.col.indexToColumn().symbol == '?') return@run failure(PlayError.InvalidCol)
             if ((play.row > game.boardSize) || (play.col > game.boardSize)) return@run failure(PlayError.InvalidPosition)
 
-            val position = Position(play.row.indexToRow(), play.col.indexToColumn())
+            val position = Position(play.row.indexToRow(), play.col.indexToColumn(), game.boardSize)
 
             if (game.board.moves[position] != null) return@run failure(PlayError.PositionOccupied)
             if (game.state != "Playing") return@run failure(PlayError.GameEnded)
