@@ -35,7 +35,7 @@ class GameController(private val gamesService: GamesService) {
 
     @PostMapping(PathTemplate.START_GAME)
     fun createLobby(@RequestBody lobbyModel: LobbyModel, user: AuthenticatedUser): ResponseEntity<*> {
-        val res = gamesService.createLobby(
+        val res= gamesService.createLobby(
             lobbyModel.playerId,
             lobbyModel.rules,
             lobbyModel.variant,
