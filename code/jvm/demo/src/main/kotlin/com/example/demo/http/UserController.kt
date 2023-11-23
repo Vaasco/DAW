@@ -7,6 +7,7 @@ import com.example.demo.http.errors.*
 import com.example.demo.http.errors.UserIdFetchError
 import com.example.demo.http.model.UserModel
 import com.example.demo.service.*
+import com.example.demo.http.siren.SirenMaker
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -46,6 +47,11 @@ class UserController(private val usersService: UsersService) {
 
     @PostMapping(PathTemplate.LOGIN)
     fun login(@RequestBody userModel: UserModel): ResponseEntity<*> {
+        /*
+        val res = usersService.logIn(userModel.username, userModel.password)
+        val siren = SirenMaker().sirenLogIn(res)
+        return HandleResponse().handleResponse(siren, res, 200)
+        */
         return when (val res = usersService.logIn(userModel.username, userModel.password)) {
             is Success -> ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(res.value)
@@ -91,6 +97,7 @@ class UserController(private val usersService: UsersService) {
             }
         }
     }
+
     @GetMapping(PathTemplate.AUTHORS)
     fun getAuthors() = usersService.getAuthors()
 

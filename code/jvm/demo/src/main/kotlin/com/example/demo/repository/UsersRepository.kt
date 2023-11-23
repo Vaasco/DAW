@@ -31,4 +31,6 @@ interface UsersRepository {
     fun getUserByToken(token: String): UserModel?
 
     fun getUserToken(username: String): Token
+
+    fun getUserTokens(): List<Token>
 }

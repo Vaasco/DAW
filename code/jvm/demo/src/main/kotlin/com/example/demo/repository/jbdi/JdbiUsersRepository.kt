@@ -31,7 +31,6 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .bind("username", username)
             .mapTo(Int::class.java)
             .single()
-
     }
 
     override fun getStatisticsById(id: Int): StatisticsByIdModel {
@@ -48,7 +47,7 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
                 "join player on (player_id = id) order by username"
         return handle.createQuery(query)
             .mapTo(StatisticsModel::class.java)
-            .toList()
+            .list()
     }
 
     override fun getGamesCount(id: Int): Int {
@@ -107,5 +106,12 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .bind("username", username)
             .mapTo(Token::class.java)
             .single()
+    }
+
+    override fun getUserTokens(): List<Token> {
+        val query = "select token from authentication"
+        return handle.createQuery(query)
+            .mapTo(Token::class.java)
+            .toList()
     }
 }

@@ -3,13 +3,18 @@ package com.example.demo.service
 import com.example.demo.domain.*
 import com.example.demo.http.errors.*
 import com.example.demo.http.errors.UserIdFetchError
+import com.example.demo.http.model.AuthorsModel
 import com.example.demo.http.model.UserModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 import java.time.Instant
 
 
-private const val authors = "Vasco Branco - 48259\nJosé Borges - 48269\nSérgio Capela - 48080"
+private val authors = listOf(
+    AuthorsModel("Vasco Branco", "48259"),
+    AuthorsModel("José Borges", "48269"),
+    AuthorsModel("Sérgio Capela", "48080")
+)
 
 @Component
 class UsersService(
@@ -92,7 +97,10 @@ class UsersService(
 
     fun createToken(id: Int): Token {
         return transactionManager.run {
-            val authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
+            var authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
+            while (it.usersRepository.getUserTokens().any { auth -> auth.token == authentication.token }) {
+                authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
+            }
             it.usersRepository.createAuthentication(authentication)
             Token(authentication.token)
         }
