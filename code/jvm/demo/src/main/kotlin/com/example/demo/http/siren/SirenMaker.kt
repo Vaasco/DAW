@@ -11,6 +11,8 @@ import com.example.demo.http.model.GameModel
 import com.example.demo.http.model.StatisticsByIdModel
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserOutputModel
+import org.springframework.http.HttpMethod
+import java.net.URI
 
 class SirenMaker {
 
@@ -19,8 +21,8 @@ class SirenMaker {
     fun sirenSignIn(body: Result<UserOutputModel>) {
         siren(body) {
             clazz("sign in")
-            link(HOME, LinkRelation(HOME))
-            link(LOGIN, LinkRelation(LOGIN))
+            //action(HOME, URI(LOGIN), HttpMethod.POST)
+            action(LOGIN, URI(LOGIN), HttpMethod.POST)
         }
     }
 
