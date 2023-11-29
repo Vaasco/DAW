@@ -1,38 +1,25 @@
 package com.example.demo.repository.jbdi
 
 import com.example.demo.domain.Board
-import com.example.demo.domain.Player
 import com.example.demo.http.model.GameModel
 import com.example.demo.repository.GamesRepository
 import org.jdbi.v3.core.Handle
 
 class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
 
-    override fun updateGame(id: Int, board: Board, turn: Player, state: String) {
-
-        val query = "update game set board = :board, state = :state where id = :id"
-        handle.createUpdate(query)
+    override fun updateGame(id: Int, board: Board, state: String): GameModel {
+        val query = "update game g set board = :board, state = :state where id = :id returning *"
+        return handle.createQuery(query)
             .bind("board", board.toString())
             .bind("state", state)
-            .bind("turn", turn.string)
-            .bind("id", id)
-            .execute()
-    }
-
-    override fun getGameById(id: Int): GameModel? {
-        return handle.createQuery(
-            "select id, board, state, player_b, player_w, board_size " +
-                    "from game where id = :id"
-        )
             .bind("id", id)
             .mapTo(GameModel::class.java)
-            .singleOrNull()
+            .single()
     }
 
     override fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int) {
-        val query =
-            "insert into lobby (player1_id, rules, variant, board_size) " +
-                    "values (:playerId, :rules, :variant, :boardSize)"
+        val query = "insert into lobby (player1_id, rules, variant, board_size) " +
+                "values (:playerId, :rules, :variant, :boardSize)"
         handle.createUpdate(query)
             .bind("playerId", playerId)
             .bind("rules", rules)
@@ -49,9 +36,8 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
             .singleOrNull()
     }
 
-    override fun getGame(id: Int): GameModel? {
-        val query =
-            "select id, board, state, player_b, player_w, rules, variant, board_size from game where id = :id"
+    override fun getGameById(id: Int): GameModel? {
+        val query = "select id, board, state, player_b, player_w, board_size from game where id = :id"
         return handle.createQuery(query)
             .bind("id", id)
             .mapTo(GameModel::class.java)

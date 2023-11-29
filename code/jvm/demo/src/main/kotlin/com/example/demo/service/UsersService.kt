@@ -1,13 +1,27 @@
 package com.example.demo.service
 
 import com.example.demo.domain.*
-import com.example.demo.http.errors.*
-import com.example.demo.http.errors.UserIdFetchError
+import com.example.demo.domain.Error
 import com.example.demo.http.model.AuthorsModel
+import com.example.demo.http.model.StatisticsByIdModel
+import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
+import com.example.demo.http.model.UserOutputModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 import java.time.Instant
+
+typealias UserIdFetchResult = Either<Error, UserOutputModel>
+
+typealias UserCreationResult = Either<Error, Token>
+
+typealias UserLoginResult = Either<Error, Token>
+
+typealias UsernameFetchResult = Either<Error, UserOutputModel>
+
+typealias StatisticsByIdFetchResult = Either<Error, StatisticsByIdModel>
+
+typealias StatisticsFetchResult = Either<Error, List<StatisticsModel>>
 
 
 private val authors = listOf(
@@ -24,11 +38,11 @@ class UsersService(
     fun getUserById(id: Int?): UserIdFetchResult {
         return transactionManager.run {
             if (id == null) {
-                failure(UserIdFetchError.InvalidId)
+                failure(Error.invalidId)
             } else {
                 val user = it.usersRepository.getUserById(id)
                 if (user == null) {
-                    failure(UserIdFetchError.NonExistingUserId)
+                    failure(Error.nonExistentUserId)
                 } else success(user)
             }
         }
@@ -37,9 +51,9 @@ class UsersService(
     fun createUser(username: String?, password: String?): UserCreationResult {
         return transactionManager.run {
             when {
-                username.isNullOrEmpty() -> failure(UserCreationError.InvalidUsername)
-                password.isNullOrEmpty() -> failure(UserCreationError.InvalidPassword)
-                getUserByUsername(username) is Success -> failure(UserCreationError.RepeatedUsername)
+                username.isNullOrEmpty() -> failure(Error.invalidUsername)
+                password.isNullOrEmpty() -> failure(Error.invalidPassword)
+                getUserByUsername(username) is Success -> failure(Error.repeatedUsername)
                 else -> {
                     val userId = it.usersRepository.createUser(username, password)
                     val token = createToken(userId)
@@ -52,10 +66,10 @@ class UsersService(
     fun logIn(username: String?, password: String?): UserLoginResult {
         return transactionManager.run {
             when {
-                username.isNullOrEmpty() -> failure(UserLoginError.InvalidUsername)
-                password.isNullOrEmpty() -> failure(UserLoginError.InvalidPassword)
-                getUserByUsername(username) is Failure -> failure(UserLoginError.NonExistentUsername)
-                it.usersRepository.getUserPassword(username) != password -> failure(UserLoginError.WrongPassword)
+                username.isNullOrEmpty() -> failure(Error.invalidUsername)
+                password.isNullOrEmpty() -> failure(Error.invalidPassword)
+                getUserByUsername(username) is Failure -> failure(Error.nonExistentUsername)
+                it.usersRepository.getUserPassword(username) != password -> failure(Error.wrongPassword)
                 else -> {
                     val token = it.usersRepository.getUserToken(username)
                     success(token)
@@ -66,10 +80,10 @@ class UsersService(
 
     fun getStatisticsById(id: Int?): StatisticsByIdFetchResult {
         return transactionManager.run {
-            if (id == null) failure(StatisticsByIdError.InvalidId)
+            if (id == null) failure(Error.invalidId)
             else {
                 val user = it.usersRepository.getUserById(id)
-                if (user == null) failure(StatisticsByIdError.NonExistingUser)
+                if (user == null) failure(Error.nonExistentUserId)
                 else success(it.usersRepository.getStatisticsById(id))
             }
         }
@@ -84,11 +98,11 @@ class UsersService(
     fun getUserByUsername(username: String?): UsernameFetchResult {
         return transactionManager.run {
             if (username == null) {
-                failure(UsernameFetchError.InvalidUsername)
+                failure(Error.invalidUsername)
             } else {
                 val user = it.usersRepository.getUserByUsername(username)
                 if (user != null) success(user)
-                else failure(UsernameFetchError.NonExistingUsername)
+                else failure(Error.nonExistentUsername)
             }
         }
     }
