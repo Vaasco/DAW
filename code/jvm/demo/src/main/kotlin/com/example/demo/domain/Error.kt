@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity
 class Error(val code: Int, val message: String) {
 
     companion object{
-        fun response(status: Int,message : Error) = ResponseEntity
-            .status(status)
-            .body<Any>(message)
+        fun response(error: Error) = ResponseEntity
+            .status(error.code)
+            .body<Any>(error.message)
 
         //Create User or Login
         val invalidPassword = Error(400, "Invalid password")
@@ -17,8 +17,8 @@ class Error(val code: Int, val message: String) {
 
         //Statistics by id
         val invalidId = Error(400, "Invalid id")
-        val nonExistingUserId = Error(404, "There's no user with the given id")
-        val nonExistingUsername = Error(404, "There's no user with the given username")
+        val nonExistentUserId = Error(404, "There's no user with the given id")
+        val nonExistentUsername = Error(404, "There's no user with the given username")
 
         //get Token
         val invalidToken = Error(400, "Invalid token")
@@ -27,7 +27,7 @@ class Error(val code: Int, val message: String) {
         val internalServerError = Error(500, "Internal server error")
 
         //Get Game by Id
-        val nonExistingGame = Error(404,"There's no game with the given id")
+        val nonExistentGame = Error(404,"There's no game with the given id")
 
         //Create lobby
         val invalidRules = Error(400, "Invalid rules")

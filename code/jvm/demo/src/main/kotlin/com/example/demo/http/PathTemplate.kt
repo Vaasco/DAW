@@ -19,12 +19,12 @@ object PathTemplate {
     const val HOME = "/home"
 
     //No authorization needed
-    const val STATISTICS_BY_ID = "/home/stats/{id}"
+    const val STATISTICS_BY_ID = "/stats/{id}"
 
-    const val STATISTICS = "/home/stats"
+    const val STATISTICS = "/stats"
 
     //No authorization needed
-    const val AUTHORS = "/home/authors"
+    const val AUTHORS = "/authors"
 
     //No authorization needed
     const val USER_BY_ID = "/users/{id}"

@@ -29,8 +29,8 @@ begin
                         player_w = pId;
                     end if;
                     newBoard := 'B' || new.board_size || new.rules || new.variant || E'\n{}';
-                    insert into game (board, state, player_b, player_w, rules, variant, board_size) values
-                        (newBoard,default, player_b, player_w, new.rules, new.variant, new.board_size) returning id into gId;
+                    insert into game (board, state, player_b, player_w, board_size) values
+                        (newBoard,default, player_b, player_w, new.board_size) returning id into gId;
                     update lobby set player2_id = new.player1_id, game_id = gId, state = 'Playing' where player1_id = pId;
                     return old;
                 end if;
