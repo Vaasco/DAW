@@ -4,7 +4,7 @@ module.exports = {
     mode: 'development',
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
-      },
+    },
     module: {
         rules: [
             {
@@ -13,10 +13,15 @@ module.exports = {
                 exclude: /node_modules/,
             },
         ],
-    }, 
+    },
 
     devServer: {
         static: path.resolve(__dirname, 'dist'),
-        port : 8081,
-    },
-};
+        historyApiFallback: true,
+        compress: false,
+        proxy: {
+            '/api': 'http://localhost:8080'
+        },
+        port:8081
+    }
+}

@@ -31,7 +31,6 @@ import {
             path : "navigate",
             element : < Navigate />
         }
-       
     ]
   )
 
@@ -39,9 +38,7 @@ import {
     return (
         <div>
             <h1>Home</h1>
-            <p><Link to="/path1">Autores</Link> </p>
-          
-            
+            <p><Link to="/path1">Autor</Link> </p>
         </div>
         
         )

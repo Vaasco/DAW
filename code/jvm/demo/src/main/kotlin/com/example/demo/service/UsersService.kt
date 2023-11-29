@@ -13,7 +13,7 @@ import java.time.Instant
 private val authors = listOf(
     AuthorsModel("Vasco Branco", "48259"),
     AuthorsModel("José Borges", "48269"),
-    AuthorsModel("Sérgio Capela", "48080")
+    AuthorsModel("Sérgio Capela", "46080")
 )
 
 @Component

@@ -1,29 +1,45 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
+import React, {useState} from 'react'
+import {createRoot} from 'react-dom/client'
 
-function Counter(){
-    const [counter, setCounter] = React.useState(0)
-    function add(){setCounter(counter + 1)}
-    function sub(){setCounter(counter - 1)}
+function useCounter(initial) {
+    const [counter, setCounter] = useState(initial)
+
+    const increment = () => setCounter(counter + 1)
+
+    const decrement = () => setCounter(counter - 1)
+
+    return [counter, increment, decrement]
+}
+
+
+function Counter(props) {
+
     return (
         <div>
-            <p><button onClick={add}>+</button></p>
-            <p>{counter}</p>
-            <p><button onClick={sub}>-</button></p>
+            <p>
+                <button onClick={props.add}>+</button>
+            </p>
+            <p>{props.value}</p>
+            <p>
+                <button onClick={props.sub}>-</button>
+            </p>
         </div>
     )
 }
 
-function TwoCounters(){
+function TwoCounters() {
+
+    const [counter, increment, decrement] = useCounter(0)
+
     return (
         <div>
-            <Counter />
-            <Counter />
+            <Counter value={counter} add={increment} sub={decrement}/>
+            <Counter value={counter} add={increment} sub={decrement}/>
         </div>
     )
 }
 
-export function demo(){
+export function demo() {
     const root = createRoot(document.getElementById("container"))
-    root.render(<TwoCounters />) 
+    root.render(<TwoCounters/>)
 }
