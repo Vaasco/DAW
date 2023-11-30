@@ -1,19 +1,47 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
+import React, { useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
-export const virtualtree1 = 
-    React.createElement("div", { className : "someClass"},
-        React.createElement("p", {}, "Must Study"),
-        React.createElement("p", {}, "DAW"))
-
-export const virtualtree2 =
-    <div>
-        <p>Must study</p>
-        <p>DAW</p>
-    </div>
+function Comp4(state) {
+    return (
+        <div>
+            <p>Comp4</p>
+            <p>{state.state.toString()}</p>
+        </div>
+    );
+}
 
 
-export function demo(){
-    const root = createRoot(document.getElementById("container"))
-    root.render(virtualtree1)
-} 
+function Comp3(state) {
+    return (
+        <div>
+            <p>Comp3</p>
+            <Comp4 state={state.state}/>
+        </div>
+    );
+}
+function Comp2(state) {
+    return (
+        <div>
+            <p>Comp2</p>
+            <Comp3 state={state.state} />
+        </div>
+    );
+}
+
+function Comp1() {
+    const [value, setValue] = useState(false);
+    return (
+        <div>
+            <p>Comp1</p>
+            <Comp2 state={value}/>
+            <button type="button" onClick={() => setValue(!value)}>
+                Click
+            </button>
+        </div>
+    );
+}
+
+export function demo() {
+    const root = createRoot(document.getElementById('container'));
+    root.render(<Comp1 />);
+}
