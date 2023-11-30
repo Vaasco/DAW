@@ -19,9 +19,13 @@ module.exports = {
         static: path.resolve(__dirname, 'dist'),
         historyApiFallback: true,
         compress: false,
+        port: 8081,
         proxy: {
-            '/api': 'http://localhost:8080'
-        },
-        port:8081
+            '/api': {
+                target: 'http://localhost:8080',
+                pathRewrite: {'^/api': ''},
+            }
+        }
+
     }
 }
