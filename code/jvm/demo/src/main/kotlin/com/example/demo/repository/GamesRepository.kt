@@ -1,7 +1,6 @@
 package com.example.demo.repository
 
 import com.example.demo.domain.Board
-import com.example.demo.domain.Player
 import com.example.demo.http.model.GameModel
 
 interface GamesRepository {
