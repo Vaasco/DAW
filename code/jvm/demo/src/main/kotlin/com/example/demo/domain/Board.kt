@@ -12,8 +12,6 @@ typealias Moves = Map<Position, Player>
 
 fun whichSize(size: Int) = if (size == 15) BoardSize.SMALL else BoardSize.BIG
 
-//private val MAX_MOVES get() = (whichSize(?) + 1).toDouble().pow(2)
-
 fun maxMoves(size: Int): Double {
     val boardSize = whichSize(size)
     return (boardSize.size + 1).toDouble().pow(2)
@@ -61,7 +59,6 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
 
     private fun isOver(position: Position, newMoves: Moves, turn: Player, boardSize: Int): Board {
         if (newMoves.size.toDouble() == maxMoves(boardSize)) return BoardDraw(newMoves, size, rules, variant)
-        //val board = this as BoardRun
         Direction.values().forEach { dir ->
             //Ver as peças numa certa direção
             if (cellsInDirection(moves, turn, position, dir) >= 5)
