@@ -64,16 +64,16 @@ class SirenMaker {
     fun sirenStatistics(body: List<StatisticsModel>): SirenModel<List<StatisticsModel>> {
         return siren(body) {
             clazz("statistics")
-            link(HOME, LinkRelation(HOME))
-            link(STATISTICS_BY_ID, LinkRelation(STATISTICS_BY_ID))
+            //link(HOME, LinkRelation(HOME))
+           // link(STATISTICS_BY_ID, LinkRelation(STATISTICS_BY_ID))
         }
     }
 
     fun sirenStatisticsById(body: StatisticsByIdModel): SirenModel<StatisticsByIdModel> {
         return siren(body) {
             clazz("statistics by id")
-            link(HOME, LinkRelation(HOME))
-            link(STATISTICS, LinkRelation(STATISTICS))
+           // link(HOME, LinkRelation(HOME))
+           // link(STATISTICS, LinkRelation(STATISTICS))
         }
     }
 
