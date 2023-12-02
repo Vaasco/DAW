@@ -25,7 +25,7 @@ class UserController(private val usersService: UsersService) {
     fun createUser(@RequestBody userModel: UserModel): ResponseEntity<*> {
         val res = usersService.createUser(userModel.username, userModel.password)
         return handleResponse(res) {
-            val siren = SirenMaker().sirenLogIn(it)
+            val siren = SirenMaker().sirenSignIn(it)
             ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(siren)
         }
@@ -42,11 +42,11 @@ class UserController(private val usersService: UsersService) {
     }
 
 
-    @GetMapping(PathTemplate.STATISTICS_BY_ID)
-    fun getStatisticsById(@PathVariable id: Int?): ResponseEntity<*> {
-        val res = usersService.getStatisticsById(id)
+    @GetMapping(PathTemplate.STATISTICS_BY_USERNAME)
+    fun getStatisticsByUsername(@PathVariable username: String?): ResponseEntity<*> {
+        val res = usersService.getStatisticsByUsername(username)
         return handleResponse(res) {
-            val siren = SirenMaker().sirenStatisticsById(it)
+            val siren = SirenMaker().sirenStatisticsByUsername(it)
             ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(siren)
         }
@@ -63,7 +63,7 @@ class UserController(private val usersService: UsersService) {
     }
 
     @GetMapping(PathTemplate.USER_BY_USERNAME)
-    fun getUserByUsername(@PathVariable username: String?) :ResponseEntity<*>{
+    fun getUserByUsername(@PathVariable username: String?): ResponseEntity<*>{
         val res = usersService.getUserByUsername(username)
         return handleResponse(res) {
             val siren = SirenMaker().sirenGetUserByUsername(it)
@@ -73,5 +73,12 @@ class UserController(private val usersService: UsersService) {
     }
 
     @GetMapping(PathTemplate.AUTHORS)
-    fun getAuthors() = usersService.getAuthors()
+    fun getAuthors(): ResponseEntity<*> {
+        val res = usersService.getAuthors()
+        return handleResponse(res) {
+            val siren = SirenMaker().sirenAuthors(it)
+            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
+                .body(siren)
+        }
+    }
 }

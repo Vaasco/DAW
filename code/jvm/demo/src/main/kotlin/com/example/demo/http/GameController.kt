@@ -16,7 +16,7 @@ import com.example.demo.service.*
 @RestController
 class GameController(private val gamesService: GamesService) {
 
-    @GetMapping(PathTemplate.CHECK_GAME)
+    @GetMapping(PathTemplate.GAME_BY_ID)
     fun getGameById(@PathVariable id: Int): ResponseEntity<*> {
         val res = gamesService.getGameById(id)
         return handleResponse(res) {
@@ -27,7 +27,7 @@ class GameController(private val gamesService: GamesService) {
     }
 
     @PostMapping(PathTemplate.START_GAME)
-    fun createLobby(@RequestBody lobbyModel: LobbyModel, user: AuthenticatedUser): ResponseEntity<*> {
+    fun createLobby(@RequestBody lobbyModel: LobbyModel, user: AuthenticatedUser?): ResponseEntity<*> {
         val res = gamesService.createLobby(
             lobbyModel.playerId,
             lobbyModel.rules,
@@ -43,7 +43,7 @@ class GameController(private val gamesService: GamesService) {
     }
 
     @PostMapping(PathTemplate.PLAY)
-    fun play(@PathVariable id: Int, @RequestBody play: PlayModel?, user: AuthenticatedUser): ResponseEntity<*> {
+    fun play(@PathVariable id: Int, @RequestBody play: PlayModel?, user: AuthenticatedUser?): ResponseEntity<*> {
         val res = gamesService.play(id, play, user)
         return handleResponse(res) {
             val siren = SirenMaker().sirenPlay(it)

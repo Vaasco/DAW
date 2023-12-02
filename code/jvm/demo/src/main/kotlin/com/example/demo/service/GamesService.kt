@@ -6,7 +6,7 @@ import com.example.demo.http.model.PlayModel
 import com.example.demo.repository.TransactionManager
 import org.springframework.stereotype.Component
 
-typealias CreateLobbyResult = Either<Error, Message>
+typealias CreateLobbyResult = Either<Error, GameModel?>
 
 typealias GameIdFetchResult = Either<Error, GameModel>
 
@@ -33,33 +33,41 @@ class GamesService(private val transactionManager: TransactionManager) {
         rules: String?,
         variant: String?,
         boardSize: Int?,
-        user: AuthenticatedUser
+        user: AuthenticatedUser?
     ): CreateLobbyResult {
         return transactionManager.run {
             when {
-                playerId == null || it.usersRepository.getUserById(playerId) == null -> failure(Error.invalidId)
+                user == null -> failure(Error.unauthorized)
+                playerId == null || it.usersRepository.getUserById(playerId) == null -> failure(Error.invalidUserId)
                 rules == null || !validRules.contains(rules) -> failure(Error.invalidRules)
                 variant == null || !validVariants.contains(variant) -> failure(Error.invalidVariant)
                 boardSize == null || (boardSize != 15 && boardSize != 19) -> failure(Error.invalidBoardSize)
-                it.usersRepository.getUserByToken(user.token)!!.id != playerId -> failure(Error.wrongAccount)
+                it.usersRepository.getUserByToken(user.token)?.id != playerId -> failure(Error.wrongAccount)
                 else -> {
-                    it.gameRepository.createLobby(playerId, rules, variant, boardSize)
+                    try {
+                        it.gameRepository.createLobby(playerId, rules, variant, boardSize)
+                    } catch (e: Exception) {
+                        return@run handleDatabaseException(e)
+                    }
                     val gameId = it.gameRepository.getGameId(playerId)
-                    success(
-                        Message(gameId ?: "Waiting for an opponent")
-                    )
+                    if (gameId != null)  {
+                        val game = it.gameRepository.getGameById(gameId.toInt())
+                        return@run success(game)
+                    }
+                    success(null)
                 }
             }
         }
     }
 
-    fun play(gameId: Int?, play: PlayModel?, user: AuthenticatedUser): PlayResult {
+    fun play(gameId: Int?, play: PlayModel?, user: AuthenticatedUser?): PlayResult {
         return transactionManager.run {
+            if (user == null) return@run failure(Error.unauthorized)
             if (gameId == null) return@run failure(Error.invalidGameId)
             if (play == null) return@run failure(Error.invalidPosition)
             if (play.row == null) return@run failure(Error.invalidRow)
             if (play.col == null) return@run failure(Error.invalidCol)
-            if (play.playerId == null) return@run failure(Error.invalidId)
+            if (play.playerId == null) return@run failure(Error.invalidUserId)
             if (it.usersRepository.getUserById(play.playerId) == null) return@run failure(Error.nonExistentUserId)
 
             val game = it.gameRepository.getGameById(gameId) ?: return@run failure(Error.nonExistentGame)
@@ -97,4 +105,21 @@ class GamesService(private val transactionManager: TransactionManager) {
             success(newGame)
         }
     }
+}
+
+private fun handleDatabaseException(e: Exception): CreateLobbyResult {
+    return when {
+        e is org.jdbi.v3.core.statement.UnableToExecuteStatementException -> {
+            val constraintViolation = extractConstraintViolation(e)
+            when {
+                constraintViolation.contains("two games at the same time!") -> failure(Error.twoGamesAtTheSameTime)
+                 else -> failure(Error.internalServerError)
+            }
+        }
+        else -> failure(Error.internalServerError)
+    }
+}
+
+private fun extractConstraintViolation(e: Exception): String {
+    return e.message ?: e.cause?.message ?: ""
 }

@@ -1,14 +1,16 @@
 package com.example.demo.http
 
+import org.springframework.web.util.UriTemplate
+
 object PathTemplate {
     /*
-  Allow a user to express their desire to start a new game
-  users will enter a waiting lobby, where a matchmaking algorithm will select pairs of users and start games with them.
-  POST
-  */
+    Allow a user to express their desire to start a new game
+    users will enter a waiting lobby, where a matchmaking algorithm will select pairs of users and start games with them.
+    POST
+    */
     const val START_GAME = "/games"
 
-    const val CHECK_GAME = "/games/check/{id}"
+    const val GAME_BY_ID = "/games/{id}"
 
     //Allow a user to play a round.POST
     const val PLAY = "/games/{id}"
@@ -17,7 +19,7 @@ object PathTemplate {
     const val HOME = "/home"
 
     //No authorization needed
-    const val STATISTICS_BY_ID = "/stats/{id}"
+    const val STATISTICS_BY_USERNAME = "/stats/{username}"
 
     const val STATISTICS = "/stats"
 
@@ -34,5 +36,14 @@ object PathTemplate {
     const val CREATE_USER = "/users"
 
     const val LOGIN = "/users/login"
-
 }
+
+fun gameByIdURI(id: Int) = UriTemplate(PathTemplate.GAME_BY_ID).expand(id)
+
+fun playURI(id: Int?) = UriTemplate(PathTemplate.PLAY).expand(id)
+
+fun statisticsByUsernameURI(username: String) = UriTemplate(PathTemplate.STATISTICS_BY_USERNAME).expand(username)
+
+fun userByIdURI(id: Int) = UriTemplate(PathTemplate.USER_BY_ID).expand(id)
+
+fun userByUsernameURI(username: String) = UriTemplate(PathTemplate.USER_BY_USERNAME).expand(username)

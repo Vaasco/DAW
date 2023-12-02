@@ -78,13 +78,13 @@ class UsersService(
         }
     }
 
-    fun getStatisticsById(id: Int?): StatisticsByIdFetchResult {
+    fun getStatisticsByUsername(username: String?): StatisticsByIdFetchResult {
         return transactionManager.run {
-            if (id == null) failure(Error.invalidId)
+            if (username == null) failure(Error.invalidId)
             else {
-                val user = it.usersRepository.getUserById(id)
+                val user = it.usersRepository.getUserByUsername(username)
                 if (user == null) failure(Error.nonExistentUserId)
-                else success(it.usersRepository.getStatisticsById(id))
+                else success(it.usersRepository.getStatisticsByUsername(username))
             }
         }
     }
@@ -107,14 +107,19 @@ class UsersService(
         }
     }
 
-    fun getAuthors() = authors
+    fun getAuthors(): Either<Error, List<AuthorsModel>> {
+        return transactionManager.run {
+            success(authors)
+        }
+    }
 
     fun createToken(id: Int): Token {
         return transactionManager.run {
-            var authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
-            while (it.usersRepository.getUserTokens().any { auth -> auth.token == authentication.token }) {
-                authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
+            var token = userDomain.generateTokenValue()
+            while (it.usersRepository.getUserTokens().any { auth -> auth.token == token }) {
+                token = userDomain.generateTokenValue()
             }
+            val authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
             it.usersRepository.createAuthentication(authentication)
             Token(authentication.token)
         }

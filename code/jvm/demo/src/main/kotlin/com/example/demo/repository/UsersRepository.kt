@@ -14,7 +14,7 @@ interface UsersRepository {
 
     fun createUser(username : String, password: String): Int
 
-    fun getStatisticsById(id : Int): StatisticsByIdModel
+    fun getStatisticsByUsername(username: String): StatisticsByIdModel
 
     fun getStatistics(): List<StatisticsModel>
 

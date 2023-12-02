@@ -23,21 +23,23 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
     override fun createUser(username: String, password: String): Int {
         val query = "insert into player(username, password) values (:username, :password)"
         val query2 = "select id from player where username = :username"
+
         handle.createUpdate(query)
             .bind("username", username)
             .bind("password", password)
             .execute()
+
         return handle.createQuery(query2)
             .bind("username", username)
             .mapTo(Int::class.java)
             .single()
     }
 
-    override fun getStatisticsById(id: Int): StatisticsByIdModel {
+    override fun getStatisticsByUsername(username: String): StatisticsByIdModel {
         val query = "select username, rank, played_games, won_games, lost_games from ranking " +
-                "join player on (player_id = id) where player_id = :id"
+                "join player on (player_id = id) where username = :username"
         return handle.createQuery(query)
-            .bind("id", id)
+            .bind("username", username)
             .mapTo(StatisticsByIdModel::class.java)
             .single()
     }

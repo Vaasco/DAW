@@ -7,6 +7,7 @@ class Error(val code: Int, val message: String) {
     companion object{
         fun response(error: Error) = ResponseEntity
             .status(error.code)
+            .header("content-type", "application/problem+json")
             .body<Any>(error.message)
 
         //Create User or Login
@@ -20,17 +21,15 @@ class Error(val code: Int, val message: String) {
         val nonExistentUserId = Error(404, "There's no user with the given id")
         val nonExistentUsername = Error(404, "There's no user with the given username")
 
-        //get Token
-        val invalidToken = Error(400, "Invalid token")
-
         //Internal error
         val internalServerError = Error(500, "Internal server error")
 
-        //Get Game by Id
+        //Get Game by id
         val nonExistentGame = Error(404,"There's no game with the given id")
 
         //Create lobby
         val invalidRules = Error(400, "Invalid rules")
+        val twoGamesAtTheSameTime = Error(400, "You can't play two games at the same time")
         val invalidVariant = Error(400, "Invalid variant")
         val invalidBoardSize = Error(400, "The board size must be either 15 or 19")
 

@@ -52,7 +52,11 @@ create or replace function one_game_check()
 as
 $$
 begin
-    if exists (select id from lobby where (state = 'Playing' or state = 'Waiting') and (player1_id = new.player1_id or player2_id = new.player1_id or player1_id = new.player2_id or player2_id = new.player2_id)) then
+    if exists (select id
+               from game
+               where (state = 'Playing' or state = 'Waiting') and
+                    (player_w = new.player1_id or player_b = new.player1_id or
+                     player_b = new.player2_id or player_b = new.player2_id)) then
         raise exception 'You cannot play two games at the same time!';
     end if;
     return new;

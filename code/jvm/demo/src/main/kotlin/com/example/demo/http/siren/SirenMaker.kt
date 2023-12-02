@@ -1,21 +1,23 @@
 package com.example.demo.http.siren
 
-import com.example.demo.domain.Message
 import com.example.demo.domain.Token
+import com.example.demo.http.PathTemplate.AUTHORS
 import com.example.demo.http.PathTemplate.CREATE_USER
 import com.example.demo.http.PathTemplate.HOME
 import com.example.demo.http.PathTemplate.LOGIN
-import com.example.demo.http.PathTemplate.PLAY
+import com.example.demo.http.PathTemplate.START_GAME
 import com.example.demo.http.PathTemplate.STATISTICS
-import com.example.demo.http.PathTemplate.STATISTICS_BY_ID
+import com.example.demo.http.gameByIdURI
 import com.example.demo.http.model.AuthorsModel
 import com.example.demo.http.model.GameModel
-import com.example.demo.http.model.LobbyModel
-import com.example.demo.http.model.PlayModel
 import com.example.demo.http.model.StatisticsByIdModel
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserOutputModel
-import org.springframework.http.HttpMethod
+import com.example.demo.http.playURI
+import com.example.demo.http.statisticsByUsernameURI
+import com.example.demo.http.userByIdURI
+import com.example.demo.http.userByUsernameURI
+import org.springframework.http.HttpMethod.*
 import java.net.URI
 
 class SirenMaker {
@@ -25,86 +27,96 @@ class SirenMaker {
     fun sirenGetUserById(body: UserOutputModel): SirenModel<UserOutputModel> {
         return siren(body) {
             clazz("user by id")
-            link(HOME, LinkRelation(HOME))
-            link(CREATE_USER, LinkRelation(CREATE_USER))
+            action(HOME, URI(HOME), GET)
+            link(userByIdURI(body.id).toString(), LinkRelation(body.id.toString()))
         }
     }
 
     fun sirenGetUserByUsername(body: UserOutputModel): SirenModel<UserOutputModel> {
         return siren(body) {
             clazz("user by username")
-            link(HOME, LinkRelation(HOME))
-            link(CREATE_USER, LinkRelation(CREATE_USER))
+            action(HOME, URI(HOME), GET)
+            link(userByUsernameURI(body.username).toString(), LinkRelation(body.username))
         }
     }
 
-    fun sirenSignIn(body: UserOutputModel): SirenModel<UserOutputModel> {
+    fun sirenSignIn(body: Token): SirenModel<Token> {
         return siren(body) {
             clazz("sign in")
-            action(HOME, URI(LOGIN), HttpMethod.GET)
-            action(LOGIN, URI(LOGIN), HttpMethod.POST)
+            action(HOME, URI(LOGIN), GET)
+            action(LOGIN, URI(LOGIN), POST)
+            link(CREATE_USER, LinkRelation(CREATE_USER))
         }
     }
 
     fun sirenLogIn(body: Token): SirenModel<Token> {
         return siren(body) {
             clazz("log in")
-            link(HOME, LinkRelation(HOME))
-            link(CREATE_USER, LinkRelation(CREATE_USER))
+            action(HOME, URI(HOME), GET)
+            action(CREATE_USER, URI(CREATE_USER), POST)
+            link(LOGIN, LinkRelation(LOGIN))
         }
     }
 
     fun sirenAuthors(body: List<AuthorsModel>): SirenModel<List<AuthorsModel>> {
         return siren(body) {
             clazz("authors")
-            link(HOME, LinkRelation(HOME))
+            action(HOME, URI(HOME), GET)
+            link(AUTHORS, LinkRelation(AUTHORS))
         }
     }
 
     fun sirenStatistics(body: List<StatisticsModel>): SirenModel<List<StatisticsModel>> {
         return siren(body) {
             clazz("statistics")
-            //link(HOME, LinkRelation(HOME))
-           // link(STATISTICS_BY_ID, LinkRelation(STATISTICS_BY_ID))
+            action(HOME, URI(HOME), GET)
+            body.forEach {
+                val uri = statisticsByUsernameURI(it.username)
+                action(uri.toString(), uri, GET)
+            }
+            link(STATISTICS, LinkRelation(STATISTICS))
         }
     }
 
-    fun sirenStatisticsById(body: StatisticsByIdModel): SirenModel<StatisticsByIdModel> {
+    fun sirenStatisticsByUsername(body: StatisticsByIdModel): SirenModel<StatisticsByIdModel> {
         return siren(body) {
             clazz("statistics by id")
-           // link(HOME, LinkRelation(HOME))
-           // link(STATISTICS, LinkRelation(STATISTICS))
+            action(HOME, URI(HOME), GET)
+            action(STATISTICS, URI(STATISTICS), GET)
+            link(statisticsByUsernameURI(body.username).toString(), LinkRelation(body.username))
         }
     }
 
     fun sirenGetGameById(body: GameModel): SirenModel<GameModel> {
         return siren(body) {
             clazz("game by id")
-            link(HOME, LinkRelation(HOME))
-            link(PLAY, LinkRelation(PLAY))
+            action(HOME, URI(HOME), GET)
+            val playUri = playURI(body.id)
+            action(playUri.toString(), playUri, POST)
+            val gameUri = gameByIdURI(body.id)
+            link(gameUri.toString(), LinkRelation(gameUri.toString()))
         }
     }
 
-    fun sirenCreateLobby(body: Message): SirenModel<Message> {
+    fun sirenCreateLobby(body: GameModel?): SirenModel<GameModel?> {
         return siren(body) {
-            //clazz("create lobby")
-            //link(HOME, LinkRelation(HOME))
-            //link(PLAY, LinkRelation(PLAY))
+            clazz("create lobby")
+            action(HOME, URI(HOME), GET)
+            if (body != null) {
+                val playUri = playURI(body.id)
+                action(playUri.toString(), playUri, POST)
+            }
+            link(START_GAME, LinkRelation(START_GAME))
         }
     }
 
     fun sirenPlay(body: GameModel): SirenModel<GameModel> {
         return siren(body) {
-            //clazz("play")
-            //link(HOME, LinkRelation(HOME))
-            //link(PLAY, LinkRelation(PLAY))
-        }
-    }
-
-    fun sirenGameState(body: GameModel): SirenModel<GameModel> {
-        return siren(body) {
-            //clazz("game state")
-            //link(PLAY, LinkRelation(PLAY))
+            clazz("play")
+            action(HOME, URI(HOME), GET)
+            val playUri = playURI(body.id)
+            action(playUri.toString(), playUri, POST)
+            link(playUri.toString(), LinkRelation(playUri.toString()))
         }
     }
 }
