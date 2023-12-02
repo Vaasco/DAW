@@ -69,7 +69,7 @@ class UsersService(
                 username.isNullOrEmpty() -> failure(Error.invalidUsername)
                 password.isNullOrEmpty() -> failure(Error.invalidPassword)
                 getUserByUsername(username) is Failure -> failure(Error.nonExistentUsername)
-                it.usersRepository.getUserPassword(username) != password -> failure(Error.wrongPassword)
+                !userDomain.validatePassword(password, it.usersRepository.getUserPassword(username))-> failure(Error.wrongPassword)
                 else -> {
                     val token = it.usersRepository.getUserToken(username)
                     success(token)
