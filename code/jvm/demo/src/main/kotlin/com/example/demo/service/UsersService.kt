@@ -38,7 +38,7 @@ class UsersService(
     fun getUserById(id: Int?): UserIdFetchResult {
         return transactionManager.run {
             if (id == null) {
-                failure(Error.invalidId)
+                failure(Error.invalidUserId)
             } else {
                 val user = it.usersRepository.getUserById(id)
                 if (user == null) {
@@ -80,10 +80,10 @@ class UsersService(
 
     fun getStatisticsByUsername(username: String?): StatisticsByIdFetchResult {
         return transactionManager.run {
-            if (username == null) failure(Error.invalidId)
+            if (username == null) failure(Error.invalidUsername)
             else {
                 val user = it.usersRepository.getUserByUsername(username)
-                if (user == null) failure(Error.nonExistentUserId)
+                if (user == null) failure(Error.nonExistentUsername)
                 else success(it.usersRepository.getStatisticsByUsername(username))
             }
         }
