@@ -87,7 +87,7 @@ function GetStats() {
 
         try {
             if (!username) setStatType(StatType.All)
-            else{
+            else {
                 setStatType(StatType.Individual)
                 const response = await fetch(`http://localhost:8081/api/stats/${username}`);
 
@@ -114,27 +114,6 @@ function GetStats() {
             console.error('Error fetching data:', error);
             setError('Error fetching data. Please try again.');
             setIndividualStats(null);
-        }
-    };
-
-    const handleLoadAllStats = async () => {
-        //setStatsType('all'); // Set stats type to all
-
-        try {
-            const response = await fetch('http://localhost:8081/api/stats');
-
-            if (response.ok) {
-                const data = await response.json();
-                setError(null);
-            } else {
-                const errorData = await response.json();
-                setError(`Error: ${errorData.message}`);
-                //setAllStats(null);
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setError('Error fetching data. Please try again.');
-            //setAllStats(null);
         }
     };
 
