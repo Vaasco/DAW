@@ -1,0 +1,27 @@
+.home-container {
+    font-family: 'Arial', sans-serif;
+}
+
+.home-title {
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    font-size: 36px;
+    text-align: center;
+}
+
+.home-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.home-links a {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-decoration: none;
+    color: #333;
+}
+
+.home-links a:hover {
+    text-decoration: underline;
+}
