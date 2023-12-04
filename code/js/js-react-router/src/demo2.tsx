@@ -9,6 +9,14 @@ type Author = {
     number: string
 }
 
+type Stat = {
+    username: string,
+    rank: number,
+    playedGames: number,
+    wonGames: number,
+    lostGames: number
+}
+
 type AuthContextType = {
     token: string,
     setToken: (newToken: string) => void
@@ -18,6 +26,18 @@ const AuthContext = createContext<AuthContextType>({
     token: '', setToken: () => {
     }
 })
+
+enum StatType {
+    Individual,
+    All
+}
+
+enum PageDesign {
+    Default,
+    Waiting,
+    Playing
+
+}
 
 const router = createBrowserRouter(
     [
@@ -44,55 +64,52 @@ const router = createBrowserRouter(
         },
         {
             path: "/stats",
-            element: <GetStats/>
-        },
-        {
-            path: "/search",
-            element: <SearchUser/>
+            element: <GetStats/>,
+            loader: statsLoader
         }
     ]
 )
 
-function SearchUser() {
-
-
-    return (
-        <div>
-            Ainda não sei se devo utilizar isto pq acho que nao podemos mostrar id!
-        </div>
-    )
+async function statsLoader() {
+    const res = await fetch("http://localhost:8081/api/stats");
+    const data = await res.json();
+    return data.properties
 }
 
 function GetStats() {
     const [username, setUsername] = useState('');
-    const [statsType, setStatsType] = useState('individual'); // New state for stats type
     const [individualStats, setIndividualStats] = useState(null);
-    const [allStats, setAllStats] = useState(null);
     const [error, setError] = useState(null);
-
+    const [statType, setStatType] = useState(StatType.All)
+    const auth = useLoaderData() as Stat[]
     const handleIndividualStats = async (e) => {
         e.preventDefault();
-        setStatsType('individual'); // Set stats type to individual
 
         try {
-            const response = await fetch(`http://localhost:8081/api/stats/${username}`);
+            if (!username) setStatType(StatType.All)
+            else{
+                setStatType(StatType.Individual)
+                const response = await fetch(`http://localhost:8081/api/stats/${username}`);
 
-            if (response.ok) {
-                const data = await response.json();
-                const userStats = data.properties;
+                if (response.ok) {
+                    const data = await response.json();
+                    const userStats = data.properties;
+                    console.log(userStats)
 
-                if (userStats) {
-                    setIndividualStats(userStats);
-                    setError(null);
+                    if (userStats) {
+                        setIndividualStats(userStats);
+                        setError(null);
+                    } else {
+                        setError(`User '${username}' not found in the response.`);
+                        setIndividualStats(null);
+                    }
                 } else {
-                    setError(`User '${username}' not found in the response.`);
+                    const errorData = await response.json();
+                    setError(`Error: ${errorData.message}`);
                     setIndividualStats(null);
                 }
-            } else {
-                const errorData = await response.json();
-                setError(`Error: ${errorData.message}`);
-                setIndividualStats(null);
             }
+
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Error fetching data. Please try again.');
@@ -101,24 +118,23 @@ function GetStats() {
     };
 
     const handleLoadAllStats = async () => {
-        setStatsType('all'); // Set stats type to all
+        //setStatsType('all'); // Set stats type to all
 
         try {
             const response = await fetch('http://localhost:8081/api/stats');
 
             if (response.ok) {
                 const data = await response.json();
-                setAllStats(data.properties);
                 setError(null);
             } else {
                 const errorData = await response.json();
                 setError(`Error: ${errorData.message}`);
-                setAllStats(null);
+                //setAllStats(null);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Error fetching data. Please try again.');
-            setAllStats(null);
+            //setAllStats(null);
         }
     };
 
@@ -136,20 +152,24 @@ function GetStats() {
                 <button type="submit">Get Stats</button>
             </form>
 
-            {statsType === 'individual' && individualStats && (
+            {statType === StatType.Individual && individualStats && (
                 <div>
-                    <h2>Username: {individualStats.username}</h2>
-                    <p>Rank: {individualStats.rank}</p>
-                    <p>Played Games: {individualStats.playedGames}</p>
-                    <p>Won Games: {individualStats.wonGames}</p>
-                    <p>Lost Games: {individualStats.lostGames}</p>
+                    {individualStats.map((userStats, index) => (
+                        <div key={index}>
+                            <h2>Username: {userStats.username}</h2>
+                            <p>Rank: {userStats.rank}</p>
+                            <p>Played Games: {userStats.playedGames}</p>
+                            <p>Won Games: {userStats.wonGames}</p>
+                            <p>Lost Games: {userStats.lostGames}</p>
+                        </div>
+                    ))}
                 </div>
             )}
 
-            {statsType === 'all' && allStats && (
+            {statType === StatType.All && auth && (
                 <div>
                     <h2>All Player Stats:</h2>
-                    {allStats.map((playerStats, index) => (
+                    {auth.map((playerStats, index) => (
                         <div key={index}>
                             <h3>{playerStats.username}</h3>
                             <p>Rank: {playerStats.rank}</p>
@@ -162,14 +182,9 @@ function GetStats() {
             )}
 
             {error && <p style={{color: 'red'}}>{error}</p>}
-
-            <button onClick={handleLoadAllStats}>Load All Stats</button>
         </div>
     );
 }
-
-
-export default GetStats;
 
 
 function CreateLobby() {
@@ -177,9 +192,12 @@ function CreateLobby() {
     const [rules, setRules] = useState('Pro');
     const [variant, setVariant] = useState('Freestyle');
     const [boardSize, setBoardSize] = useState(15);
-    const auth = useContext(AuthContext)
+    const [error, setError] = useState(null); // New state for error
+    const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
 
-    const authTokenCookie = Cookies.get('authToken')
+    const auth = useContext(AuthContext);
+    const authTokenCookie = Cookies.get('authToken');
+
     const handleRulesChange = (e) => {
         setRules(e.target.value);
     };
@@ -195,7 +213,6 @@ function CreateLobby() {
     const handleSubmit = async () => {
         try {
             const requestBody = {
-                playerId,
                 rules,
                 variant,
                 boardSize,
@@ -205,7 +222,7 @@ function CreateLobby() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authTokenCookie}`,
+                    'Authorization': `Bearer ${authTokenCookie}`
                 },
                 body: JSON.stringify(requestBody),
             });
@@ -214,93 +231,107 @@ function CreateLobby() {
                 const data = await response.json();
                 console.log('Create Lobby successful:', data);
             } else {
-                console.error('Create Lobby failed:', response.statusText);
-                // Handle the error as needed
+                const errorData = await response.json();
+                setError(`Error: ${errorData.message}`);
             }
         } catch (error) {
             console.error('Error creating lobby:', error.message);
-            // Handle the error as needed
+            setError('Error creating lobby. Please try again.');
         }
     };
 
-
     return (
         <div>
-            <label>
-                Rules:
+            {pageDesign === PageDesign.Default && (
                 <div>
-                    <input
-                        type="radio"
-                        value="Pro"
-                        checked={rules === 'Pro'}
-                        onChange={handleRulesChange}
-                    />
-                    Pro
-                    <input
-                        type="radio"
-                        value="Long Pro"
-                        checked={rules === 'Long Pro'}
-                        onChange={handleRulesChange}
-                    />
-                    Long Pro
+                    Rules:
+                    <div>
+                        <label>
+                            <input
+                                type="radio"
+                                value="Pro"
+                                checked={rules === 'Pro'}
+                                onChange={handleRulesChange}
+                            />
+                            Pro
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                value="Long Pro"
+                                checked={rules === 'Long Pro'}
+                                onChange={handleRulesChange}
+                            />
+                            Long Pro
+                        </label>
+                    </div>
+                    <br/>
+                    <div>
+                        Variant:
+                        <div>
+                            <label>
+                                <input
+                                    type="radio"
+                                    value="Freestyle"
+                                    checked={variant === 'Freestyle'}
+                                    onChange={handleVariantChange}
+                                />
+                                Freestyle
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    value="Swap"
+                                    checked={variant === 'Swap'}
+                                    onChange={handleVariantChange}
+                                />
+                                Swap
+                            </label>
+                        </div>
+                        <br/>
+                        Board Size:
+                        <div>
+                            <label>
+                                <input
+                                    type="radio"
+                                    value={15}
+                                    checked={boardSize === 15}
+                                    onChange={handleBoardSizeChange}
+                                />
+                                15
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    value={19}
+                                    checked={boardSize === 19}
+                                    onChange={handleBoardSizeChange}
+                                />
+                                19
+                            </label>
+                        </div>
+                    </div>
+                    <br/>
+                    <button onClick={handleSubmit}>Submit</button>
+                    {error && <p style={{color: 'red'}}>{error}</p>}
                 </div>
-            </label>
-            <br/>
-
-            <label>
-                Variant:
-                <div>
-                    <input
-                        type="radio"
-                        value="Freestyle"
-                        checked={variant === 'Freestyle'}
-                        onChange={handleVariantChange}
-                    />
-                    Freestyle
-                    <input
-                        type="radio"
-                        value="Swap"
-                        checked={variant === 'Swap'}
-                        onChange={handleVariantChange}
-                    />
-                    Swap
-                </div>
-            </label>
-            <br/>
-
-            <label>
-                Board Size:
-                <div>
-                    <input
-                        type="radio"
-                        value={15}
-                        checked={boardSize === 15}
-                        onChange={handleBoardSizeChange}
-                    />
-                    15
-                    <input
-                        type="radio"
-                        value={19}
-                        checked={boardSize === 19}
-                        onChange={handleBoardSizeChange}
-                    />
-                    19
-                </div>
-            </label>
-            <br/>
-
-            <button onClick={handleSubmit}>Submit</button>
+            )}
+            {pageDesign === PageDesign.Waiting && (
+                <h2>Waiting for opponent...</h2>
+            )}
         </div>
     );
+}
+
+function getUsername() {
+
 }
 
 function Login(): React.ReactElement {
     const [inputs, setInputs] = useState({username: '', password: ''});
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
-    const [token, setToken] = useState('');
-    //const auth = useContext(AuthContext);
-
+    const [loginSuccess, setLoginSuccess] = useState(false);
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -309,7 +340,6 @@ function Login(): React.ReactElement {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
 
         try {
             setSubmitting(true);
@@ -326,12 +356,16 @@ function Login(): React.ReactElement {
                 },
                 body: requestBody,
             });
+
             if (response.ok) {
                 const data = await response.json();
                 const newToken = data.properties.token;
-                Cookies.set('authToken', newToken)
-                //auth.setToken(newToken)
-                console.log("ESTE É O TOKEN NOVO!!!", newToken);
+                if (Cookies.get('authToken') === newToken) {
+                    setLoginSuccess(true);
+                } else {
+                    Cookies.set('authToken', newToken);
+                    console.log("ESTE É O TOKEN NOVO!!!", newToken);
+                }
             } else {
                 console.error('Authentication failed:', response.statusText);
                 setError('Authentication failed. Please check your credentials.');
@@ -347,33 +381,36 @@ function Login(): React.ReactElement {
     return (
         <div>
             <Link to="/">Home</Link>
-            <form onSubmit={handleSubmit}>
-                <fieldset disabled={submitting}>
-                    <div>
-                        <label htmlFor="username">Username</label>
-                        <input
-                            id="username"
-                            type="text"
-                            name="username"
-                            value={inputs.username}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="password">Password</label>
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            value={inputs.password}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div>
-                        <button type="submit">Login</button>
-                    </div>
-                </fieldset>
-            </form>
+            {loginSuccess && <p style={{color: 'green'}}>Login successful</p>}
+            {!loginSuccess && (
+                <form onSubmit={handleSubmit}>
+                    <fieldset disabled={submitting}>
+                        <div>
+                            <label htmlFor="username">Username</label>
+                            <input
+                                id="username"
+                                type="text"
+                                name="username"
+                                value={inputs.username}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password">Password</label>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={inputs.password}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <button type="submit">Login</button>
+                        </div>
+                    </fieldset>
+                </form>
+            )}
             {error && <p style={{color: 'red'}}>{error}</p>}
         </div>
     );
@@ -385,7 +422,6 @@ async function authorsLoader(): Promise<Author[]> {
     const data = await res.json();
     return data.properties
 }
-
 
 function Authors() {
     const authors = useLoaderData() as Author[];
@@ -404,12 +440,11 @@ function Authors() {
     );
 }
 
-
 function Sign() {
     const [inputs, setInputs] = useState({username: '', password: ''});
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
-
+    const [redirectToHome, setRedirectToHome] = useState(false);
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -437,7 +472,8 @@ function Sign() {
 
             if (response.ok) {
                 const data = await response.json();
-                Cookies
+                Cookies.set('authToken', data.properties.token)
+                setRedirectToHome(true)
                 console.log('Authentication successful:', data);
 
             } else {
@@ -451,6 +487,8 @@ function Sign() {
             setSubmitting(false);
         }
     };
+
+    if (redirectToHome) return <Navigate to="/"/>;
 
     return (
         <div>
@@ -487,7 +525,6 @@ function Sign() {
     );
 }
 
-
 function Home() {
     const [token, setToken] = useState('')
     return (
@@ -495,7 +532,7 @@ function Home() {
             <div>
                 <h1>Home</h1>
                 <div>
-                    <Link to="/login">Login</Link>
+                    <Link to="/login">login</Link>
                     <br/>
                     <Link to="/sign">Sign In</Link>
                     <br/>
@@ -505,11 +542,6 @@ function Home() {
                     <br/>
                     <Link to="/stats">Statistics</Link>
                     <br/>
-                    <Link to="/search">Search User</Link>
-                    <br/>
-                    -------------//-------------
-                    <br/>
-
                 </div>
             </div>
         </AuthContext.Provider>
@@ -517,10 +549,8 @@ function Home() {
     );
 }
 
-
 export function demo() {
     const root = createRoot(document.getElementById("container"))
-
     root.render(
         <RouterProvider router={router}/>
     );
