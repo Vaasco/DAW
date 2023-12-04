@@ -53,7 +53,7 @@ class UserController(private val usersService: UsersService) {
     }
 
     @GetMapping(PathTemplate.STATISTICS)
-    fun getStatistics():ResponseEntity<*>{
+    fun getStatistics(): ResponseEntity<*> {
         val res = usersService.getStatistics()
         return handleResponse(res) {
             val siren = SirenMaker().sirenStatistics(it)
@@ -63,7 +63,7 @@ class UserController(private val usersService: UsersService) {
     }
 
     @GetMapping(PathTemplate.USER_BY_USERNAME)
-    fun getUserByUsername(@PathVariable username: String?): ResponseEntity<*>{
+    fun getUserByUsername(@PathVariable username: String?): ResponseEntity<*> {
         val res = usersService.getUserByUsername(username)
         return handleResponse(res) {
             val siren = SirenMaker().sirenGetUserByUsername(it)
