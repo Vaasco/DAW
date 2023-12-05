@@ -14,7 +14,7 @@ class AuthenticationInterceptor(
     private val authorizationHeaderProcessor: RequestTokenProcessor
 ) : HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-
+        logger.info("Calling $handler")
         if (handler is HandlerMethod && handler.methodParameters.any {
                 it.parameterType == AuthenticatedUser::class.java
             }
