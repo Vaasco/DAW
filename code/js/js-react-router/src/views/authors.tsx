@@ -1,5 +1,6 @@
 import {useLoaderData} from "react-router-dom";
 import React from "react";
+import {Navbar} from "../utils/navBar";
 
 type Author = {
     name: string,
@@ -17,6 +18,7 @@ function Authors() {
     const authors = useLoaderData() as Author[];
     return (
         <div>
+            <Navbar />
             <h1>Authors</h1>
             <div>
                 {authors.map((author, index) => (

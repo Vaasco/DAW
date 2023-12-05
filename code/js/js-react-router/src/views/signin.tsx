@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Link, Navigate} from "react-router-dom";
 import Cookies from 'js-cookie';
+import {Navbar} from "../utils/navBar";
 
 export function Sign() {
     const [inputs, setInputs] = useState({username: '', password: ''});
@@ -54,6 +55,7 @@ export function Sign() {
 
     return (
         <div>
+            <Navbar />
             <Link to="/">Home</Link>
             <form onSubmit={handleSubmit}>
                 <fieldset disabled={submitting}>

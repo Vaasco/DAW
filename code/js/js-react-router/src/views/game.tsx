@@ -1,5 +1,6 @@
-import React, {useState} from "react";
-import {fetchReq} from "../utils/fetchReq";
+import React, { useState } from "react";
+import { fetchReq } from "../utils/fetchReq";
+import {Navbar} from "../utils/navBar";
 
 export function GetGame() {
     const [id, setId] = useState('');
@@ -10,6 +11,7 @@ export function GetGame() {
 
         try {
             const response = await fetchReq(`games/${id}`)
+            console.log("this is response", response)
             setResponse(response)
         } catch (error) {
             console.error('Error fetching game:', error.message);
@@ -17,8 +19,56 @@ export function GetGame() {
         }
     };
 
+    // Function to generate the board based on moves and board size
+    const generateBoard = () => {
+        const board = Array.from({ length: response.boardSize }, () =>
+            Array.from({ length: response.boardSize }, () => ' ')
+        );
+
+        if (response.board.moves) {
+            for (const [position, player] of Object.entries(response.board.moves)) {
+                const [row, col] = position.split('').map((c) =>
+                    (c >= '1' && c <= '9') ? parseInt(c, 10) - 1 : c.charCodeAt(0) - 'A'.charCodeAt(0)
+                );
+
+                board[row][col] = player as string;
+            }
+        }
+
+        return board;
+    };
+
+    const renderBoard = () => {
+        const board = generateBoard();
+
+        return (
+            <table style={{ borderCollapse: 'collapse', border: '1px solid black' }}>
+                <tbody>
+                {board.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                        {row.map((cell, colIndex) => (
+                            <td
+                                key={colIndex}
+                                style={{
+                                    border: '1px solid black',
+                                    width: '40px', // Adjust the width as needed
+                                    height: '40px', // Adjust the height as needed
+                                    textAlign: 'center',
+                                }}
+                            >
+                                {cell}
+                            </td>
+                        ))}
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        );
+    };
+
     return (
         <div>
+            <Navbar />
             <form onSubmit={handleSubmit}>
                 <label>
                     Game ID:
@@ -43,17 +93,8 @@ export function GetGame() {
                     <p>Player W: {response.playerW}</p>
                     <p>Board Size: {response.boardSize}</p>
                     <div>
-                        <h3>Moves:</h3>
-
-
-                        {Array.isArray(response.board.moves) && response.board.moves.length > 0 && (
-                            <ul>
-                                {response.board.moves.map((move, index) => (
-                                    <li key={index}>{/* Display individual move properties here */}</li>
-                                ))}
-                            </ul>
-                        )}
-
+                        <h3>Board:</h3>
+                        {renderBoard()}
                     </div>
                 </div>
             )}

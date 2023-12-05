@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import Cookies from 'js-cookie';
+import {Navbar} from "../utils/navBar";
 
 export function Login(): React.ReactElement {
     const [inputs, setInputs] = useState({username: '', password: ''});
@@ -55,6 +56,7 @@ export function Login(): React.ReactElement {
 
     return (
         <div>
+            <Navbar />
             <Link to="/">Home</Link>
             {loginSuccess && <p style={{color: 'green'}}>Login successful</p>}
             {!loginSuccess && (

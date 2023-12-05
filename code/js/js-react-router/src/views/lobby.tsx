@@ -1,10 +1,11 @@
 import React, {createContext, useContext, useState} from "react";
 import Cookies from 'js-cookie';
+import {Navbar} from "../utils/navBar";
 
-const AuthContext = createContext<AuthContextType>({
+/*const AuthContext = createContext<AuthContextType>({
     token: '', setToken: () => {
     }
-})
+})*/
 
 enum PageDesign {
     Default,
@@ -25,7 +26,7 @@ export function CreateLobby() {
     const [error, setError] = useState(null); // New state for error
     const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
 
-    const auth = useContext(AuthContext);
+    //const auth = useContext(AuthContext);
     const authTokenCookie = Cookies.get('authToken');
 
     const handleRulesChange = (e) => {
@@ -72,6 +73,7 @@ export function CreateLobby() {
 
     return (
         <div>
+            <Navbar />
             {pageDesign === PageDesign.Default && (
                 <div>
                     Rules:

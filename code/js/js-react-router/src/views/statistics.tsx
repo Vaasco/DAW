@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import {useLoaderData} from "react-router-dom";
+import {Navbar} from "../utils/navBar";
 
 type Stat = {
-    username: string,
+    username : string,
     rank: number,
     playedGames: number,
     wonGames: number,
@@ -63,6 +64,7 @@ function GetStats() {
 
     return (
         <div>
+            <Navbar />
             <form onSubmit={handleIndividualStats}>
                 <label>
                     Username:
