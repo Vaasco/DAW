@@ -32,11 +32,13 @@ class SirenMaker {
         }
     }
 
-    fun sirenGetUserByUsername(body: UserOutputModel): SirenModel<UserOutputModel> {
+    fun sirenGetUsersByUsername(body: List<UserOutputModel>): SirenModel<List<UserOutputModel>> {
         return siren(body) {
             clazz("user by username")
             action(HOME, URI(HOME), GET)
-            link(userByUsernameURI(body.username).toString(), LinkRelation(body.username))
+            body.forEach {
+                link(userByUsernameURI(it.username).toString(), LinkRelation(it.username))
+            }
         }
     }
 
@@ -78,12 +80,14 @@ class SirenMaker {
         }
     }
 
-    fun sirenStatisticsByUsername(body: StatisticsByIdModel): SirenModel<StatisticsByIdModel> {
+    fun sirenStatisticsByUsername(body: List<StatisticsByIdModel>): SirenModel<List<StatisticsByIdModel>> {
         return siren(body) {
             clazz("statistics by id")
             action(HOME, URI(HOME), GET)
             action(STATISTICS, URI(STATISTICS), GET)
-            link(statisticsByUsernameURI(body.username).toString(), LinkRelation(body.username))
+            body.forEach {
+                link(statisticsByUsernameURI(it.username).toString(), LinkRelation(it.username))
+            }
         }
     }
 

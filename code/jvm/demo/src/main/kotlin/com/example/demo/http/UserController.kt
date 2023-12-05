@@ -66,7 +66,7 @@ class UserController(private val usersService: UsersService) {
     fun getUserByUsername(@PathVariable username: String?): ResponseEntity<*> {
         val res = usersService.getUserByUsername(username)
         return handleResponse(res) {
-            val siren = SirenMaker().sirenGetUserByUsername(it)
+            val siren = SirenMaker().sirenGetUsersByUsername(it)
             ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(siren)
         }

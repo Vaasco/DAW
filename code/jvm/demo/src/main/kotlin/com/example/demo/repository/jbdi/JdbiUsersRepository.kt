@@ -35,18 +35,18 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .single()
     }
 
-    override fun getStatisticsByUsername(username: String): StatisticsByIdModel {
+    override fun getStatisticsByUsername(username: String): List<StatisticsByIdModel> {
         val query = "select username, rank, played_games, won_games, lost_games from ranking " +
-                "join player on (player_id = id) where username = :username"
+                "join player on (player_id = id) where username ilike :username"
         return handle.createQuery(query)
-            .bind("username", username)
+            .bind("username", "$username%")
             .mapTo(StatisticsByIdModel::class.java)
-            .single()
+            .toList()
     }
 
     override fun getStatistics(): List<StatisticsModel> {
         val query = "select username, rank, played_games, won_games, lost_games from ranking " +
-                "join player on (player_id = id) order by username"
+                "join player on (player_id = id) order by rank desc limit 50"
         return handle.createQuery(query)
             .mapTo(StatisticsModel::class.java)
             .list()
@@ -60,12 +60,13 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .single()
     }
 
-    override fun getUserByUsername(username: String): UserOutputModel? {
-        val query = "select id, username from player where username = :username"
-        return handle.createQuery(query)
-            .bind("username", username)
+    override fun getUsersByUsername(username: String): List<UserOutputModel>? {
+        val query = "select id, username from player where username ilike :username"
+        val list = handle.createQuery(query)
+            .bind("username", "$username%")
             .mapTo(UserOutputModel::class.java)
-            .singleOrNull()
+            .toList()
+        return list.ifEmpty { null }
     }
 
     override fun getUserPassword(username: String): String {

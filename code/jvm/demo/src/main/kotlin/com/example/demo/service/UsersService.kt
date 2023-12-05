@@ -17,9 +17,9 @@ typealias UserCreationResult = Either<Error, Token>
 
 typealias UserLoginResult = Either<Error, Token>
 
-typealias UsernameFetchResult = Either<Error, UserOutputModel>
+typealias UsernameFetchResult = Either<Error, List<UserOutputModel>>
 
-typealias StatisticsByIdFetchResult = Either<Error, StatisticsByIdModel>
+typealias StatisticsByIdFetchResult = Either<Error, List<StatisticsByIdModel>>
 
 typealias StatisticsFetchResult = Either<Error, List<StatisticsModel>>
 
@@ -84,12 +84,11 @@ class UsersService(
 
     fun getStatisticsByUsername(username: String?): StatisticsByIdFetchResult {
         return transactionManager.run {
-            if (username == null) failure(Error.invalidUsername)
-            else {
-                val user = it.usersRepository.getUserByUsername(username)
-                if (user == null) failure(Error.nonExistentUsername)
-                else success(it.usersRepository.getStatisticsByUsername(username))
-            }
+            if (username == null) return@run failure(Error.invalidUsername)
+            val users = it.usersRepository.getUsersByUsername(username)
+            if (users == null) failure(Error.nonExistentUsername)
+            else success(it.usersRepository.getStatisticsByUsername(username))
+
         }
     }
 
@@ -104,8 +103,8 @@ class UsersService(
             if (username == null) {
                 failure(Error.invalidUsername)
             } else {
-                val user = it.usersRepository.getUserByUsername(username)
-                if (user != null) success(user)
+                val users = it.usersRepository.getUsersByUsername(username)
+                if (users != null) success(users)
                 else failure(Error.nonExistentUsername)
             }
         }

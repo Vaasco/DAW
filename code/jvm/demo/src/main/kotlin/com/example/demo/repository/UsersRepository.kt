@@ -14,13 +14,13 @@ interface UsersRepository {
 
     fun createUser(username : String, password: String): Int
 
-    fun getStatisticsByUsername(username: String): StatisticsByIdModel
+    fun getStatisticsByUsername(username: String): List<StatisticsByIdModel>
 
     fun getStatistics(): List<StatisticsModel>
 
     fun getGamesCount(id : Int): Int
 
-    fun getUserByUsername(username : String): UserOutputModel?
+    fun getUsersByUsername(username : String): List<UserOutputModel>?
 
     fun getUserPassword(username: String): String
 
