@@ -80,8 +80,8 @@ class UserController(private val usersService: UsersService) {
         usernameCookie.secure = false
         usernameCookie.isHttpOnly = false
 
-        response.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString())
-        response.addHeader(HttpHeaders.SET_COOKIE, usernameCookie.toString())
+        response.addCookie(tokenCookie)
+        response.addCookie(usernameCookie)
     }
 
 

@@ -19,7 +19,11 @@ class AuthenticationInterceptor(
                 it.parameterType == AuthenticatedUser::class.java
             }
         ) {
-            val user = authorizationHeaderProcessor.processAuthorizationHeaderValue(request.getHeader(NAME_AUTHORIZATION_HEADER))
+            val cookie = request.cookies.find { it.name == "token" }
+            val bearer = request.getHeader(NAME_AUTHORIZATION_HEADER)
+            val user = if(cookie != null) authorizationHeaderProcessor.processAuthorizationCookieValue(cookie.value)
+            else authorizationHeaderProcessor.processAuthorizationHeaderValue(bearer)
+
             return if(user == null) {
                 response.status = 401
                 response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, RequestTokenProcessor.SCHEME)

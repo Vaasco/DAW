@@ -60,6 +60,15 @@ class SirenMaker {
         }
     }
 
+    fun sirenLogOut(body: Token): SirenModel<Token> {
+        return siren(body) {
+            clazz("log out")
+            action(HOME, URI(HOME), GET)
+            action(LOGIN, URI(LOGIN), POST)
+            link(CREATE_USER, LinkRelation(CREATE_USER))
+        }
+    }
+
     fun sirenAuthors(body: List<AuthorsModel>): SirenModel<List<AuthorsModel>> {
         return siren(body) {
             clazz("authors")

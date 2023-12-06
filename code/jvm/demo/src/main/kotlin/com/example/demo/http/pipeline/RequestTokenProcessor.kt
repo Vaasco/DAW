@@ -25,6 +25,19 @@ class RequestTokenProcessor( val usersService: UsersService) {
         }
     }
 
+    fun processAuthorizationCookieValue(authorizationValue: String?): AuthenticatedUser? {
+        if (authorizationValue == "" || authorizationValue == null) {
+            return null
+        }
+
+        return usersService.getUserByToken(authorizationValue)?.let {
+            AuthenticatedUser(
+                it,
+                authorizationValue
+            )
+        }
+    }
+
     companion object {
         const val SCHEME = "bearer"
     }
