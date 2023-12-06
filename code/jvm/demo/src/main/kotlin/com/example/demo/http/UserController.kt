@@ -1,5 +1,6 @@
 package com.example.demo.http
 
+import com.example.demo.domain.AuthenticatedUser
 import com.example.demo.http.model.UserModel
 import com.example.demo.service.*
 import com.example.demo.http.siren.SirenMaker

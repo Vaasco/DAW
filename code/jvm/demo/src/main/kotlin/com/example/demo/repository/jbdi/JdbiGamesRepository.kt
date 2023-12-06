@@ -44,6 +44,16 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
             .singleOrNull()
     }
 
+    override fun getLastGame(username: String): GameModel? {
+        val query = "select g.id, board, state, player_b, player_w, board_size from game g " +
+                "join player p on (g.player_w = p.id or g.player_b = p.id) where p.username = :username " +
+                "and g.state = 'Playing'"
+        return handle.createQuery(query)
+            .bind("username", username)
+            .mapTo(GameModel::class.java)
+            .singleOrNull()
+    }
+
     override fun swapPlayers(gameId: Int) {
         val query = "update game g set player_b = g.player_w, player_w = g.player_b where id = :id"
         handle.createUpdate(query)

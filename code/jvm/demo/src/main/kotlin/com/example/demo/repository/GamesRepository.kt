@@ -10,6 +10,8 @@ interface GamesRepository {
 
     fun getGameById(id : Int): GameModel?
 
+    fun getLastGame(username : String) : GameModel?
+
     fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int)
 
     fun getGameId(playerId: Int): String?

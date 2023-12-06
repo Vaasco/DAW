@@ -56,7 +56,6 @@ export function Sign() {
     return (
         <div>
             <Navbar />
-            <Link to="/">Home</Link>
             <form onSubmit={handleSubmit}>
                 <fieldset disabled={submitting}>
                     <div>

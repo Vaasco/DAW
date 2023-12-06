@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {Link} from "react-router-dom";
 import Cookies from 'js-cookie';
 import {Navbar} from "../utils/navBar";
 
@@ -43,8 +42,10 @@ export function Login(): React.ReactElement {
                     console.log("ESTE É O TOKEN NOVO!!!", newToken);
                 }
             } else {
-                console.error('Authentication failed:', response.statusText);
-                setError('Authentication failed. Please check your credentials.');
+                const errorData = await response.json();
+                console.error('Authentication failed:', errorData.message);
+                //setError('Authentication failed. Please check your credentials.');
+                setError( response.statusText )
             }
         } catch (error) {
             console.error('Error during authentication:', error.message);
@@ -56,8 +57,8 @@ export function Login(): React.ReactElement {
 
     return (
         <div>
-            <Navbar />
-            <Link to="/">Home</Link>
+            <Navbar/>
+
             {loginSuccess && <p style={{color: 'green'}}>Login successful</p>}
             {!loginSuccess && (
                 <form onSubmit={handleSubmit}>
@@ -88,7 +89,6 @@ export function Login(): React.ReactElement {
                     </fieldset>
                 </form>
             )}
-            {error && <p style={{color: 'red'}}>{error}</p>}
         </div>
     );
 }

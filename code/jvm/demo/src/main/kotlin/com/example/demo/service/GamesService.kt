@@ -17,6 +17,17 @@ class GamesService(private val transactionManager: TransactionManager) {
     private val validRules = listOf("Pro", "Long Pro")
     private val validVariants = listOf("Freestyle", "Swap after 1st move")
 
+    fun getLastGame(username: String?): GameIdFetchResult {
+        return transactionManager.run {
+            if (username == null) failure(Error.invalidUsername)
+            else {
+                val game = it.gameRepository.getLastGame(username)
+                if(game == null) failure(Error.nonExistentGame)
+                else success(game)
+            }
+        }
+    }
+
     fun getGameById(id: Int?): GameIdFetchResult {
         return transactionManager.run {
             if (id == null) failure(Error.invalidGameId)
@@ -48,7 +59,7 @@ class GamesService(private val transactionManager: TransactionManager) {
                         return@run handleDatabaseException(e)
                     }
                     val gameId = it.gameRepository.getGameId(playerId)
-                    if (gameId != null)  {
+                    if (gameId != null) {
                         val game = it.gameRepository.getGameById(gameId.toInt())
                         return@run success(game)
                     }
@@ -84,10 +95,10 @@ class GamesService(private val transactionManager: TransactionManager) {
 
             if (game.board.moves[position] != null) return@run failure(Error.positionOccupied)
 
-            val turn =  if (play.swap != null && board.moves.size == 2 && board.variant == "Swap after 1st move") {
-                            it.gameRepository.swapPlayers(gameId)
-                            board.turn.other()
-                        } else board.turn
+            val turn = if (play.swap != null && board.moves.size == 2 && board.variant == "Swap after 1st move") {
+                it.gameRepository.swapPlayers(gameId)
+                board.turn.other()
+            } else board.turn
 
             val newBoard = game.board.play(position, turn)
             if (newBoard is BoardRun && newBoard.moves == board.moves) return@run failure(Error.wrongPlace)
@@ -114,6 +125,7 @@ private fun handleDatabaseException(e: Exception): CreateLobbyResult {
             println(constraintViolation)
             failure(Error.internalServerError)
         }
+
         else -> failure(Error.internalServerError)
     }
 }

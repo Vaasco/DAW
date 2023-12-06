@@ -9,6 +9,7 @@ import {Sign} from "./views/signin";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {createRoot} from "react-dom/client";
 import React from "react";
+import {ErrorComp} from "./Errors/ErrorLogin";
 
 
 const router = createBrowserRouter(
@@ -24,7 +25,7 @@ const router = createBrowserRouter(
         },
         {
             path: "/login",
-            element: <Login/>,
+            element: <Login/>
         },
         {
             path: "/sign",

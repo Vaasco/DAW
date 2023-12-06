@@ -3,7 +3,6 @@ package com.example.demo.http
 import com.example.demo.domain.AuthenticatedUser
 import com.example.demo.http.model.LobbyModel
 import com.example.demo.http.model.PlayModel
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,6 +22,15 @@ class GameController(private val gamesService: GamesService) {
             val siren = SirenMaker().sirenGetGameById(it)
             ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
                 .body(siren)
+        }
+    }
+
+    @GetMapping(PathTemplate.LAST_GAME)
+    fun getLastGame(@PathVariable username: String) : ResponseEntity<*>{
+        val res = gamesService.getLastGame(username)
+        return handleResponse(res){
+            val siren = SirenMaker().sirenGetLastGame(it)
+            siren.response(200)
         }
     }
 

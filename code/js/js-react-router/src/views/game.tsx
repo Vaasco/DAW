@@ -19,7 +19,6 @@ export function GetGame() {
         }
     };
 
-    // Function to generate the board based on moves and board size
     const generateBoard = () => {
         const board = Array.from({ length: response.boardSize }, () =>
             Array.from({ length: response.boardSize }, () => ' ')

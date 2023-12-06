@@ -1,11 +1,10 @@
 import React, {createContext, useContext, useState} from "react";
 import Cookies from 'js-cookie';
 import {Navbar} from "../utils/navBar";
+import {fetchReq} from "../utils/fetchReq";
+import {Simulate} from "react-dom/test-utils";
+import waiting = Simulate.waiting;
 
-/*const AuthContext = createContext<AuthContextType>({
-    token: '', setToken: () => {
-    }
-})*/
 
 enum PageDesign {
     Default,

@@ -12,6 +12,8 @@ object PathTemplate {
 
     const val GAME_BY_ID = "/games/{id}"
 
+    const val LAST_GAME = "/games/user/{username}"
+
     //Allow a user to play a round.POST
     const val PLAY = "/games/{id}"
 
