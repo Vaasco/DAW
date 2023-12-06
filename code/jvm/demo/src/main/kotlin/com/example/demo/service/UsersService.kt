@@ -13,9 +13,7 @@ import java.time.Instant
 
 typealias UserIdFetchResult = Either<Error, UserOutputModel>
 
-typealias UserCreationResult = Either<Error, Token>
-
-typealias UserLoginResult = Either<Error, Token>
+typealias TokenResult = Either<Error, Token>
 
 typealias UsernameFetchResult = Either<Error, List<UserOutputModel>>
 
@@ -48,12 +46,12 @@ class UsersService(
         }
     }
 
-    fun createUser(username: String?, password: String?): UserCreationResult {
+    fun createUser(username: String?, password: String?): TokenResult {
         return transactionManager.run {
             when {
                 username.isNullOrEmpty() -> failure(Error.invalidUsername)
                 password.isNullOrEmpty() -> failure(Error.invalidPassword)
-                getUserByUsername(username) is Success -> failure(Error.repeatedUsername)
+                it.usersRepository.getUserByUsername(username) != null -> failure(Error.repeatedUsername)
                 else -> {
                     val userId = it.usersRepository.createUser(username, password)
                     val token = createToken(userId)
@@ -63,22 +61,26 @@ class UsersService(
         }
     }
 
-    fun logIn(username: String?, password: String?): UserLoginResult {
+    fun logIn(username: String?, password: String?): TokenResult {
         return transactionManager.run {
+            if (username.isNullOrEmpty()) return@run failure(Error.invalidUsername)
+            val user = it.usersRepository.getUserByUsername(username)
             when {
-                username.isNullOrEmpty() -> failure(Error.invalidUsername)
+                user == null -> failure(Error.nonExistentUsername)
                 password.isNullOrEmpty() -> failure(Error.invalidPassword)
-                getUserByUsername(username) is Failure -> failure(Error.nonExistentUsername)
-                !userDomain.validatePassword(
-                    password,
-                    it.usersRepository.getUserPassword(username)
-                ) -> failure(Error.wrongPassword)
-
+                !userDomain.validatePassword(password, it.usersRepository.getUserPassword(username)) -> failure(Error.wrongPassword)
                 else -> {
-                    val token = it.usersRepository.getUserToken(username)
+                    it.usersRepository.deleteAuthentication(username)
+                    val token = createToken(user.id)
                     success(token)
                 }
             }
+        }
+    }
+
+    fun logOut(username: String?) {
+        return transactionManager.run {
+            it.usersRepository.deleteAuthentication(username)
         }
     }
 
@@ -98,7 +100,7 @@ class UsersService(
         }
     }
 
-    fun getUserByUsername(username: String?): UsernameFetchResult {
+    fun getUsersByUsername(username: String?): UsernameFetchResult {
         return transactionManager.run {
             if (username == null) {
                 failure(Error.invalidUsername)
@@ -125,6 +127,12 @@ class UsersService(
             val authentication = Authentication(userDomain.generateTokenValue(), id, Instant.now(), Instant.now())
             it.usersRepository.createAuthentication(authentication)
             Token(authentication.token)
+        }
+    }
+
+    fun getUserToken(username: String): Token {
+        return transactionManager.run {
+            it.usersRepository.getUserToken(username)
         }
     }
 

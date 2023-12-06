@@ -20,11 +20,15 @@ interface UsersRepository {
 
     fun getGamesCount(id : Int): Int
 
+    fun getUserByUsername(username: String): UserOutputModel?
+
     fun getUsersByUsername(username : String): List<UserOutputModel>?
 
     fun getUserPassword(username: String): String
 
     fun createAuthentication(token: Authentication)
+
+    fun deleteAuthentication(username: String?)
 
     fun getCurrDate(): Date
 

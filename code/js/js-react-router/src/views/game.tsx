@@ -50,8 +50,8 @@ export function GetGame() {
                                 key={colIndex}
                                 style={{
                                     border: '1px solid black',
-                                    width: '40px', // Adjust the width as needed
-                                    height: '40px', // Adjust the height as needed
+                                    width: '40px',
+                                    height: '40px',
                                     textAlign: 'center',
                                 }}
                             >

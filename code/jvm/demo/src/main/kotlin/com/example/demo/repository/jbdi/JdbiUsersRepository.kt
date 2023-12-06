@@ -60,6 +60,14 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .single()
     }
 
+    override fun getUserByUsername(username: String): UserOutputModel? {
+        val query = "select id, username from player where username = :username"
+        return handle.createQuery(query)
+            .bind("username", username)
+            .mapTo(UserOutputModel::class.java)
+            .singleOrNull()
+    }
+
     override fun getUsersByUsername(username: String): List<UserOutputModel>? {
         val query = "select id, username from player where username ilike :username"
         val list = handle.createQuery(query)
@@ -85,6 +93,14 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .bind("token", token.token)
             .bind("createdAt", token.createdAt)
             .bind("lastUsedAt", token.lastUsedAt)
+            .execute()
+    }
+
+    override fun deleteAuthentication(username: String?) {
+        val query = "delete from authentication using player where " +
+                "authentication.player_id = player.id and player.username = :username;"
+        handle.createUpdate(query)
+            .bind("username", username)
             .execute()
     }
 

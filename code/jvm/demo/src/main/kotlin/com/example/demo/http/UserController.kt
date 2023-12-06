@@ -4,9 +4,14 @@ import com.example.demo.domain.AuthenticatedUser
 import com.example.demo.http.model.UserModel
 import com.example.demo.service.*
 import com.example.demo.http.siren.SirenMaker
-import org.springframework.http.MediaType
+import com.example.demo.http.siren.response
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.http.ResponseCookie
+
 
 @RestController
 class UserController(private val usersService: UsersService) {
@@ -16,8 +21,7 @@ class UserController(private val usersService: UsersService) {
         val res = usersService.getUserById(id)
         return handleResponse(res) {
             val siren = SirenMaker().sirenGetUserById(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 
@@ -27,19 +31,57 @@ class UserController(private val usersService: UsersService) {
         val res = usersService.createUser(userModel.username, userModel.password)
         return handleResponse(res) {
             val siren = SirenMaker().sirenSignIn(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 
     @PostMapping(PathTemplate.LOGIN)
-    fun login(@RequestBody userModel: UserModel): ResponseEntity<*> {
+    fun login(@RequestBody userModel: UserModel, response: HttpServletResponse): ResponseEntity<*> {
         val res = usersService.logIn(userModel.username, userModel.password)
+        val token = usersService.getUserToken(userModel.username)
+
+        val tokenCookie = ResponseCookie
+            .from("token", token.token)
+            .maxAge(3600)
+            .path("/")
+            .httpOnly(true)
+            .secure(false)
+            .build()
+
+        val usernameCookie = ResponseCookie
+            .from("username", userModel.username)
+            .maxAge(3600)
+            .path("/")
+            .httpOnly(false)
+            .secure(false)
+            .build()
+
+        response.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString())
+        response.addHeader(HttpHeaders.SET_COOKIE, usernameCookie.toString())
+
         return handleResponse(res) {
             val siren = SirenMaker().sirenLogIn(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
+    }
+
+    @PostMapping(PathTemplate.LOGOUT)
+    fun logout(user: AuthenticatedUser, response: HttpServletResponse) {
+        usersService.logOut(user.user.username)
+        val tokenCookie = Cookie("token", null)
+        tokenCookie.maxAge = 0
+        tokenCookie.path = "/"
+        tokenCookie.secure = false
+        tokenCookie.isHttpOnly = true
+
+        val usernameCookie = Cookie("username", null)
+        usernameCookie.maxAge = 0
+        usernameCookie.path = "/"
+        usernameCookie.secure = false
+        usernameCookie.isHttpOnly = false
+
+        response.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString())
+        response.addHeader(HttpHeaders.SET_COOKIE, usernameCookie.toString())
     }
 
 
@@ -48,8 +90,7 @@ class UserController(private val usersService: UsersService) {
         val res = usersService.getStatisticsByUsername(username)
         return handleResponse(res) {
             val siren = SirenMaker().sirenStatisticsByUsername(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 
@@ -58,18 +99,16 @@ class UserController(private val usersService: UsersService) {
         val res = usersService.getStatistics()
         return handleResponse(res) {
             val siren = SirenMaker().sirenStatistics(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 
     @GetMapping(PathTemplate.USER_BY_USERNAME)
     fun getUserByUsername(@PathVariable username: String?): ResponseEntity<*> {
-        val res = usersService.getUserByUsername(username)
+        val res = usersService.getUsersByUsername(username)
         return handleResponse(res) {
             val siren = SirenMaker().sirenGetUsersByUsername(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 
@@ -78,8 +117,7 @@ class UserController(private val usersService: UsersService) {
         val res = usersService.getAuthors()
         return handleResponse(res) {
             val siren = SirenMaker().sirenAuthors(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 }

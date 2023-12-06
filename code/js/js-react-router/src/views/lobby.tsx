@@ -18,11 +18,10 @@ type AuthContextType = {
 }
 
 export function CreateLobby() {
-    const [playerId, setPlayerId] = useState(1);
     const [rules, setRules] = useState('Pro');
     const [variant, setVariant] = useState('Freestyle');
     const [boardSize, setBoardSize] = useState(15);
-    const [error, setError] = useState(null); // New state for error
+    const [error, setError] = useState(null);
     const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
 
     //const auth = useContext(AuthContext);
@@ -48,22 +47,11 @@ export function CreateLobby() {
                 boardSize,
             };
 
-            const response = await fetch('http://localhost:8081/api/games', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authTokenCookie}`
-                },
-                body: JSON.stringify(requestBody),
-            });
+            const response = await fetchReq("games", "POST", requestBody, authTokenCookie)
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Create Lobby successful:', data);
-            } else {
-                const errorData = await response.json();
-                setError(`Error: ${errorData.message}`);
-            }
+            if (response == null) setPageDesign(PageDesign.Waiting)
+            else setPageDesign(PageDesign.Playing)
+
         } catch (error) {
             console.error('Error creating lobby:', error.message);
             setError('Error creating lobby. Please try again.');
@@ -112,8 +100,8 @@ export function CreateLobby() {
                             <label>
                                 <input
                                     type="radio"
-                                    value="Swap"
-                                    checked={variant === 'Swap'}
+                                    value="Swap after 1st move"
+                                    checked={variant === "Swap after 1st move"}
                                     onChange={handleVariantChange}
                                 />
                                 Swap

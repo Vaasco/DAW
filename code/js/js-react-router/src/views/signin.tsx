@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Link, Navigate} from "react-router-dom";
 import Cookies from 'js-cookie';
 import {Navbar} from "../utils/navBar";
+import {fetchReq} from "../utils/fetchReq";
 
 export function Sign() {
     const [inputs, setInputs] = useState({username: '', password: ''});
@@ -25,24 +26,12 @@ export function Sign() {
                 password: inputs.password,
             });
 
-            const response = await fetch('http://localhost:8081/api/users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: requestBody,
-            });
+            const response = await fetchReq("users", "POST", requestBody)
 
-            if (response.ok) {
-                const data = await response.json();
-                Cookies.set('authToken', data.properties.token)
-                setRedirectToHome(true)
-                console.log('Authentication successful:', data);
+            Cookies.set('authToken', response.token)
+            setRedirectToHome(true)
+            console.log('Authentication successful:', response);
 
-            } else {
-                console.error('Authentication failed:', response.statusText);
-                setError('Authentication failed. Please check your credentials.');
-            }
         } catch (error) {
             console.error('Error during authentication:', error.message);
             setError('Error during authentication. Please try again.');

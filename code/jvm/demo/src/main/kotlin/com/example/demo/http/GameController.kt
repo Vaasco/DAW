@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import com.example.demo.http.siren.SirenMaker
+import com.example.demo.http.siren.response
 import com.example.demo.service.*
 
 @RestController
@@ -20,8 +21,7 @@ class GameController(private val gamesService: GamesService) {
         val res = gamesService.getGameById(id)
         return handleResponse(res) {
             val siren = SirenMaker().sirenGetGameById(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 
@@ -44,8 +44,7 @@ class GameController(private val gamesService: GamesService) {
         )
         return handleResponse(res) {
             val siren = SirenMaker().sirenCreateLobby(it)
-            ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(201)
         }
     }
 
@@ -54,8 +53,7 @@ class GameController(private val gamesService: GamesService) {
         val res = gamesService.play(id, play, user)
         return handleResponse(res) {
             val siren = SirenMaker().sirenPlay(it)
-            ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON)
-                .body(siren)
+            siren.response(200)
         }
     }
 }

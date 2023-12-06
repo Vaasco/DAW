@@ -5,9 +5,7 @@ import com.example.demo.service.UsersService
 import org.springframework.stereotype.Component
 
 @Component
-class RequestTokenProcessor(
-    val usersService: UsersService
-) {
+class RequestTokenProcessor( val usersService: UsersService) {
     fun processAuthorizationHeaderValue(authorizationValue: String?): AuthenticatedUser? {
         if (authorizationValue == null) {
             return null
