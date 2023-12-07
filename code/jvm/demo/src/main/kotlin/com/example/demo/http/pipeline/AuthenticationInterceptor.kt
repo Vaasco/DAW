@@ -21,19 +21,18 @@ class AuthenticationInterceptor(
         ) {
             val cookie = request.cookies.find { it.name == "token" }
             val bearer = request.getHeader(NAME_AUTHORIZATION_HEADER)
-            val user = if(cookie != null) authorizationHeaderProcessor.processAuthorizationCookieValue(cookie.value)
+            val user = if (cookie != null) authorizationHeaderProcessor.processAuthorizationCookieValue(cookie.value)
             else authorizationHeaderProcessor.processAuthorizationHeaderValue(bearer)
 
-            return if(user == null) {
+            return if (user == null) {
                 response.status = 401
                 response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, RequestTokenProcessor.SCHEME)
                 false
+            } else {
+                AuthenticatedUserArgumentResolver.addUserTo(user, request)
+                true
             }
-                else{
-                    AuthenticatedUserArgumentResolver.addUserTo(user, request)
-                    true
-                }
-            }
+        }
         return true
     }
 

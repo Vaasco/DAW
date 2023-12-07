@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { fetchReq } from "../utils/fetchReq";
+import { useFetch } from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
 
 export function GetGame() {

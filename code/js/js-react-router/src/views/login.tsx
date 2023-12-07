@@ -1,66 +1,53 @@
-import React, {useState} from "react";
-import Cookies from 'js-cookie';
+import React, {useEffect, useState} from "react";
 import {Navbar} from "../utils/navBar";
+import {useFetch} from "../utils/useFetch";
 
 export function Login(): React.ReactElement {
     const [inputs, setInputs] = useState({username: '', password: ''});
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
-    const [loginSuccess, setLoginSuccess] = useState(false);
 
     const handleChange = (e) => {
+        e.preventDefault()
         const {name, value} = e.target;
         setInputs((prevInputs) => ({...prevInputs, [name]: value}));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        setSubmitting(true)
+    }
 
-        try {
-            setSubmitting(true);
-
-            const requestBody = JSON.stringify({
-                username: inputs.username,
-                password: inputs.password,
-            });
-
-            const response = await fetch('http://localhost:8081/api/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: requestBody,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const newToken = data.properties.token;
-                if (Cookies.get('authToken') === newToken) {
-                    setLoginSuccess(true);
-                } else {
-                    Cookies.set('authToken', newToken);
-                    console.log("ESTE É O TOKEN NOVO!!!", newToken);
-                }
-            } else {
-                const errorData = await response.json();
-                console.error('Authentication failed:', errorData.message);
-                //setError('Authentication failed. Please check your credentials.');
-                setError( response.statusText )
-            }
-        } catch (error) {
-            console.error('Error during authentication:', error.message);
-            setError('Error during authentication. Please try again.');
-        } finally {
-            setSubmitting(false);
+    function Authenticate(input) {
+        useEffect(() => {
+            setSubmitting(false)
+        }, []);
+        const fetch = useFetch("users/login", "POST", { username: input.username, password: input.password })
+        const rsp = fetch.response
+        const error = fetch.error
+        if(!rsp && !error){
+            return(
+                <div>
+                    <h1>Loading</h1>
+                </div>
+            )
         }
-    };
+
+        if(rsp){
+            window.location.href = "/"
+        }
+
+        if (error) {
+            alert(error)
+            window.location
+        }
+
+    }
 
     return (
         <div>
             <Navbar/>
-
-            {loginSuccess && <p style={{color: 'green'}}>Login successful</p>}
-            {!loginSuccess && (
+            {!submitting?
                 <form onSubmit={handleSubmit}>
                     <fieldset disabled={submitting}>
                         <div>
@@ -88,7 +75,8 @@ export function Login(): React.ReactElement {
                         </div>
                     </fieldset>
                 </form>
-            )}
+                : <Authenticate username={inputs.username} password={inputs.password}/>
+            }
         </div>
     );
 }

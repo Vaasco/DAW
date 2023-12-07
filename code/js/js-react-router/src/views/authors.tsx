@@ -1,35 +1,31 @@
 import {useLoaderData} from "react-router-dom";
-import React from "react";
+import React, {useState} from "react";
 import {Navbar} from "../utils/navBar";
+import {useFetch} from "../utils/useFetch";
 
-type Author = {
-    name: string,
-    number: string
-}
+export function Authors() {
+    const fetch = useFetch("authors").response
 
-
-async function authorsLoader(): Promise<Author[]> {
-    const res = await fetch("http://localhost:8081/api/authors");
-    const data = await res.json();
-    return data.properties
-}
-
-function Authors() {
-    const authors = useLoaderData() as Author[];
     return (
         <div>
-            <Navbar />
-            <h1>Authors</h1>
-            <div>
-                {authors.map((author, index) => (
-                    <div key={index} style={{marginBottom: '10px'}}>
-                        <strong>{author.name}</strong>
-                        <p>Number: {author.number}</p>
+            <Navbar/>
+            {!fetch ?
+                <div>
+                    <h1>Loading</h1>
+                </div>
+                :
+                <div>
+                    <h1>Authors</h1>
+                    <div>
+                        {fetch.properties.map((author, index) => (
+                            <div key={index} style={{marginBottom: '10px'}}>
+                                <strong>{author.name}</strong>
+                                <p>Number: {author.number}</p>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                </div>
+            }
             </div>
-        </div>
-    );
+    )
 }
-
-export {authorsLoader, Authors};

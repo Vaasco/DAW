@@ -1,9 +1,10 @@
 import React, {useState} from "react";
 import {useLoaderData} from "react-router-dom";
 import {Navbar} from "../utils/navBar";
+import {useFetch} from "../utils/useFetch";
 
 type Stat = {
-    username : string,
+    username: string,
     rank: number,
     playedGames: number,
     wonGames: number,
@@ -23,14 +24,15 @@ async function statsLoader() {
 
 function GetStats() {
     const [username, setUsername] = useState('');
-    const [individualStats, setIndividualStats] = useState(null);
+    const [nameStats, setNameStats] = useState(null);
+    const [everyStats, setEveryStats] = useState(null);
     const [error, setError] = useState(null);
     const [statType, setStatType] = useState(StatType.All)
-    const auth = useLoaderData() as Stat[]
-    const handleIndividualStats = async (e) => {
+    //const auth = useLoaderData() as Stat[]
+    const handleIndividualStats = (e) => {
         e.preventDefault();
 
-        try {
+        /*try {
             if (!username) setStatType(StatType.All)
             else {
                 setStatType(StatType.Individual)
@@ -62,10 +64,56 @@ function GetStats() {
         }
     };
 
+    function allStats() {
+        setNameStats(null)
+        const fetchAll = useFetch('/stats')
+        const rsp = fetchAll.response
+        const error = fetchAll.error
+        if (!rsp && !error) {
+            return (
+                <div>
+                    <h1>Loading</h1>
+                </div>
+            )
+        }
+
+        if (rsp) {
+            setEveryStats(rsp.properties)
+        }
+
+        if (error) {
+            alert(error)
+            window.location
+        }
+    }
+
+    const usernameStats = () => {
+        setEveryStats(null)
+        const fetchAll = useFetch(`/stats/${username}`)
+        const rsp = fetchAll.response
+        const error = fetchAll.error
+        if (!rsp && !error) {
+            return (
+                <div>
+                    <h1>Loading</h1>
+                </div>
+            )
+        }
+
+        if (rsp) {
+            setNameStats(rsp.properties)
+        }
+
+        if (error) {
+            alert(error)
+            window.location
+        }
+    }
+
     return (
         <div>
-            <Navbar />
-            <form onSubmit={handleIndividualStats}>
+            <Navbar/>
+            <form onSubmit={usernameStats}>
                 <label>
                     Username:
                     <input
@@ -77,9 +125,9 @@ function GetStats() {
                 <button type="submit">Get Stats</button>
             </form>
 
-            {statType === StatType.Individual && individualStats && (
+            {nameStats && (
                 <div>
-                    {individualStats.map((userStats, index) => (
+                    {nameStats.map((userStats, index) => (
                         <div key={index}>
                             <h2>Username: {userStats.username}</h2>
                             <p>Rank: {userStats.rank}</p>
@@ -91,10 +139,10 @@ function GetStats() {
                 </div>
             )}
 
-            {statType === StatType.All && auth && (
+            {everyStats && (
                 <div>
                     <h2>All Player Stats:</h2>
-                    {auth.map((playerStats, index) => (
+                    {everyStats.map((playerStats, index) => (
                         <div key={index}>
                             <h3>{playerStats.username}</h3>
                             <p>Rank: {playerStats.rank}</p>

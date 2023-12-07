@@ -1,4 +1,4 @@
-import {fetchReq} from "./utils/fetchReq";
+import {useFetch} from "./utils/useFetch";
 import {Home} from "./views/home";
 import {GetStats, statsLoader} from "./views/statistics";
 import {CreateLobby} from "./views/lobby";
@@ -20,8 +20,7 @@ const router = createBrowserRouter(
         },
         {
             path: "/authors",
-            element: <Authors/>,
-            loader: authorsLoader
+            element: <Authors/>
         },
         {
             path: "/login",
@@ -38,7 +37,6 @@ const router = createBrowserRouter(
         {
             path: "/stats",
             element: <GetStats/>,
-            loader: statsLoader
         },
         {
             path: "/game",

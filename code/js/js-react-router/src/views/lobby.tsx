@@ -1,10 +1,6 @@
-import React, {createContext, useContext, useState} from "react";
-import Cookies from 'js-cookie';
+import React, {useEffect, useState} from "react";
 import {Navbar} from "../utils/navBar";
-import {fetchReq} from "../utils/fetchReq";
-import {Simulate} from "react-dom/test-utils";
-import waiting = Simulate.waiting;
-
+import {useFetch} from "../utils/useFetch";
 
 enum PageDesign {
     Default,
@@ -12,20 +8,13 @@ enum PageDesign {
     Playing
 }
 
-type AuthContextType = {
-    token: string,
-    setToken: (newToken: string) => void
-}
-
 export function CreateLobby() {
     const [rules, setRules] = useState('Pro');
     const [variant, setVariant] = useState('Freestyle');
     const [boardSize, setBoardSize] = useState(15);
-    const [error, setError] = useState(null);
-    const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
-
-    //const auth = useContext(AuthContext);
-    const authTokenCookie = Cookies.get('authToken');
+    const [submitting, setSubmitting] = useState(false)
+    const [response, setResponse] = useState(null)
+    //const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
 
     const handleRulesChange = (e) => {
         setRules(e.target.value);
@@ -39,7 +28,7 @@ export function CreateLobby() {
         setBoardSize(parseInt(e.target.value, 10));
     };
 
-    const handleSubmit = async () => {
+    /*const handleSubmit = async () => {
         try {
             const requestBody = {
                 rules,
@@ -47,21 +36,90 @@ export function CreateLobby() {
                 boardSize,
             };
 
-            const response = await fetchReq("games", "POST", requestBody, authTokenCookie)
+            const response = useFetch("games", "POST", requestBody)
 
-            if (response == null) setPageDesign(PageDesign.Waiting)
-            else setPageDesign(PageDesign.Playing)
+            if (response == null) {
+                setPageDesign(PageDesign.Waiting)
+
+            } else {
+                setPageDesign(PageDesign.Playing)
+            }
 
         } catch (error) {
             console.error('Error creating lobby:', error.message);
             setError('Error creating lobby. Please try again.');
         }
-    };
+    };*/
+
+    function handleSubmit() {
+        setSubmitting(true)
+    }
+
+    function Create() {
+        const requestBody = {
+            rules,
+            variant,
+            boardSize,
+        };
+        const fetch = useFetch("games", "POST", requestBody)
+        const rsp = fetch.response
+
+        useEffect(() => {
+            const period = 2000;
+            if (rsp && rsp.properties) {
+                const tid = setInterval(() => {
+                    const fetch2 = useFetch(`games/${rsp.properties.id}`);
+                    if (fetch2.response) {
+                        window.location.href = `games/${rsp.properties.id}`;
+                    }
+                }, period);
+                return () => clearInterval(tid);
+            }
+        }, [rsp]); // Make sure to include all dependencies in the dependency array
+
+
+
+
+        console.log(rsp)
+        const error = fetch.error
+
+        if (!rsp && !error) {
+            return (
+                <div>
+                    <h1>Waiting for opponent</h1>
+                </div>
+            )
+        }
+
+        //Fazer polling
+        /*const period = 2000
+        //window.location.href = `/`
+        useEffect(() => {
+            if (rsp && rsp.properties) {
+                const tid = setInterval(() => {
+                    const fetch2 = useFetch(`games/${rsp.properties.id}`)
+                    if (fetch2.response) {
+                        window.location.href = `games/${rsp.properties.id}`
+                    }
+                }, period)
+                return () => clearInterval(tid);
+            }
+        });*/
+
+        if (error) {
+            alert(error)
+            window.location
+        }
+    }
 
     return (
         <div>
-            <Navbar />
-            {pageDesign === PageDesign.Default && (
+            <Navbar/>
+            {submitting ?
+                <div>
+                    <Create/>
+                </div>
+                :
                 <div>
                     Rules:
                     <div>
@@ -132,12 +190,8 @@ export function CreateLobby() {
                     </div>
                     <br/>
                     <button onClick={handleSubmit}>Submit</button>
-                    {error && <p style={{color: 'red'}}>{error}</p>}
                 </div>
-            )}
-            {pageDesign === PageDesign.Waiting && (
-                <h2>Waiting for opponent...</h2>
-            )}
+            }
         </div>
     );
 }

@@ -26,9 +26,9 @@ class GameController(private val gamesService: GamesService) {
     }
 
     @GetMapping(PathTemplate.LAST_GAME)
-    fun getLastGame(@PathVariable username: String) : ResponseEntity<*>{
+    fun getLastGame(@PathVariable username: String): ResponseEntity<*> {
         val res = gamesService.getLastGame(username)
-        return handleResponse(res){
+        return handleResponse(res) {
             val siren = SirenMaker().sirenGetLastGame(it)
             siren.response(200)
         }
