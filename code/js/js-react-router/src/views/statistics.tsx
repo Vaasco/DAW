@@ -61,7 +61,7 @@ function GetStats() {
             console.error('Error fetching data:', error);
             setError('Error fetching data. Please try again.');
             setIndividualStats(null);
-        }
+        }*/
     };
 
     function allStats() {

@@ -3,9 +3,9 @@ import {Home} from "./views/home";
 import {GetStats, statsLoader} from "./views/statistics";
 import {CreateLobby} from "./views/lobby";
 import {GetGame} from "./views/game";
-import {Authors, authorsLoader} from "./views/authors";
+import {Authors} from "./views/authors";
 import {Login} from "./views/login";
-import {Sign} from "./views/signin";
+import {SignIn} from "./views/signin";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {createRoot} from "react-dom/client";
 import React from "react";
@@ -28,7 +28,7 @@ const router = createBrowserRouter(
         },
         {
             path: "/sign",
-            element: <Sign/>
+            element: <SignIn/>
         },
         {
             path: "/play",

@@ -10,7 +10,7 @@ export function GetGame() {
         e.preventDefault();
 
         try {
-            const response = await fetchReq(`games/${id}`)
+            const response = await useFetch(`games/${id}`)
             console.log("this is response", response)
             setResponse(response)
         } catch (error) {

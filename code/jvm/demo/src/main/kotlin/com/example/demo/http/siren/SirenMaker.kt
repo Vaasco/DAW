@@ -111,14 +111,16 @@ class SirenMaker {
         }
     }
 
-    fun sirenGetLastGame(body : GameModel): SirenModel<GameModel> {
+    fun sirenGetLastGame(body : GameModel?): SirenModel<GameModel?> {
         return siren(body){
             clazz("last game")
             action(HOME, URI(HOME), GET)
-            val playUri = playURI(body.id)
-            action(playUri.toString(), playUri, POST)
-            val gameUri = gameByIdURI(body.id)
-            link(gameUri.toString(), LinkRelation(gameUri.toString()))
+            if(body != null) {
+                val playUri = playURI(body.id)
+                action(playUri.toString(), playUri, POST)
+                val gameUri = gameByIdURI(body.id)
+                link(gameUri.toString(), LinkRelation(gameUri.toString()))
+            }
         }
     }
 

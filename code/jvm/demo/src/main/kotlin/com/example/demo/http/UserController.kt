@@ -27,8 +27,28 @@ class UserController(private val usersService: UsersService) {
 
 
     @PostMapping(PathTemplate.CREATE_USER)
-    fun createUser(@RequestBody userModel: UserModel): ResponseEntity<*> {
+    fun createUser(@RequestBody userModel: UserModel, response: HttpServletResponse): ResponseEntity<*> {
         val res = usersService.createUser(userModel.username, userModel.password)
+        val token = usersService.getUserToken(userModel.username)
+
+        val tokenCookie = ResponseCookie
+            .from("token", token.token)
+            .maxAge(3600)
+            .path("/")
+            .httpOnly(true)
+            .secure(false)
+            .build()
+
+        val usernameCookie = ResponseCookie
+            .from("username", userModel.username)
+            .maxAge(3600)
+            .path("/")
+            .httpOnly(false)
+            .secure(false)
+            .build()
+
+        response.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString())
+        response.addHeader(HttpHeaders.SET_COOKIE, usernameCookie.toString())
         return handleResponse(res) {
             val siren = SirenMaker().sirenSignIn(it)
             siren.response(200)

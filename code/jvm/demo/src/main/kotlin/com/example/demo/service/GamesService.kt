@@ -17,13 +17,12 @@ class GamesService(private val transactionManager: TransactionManager) {
     private val validRules = listOf("Pro", "Long Pro")
     private val validVariants = listOf("Freestyle", "Swap after 1st move")
 
-    fun getLastGame(username: String?): GameIdFetchResult {
+    fun getLastGame(username: String?): CreateLobbyResult {
         return transactionManager.run {
             if (username == null) failure(Error.invalidUsername)
             else {
                 val game = it.gameRepository.getLastGame(username)
-                if(game == null) failure(Error.nonExistentGame)
-                else success(game)
+                success(game)
             }
         }
     }

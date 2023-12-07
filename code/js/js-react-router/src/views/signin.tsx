@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {Navbar} from "../utils/navBar";
-import {fetchReq} from "../utils/fetchReq";
+import {useFetch} from "../utils/useFetch";
 
-export function Sign() {
+export function SignIn() {
     const [inputs, setInputs] = useState({username: '', password: ''});
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
+        e.preventDefault()
         const {name, value} = e.target;
         setInputs((prevInputs) => ({...prevInputs, [name]: value}));
     };
