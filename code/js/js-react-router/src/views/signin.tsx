@@ -75,8 +75,6 @@ export function SignIn() {
                         </div>
                     </fieldset>
                 </form>
-                : <Create username={inputs.username} password={inputs.password}/>
-            }
         </div>
     );
 }

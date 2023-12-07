@@ -66,19 +66,14 @@ function GetStats() {
 
     function allStats() {
         setNameStats(null)
-        const fetchAll = useFetch('/stats')
-        const rsp = fetchAll.response
-        const error = fetchAll.error
-        if (!rsp && !error) {
-            return (
-                <div>
-                    <h1>Loading</h1>
-                </div>
-            )
+        const fetchAll = await useFetch('/stats')
+        const body = await fetchAll.json()
+        if (!fetchAll.ok) {
+            setError(body.properties)
         }
 
-        if (rsp) {
-            setEveryStats(rsp.properties)
+        if (fetchAll.ok) {
+            setEveryStats(body.properties)
         }
 
         if (error) {
@@ -89,24 +84,15 @@ function GetStats() {
 
     const usernameStats = () => {
         setEveryStats(null)
-        const fetchAll = useFetch(`/stats/${username}`)
-        const rsp = fetchAll.response
-        const error = fetchAll.error
-        if (!rsp && !error) {
-            return (
-                <div>
-                    <h1>Loading</h1>
-                </div>
-            )
+        const fetchAll = await useFetch(`/stats/${username}`)
+        const body = await fetchAll.json()
+
+        if (!fetchAll.ok) {
+            setError(body.properties)
         }
 
-        if (rsp) {
-            setNameStats(rsp.properties)
-        }
-
-        if (error) {
-            alert(error)
-            window.location
+        if (fetchAll.ok) {
+            setNameStats(body.properties)
         }
     }
 

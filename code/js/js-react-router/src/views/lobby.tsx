@@ -14,6 +14,7 @@ export function CreateLobby() {
     const [boardSize, setBoardSize] = useState(15);
     const [submitting, setSubmitting] = useState(false)
     const [response, setResponse] = useState(null)
+    const [error, setError] = useState('')
     //const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
 
     const handleRulesChange = (e) => {
@@ -55,65 +56,9 @@ export function CreateLobby() {
         setSubmitting(true)
     }
 
-    function Create() {
-        const requestBody = {
-            rules,
-            variant,
-            boardSize,
-        };
-        const fetch = useFetch("games", "POST", requestBody)
-        const rsp = fetch.response
-
-        useEffect(() => {
-            const period = 2000;
-            if (rsp && rsp.properties) {
-                const tid = setInterval(() => {
-                    const fetch2 = useFetch(`games/${rsp.properties.id}`);
-                    if (fetch2.response) {
-                        window.location.href = `games/${rsp.properties.id}`;
-                    }
-                }, period);
-                return () => clearInterval(tid);
-            }
-        }, [rsp]); // Make sure to include all dependencies in the dependency array
-
-
-
-
-        console.log(rsp)
-        const error = fetch.error
-
-        if (!rsp && !error) {
-            return (
-                <div>
-                    <h1>Waiting for opponent</h1>
-                </div>
-            )
-        }
-
-        //Fazer polling
-        /*const period = 2000
-        //window.location.href = `/`
-        useEffect(() => {
-            if (rsp && rsp.properties) {
-                const tid = setInterval(() => {
-                    const fetch2 = useFetch(`games/${rsp.properties.id}`)
-                    if (fetch2.response) {
-                        window.location.href = `games/${rsp.properties.id}`
-                    }
-                }, period)
-                return () => clearInterval(tid);
-            }
-        });*/
-
-        if (error) {
-            alert(error)
-            window.location
-        }
-    }
-
     return (
-        <div>
+        <div>y
+
             <Navbar/>
             {submitting ?
                 <div>

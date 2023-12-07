@@ -26,6 +26,6 @@ export function Authors() {
                     </div>
                 </div>
             }
-            </div>
+        </div>
     )
 }

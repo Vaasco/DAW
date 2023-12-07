@@ -5,12 +5,14 @@ import {
 
 const BASE_URL = "http://localhost:8081/api/"
 
+/*
 export type fetchRsp = {
     response: any,
     error: any
 }
+*/
 
-export function useFetch(uri: string, method: string = "GET", bodyRequest: any = null) : fetchRsp {
+/*export function useFetch(uri: string, method: string = "GET", bodyRequest: any = null) : fetchRsp {
     console.log("inside useFetch")
     const [content, setContent] = useState(undefined)
     const [error, setError] = useState(undefined)
@@ -54,4 +56,16 @@ export function useFetch(uri: string, method: string = "GET", bodyRequest: any =
         }
     }, [uri, method, bodyRequest])
     return { response: content, error: error }
+}*/
+
+export function useFetch(path:string, method:string = "GET", body?:object) {
+    const options = {
+        method: method,
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        ...(body && {body: JSON.stringify(body)}),
+    };
+    return fetch(BASE_URL + path, options);
 }

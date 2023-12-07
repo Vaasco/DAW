@@ -13,35 +13,18 @@ export function Login(): React.ReactElement {
         setInputs((prevInputs) => ({...prevInputs, [name]: value}));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        setSubmitting(true)
-    }
+        const rsp = await useFetch("users/login", "POST", { username: inputs.username, password: inputs.password })
+        const body = await rsp.json()
 
-    function Authenticate(input) {
-        useEffect(() => {
-            setSubmitting(false)
-        }, []);
-        const fetch = useFetch("users/login", "POST", { username: input.username, password: input.password })
-        const rsp = fetch.response
-        const error = fetch.error
-        if(!rsp && !error){
-            return(
-                <div>
-                    <h1>Loading</h1>
-                </div>
-            )
+        if(!rsp.ok){
+            setError(body.properties)
         }
 
         if(rsp){
             window.location.href = "/"
         }
-
-        if (error) {
-            alert(error)
-            window.location
-        }
-
     }
 
     return (
@@ -75,8 +58,6 @@ export function Login(): React.ReactElement {
                         </div>
                     </fieldset>
                 </form>
-                : <Authenticate username={inputs.username} password={inputs.password}/>
-            }
         </div>
     );
 }
