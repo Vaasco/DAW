@@ -22,7 +22,7 @@ export function Login(): React.ReactElement {
             setError(body.properties)
         }
 
-        if(rsp){
+        if(rsp.ok){
             window.location.href = "/"
         }
     }
@@ -30,7 +30,11 @@ export function Login(): React.ReactElement {
     return (
         <div>
             <Navbar/>
-            {!submitting?
+            {error && (
+                <div>
+                    <h1>Error: ${error}</h1>
+                </div>
+            )}
                 <form onSubmit={handleSubmit}>
                     <fieldset disabled={submitting}>
                         <div>

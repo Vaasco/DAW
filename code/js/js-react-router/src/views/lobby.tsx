@@ -29,42 +29,46 @@ export function CreateLobby() {
         setBoardSize(parseInt(e.target.value, 10));
     };
 
-    /*const handleSubmit = async () => {
-        try {
-            const requestBody = {
-                rules,
-                variant,
-                boardSize,
-            };
-
-            const response = useFetch("games", "POST", requestBody)
-
-            if (response == null) {
-                setPageDesign(PageDesign.Waiting)
-
-            } else {
-                setPageDesign(PageDesign.Playing)
-            }
-
-        } catch (error) {
-            console.error('Error creating lobby:', error.message);
-            setError('Error creating lobby. Please try again.');
-        }
-    };*/
-
-    function handleSubmit() {
+    const handleSubmit = async () => {
         setSubmitting(true)
+        const requestBody = {
+            rules,
+            variant,
+            boardSize,
+        };
+
+        const rsp = await useFetch("games", "POST", requestBody)
+        const body = await rsp.json()
+
+        if (!rsp.ok) {
+            setError(body.properties)
+        }
+
+        useEffect(() => {
+            const period = 2000;
+            if (body.properties) {
+                const tid = setInterval(async () => {
+                    const rsp2 = await useFetch(`games/${body.properties.id}`);
+                    const body2 = await rsp2.json()
+                    if (body2.properties) {
+                        window.location.href = `games/${body.properties.id}`;
+                    }
+                }, period);
+                return () => clearInterval(tid);
+            }
+        }, [rsp]);
+
     }
 
     return (
         <div>y
 
             <Navbar/>
-            {submitting ?
+            {error && (
                 <div>
-                    <Create/>
+                    <h1> Error ${error} </h1>
                 </div>
-                :
+                )}
                 <div>
                     Rules:
                     <div>
@@ -136,7 +140,6 @@ export function CreateLobby() {
                     <br/>
                     <button onClick={handleSubmit}>Submit</button>
                 </div>
-            }
         </div>
     );
 }

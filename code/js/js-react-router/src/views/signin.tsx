@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 
@@ -13,41 +13,27 @@ export function SignIn() {
         setInputs((prevInputs) => ({...prevInputs, [name]: value}));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         setSubmitting(true)
-    };
-
-    function Create(input) {
-        useEffect(() => {
-            setSubmitting(false)
-        }, []);
-        const fetch = useFetch("users", "POST", {username: input.username, password: input.password})
-        const rsp = fetch.response
-        const error = fetch.error
-        if (!rsp && !error) {
-            return (
-                <div>
-                    <h1>Loading</h1>
-                </div>
-            )
+        const rsp = await useFetch("users", "POST", {username: inputs.username, password: inputs.password})
+        const body = await rsp.json()
+        if(!rsp.ok) {
+            setError(body.properties)
         }
-
-        if (rsp) {
+        if (rsp.ok) {
             window.location.href = "/"
         }
-
-        if (error) {
-            alert(error)
-            window.location
-        }
-
-    }
+    };
 
     return (
         <div>
             <Navbar/>
-            {!submitting?
+            {error && (
+                <div>
+                    <h1>Error: ${error}</h1>
+                </div>
+            )}
                 <form onSubmit={handleSubmit}>
                     <fieldset disabled={submitting}>
                         <div>

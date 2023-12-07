@@ -4,12 +4,19 @@ import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 
 export function Authors() {
-    const fetch = useFetch("authors").response
+    const [authors, setAuthors] = useState(null)
+    const fetch = async () => {
+        const rsp = await useFetch("authors")
+        const body = await rsp.json()
+        if (rsp.ok) {
+            setAuthors(body.properties)
+        }
+    }
 
     return (
         <div>
             <Navbar/>
-            {!fetch ?
+            {!authors ?
                 <div>
                     <h1>Loading</h1>
                 </div>
@@ -17,7 +24,7 @@ export function Authors() {
                 <div>
                     <h1>Authors</h1>
                     <div>
-                        {fetch.properties.map((author, index) => (
+                        {authors.map((author, index) => (
                             <div key={index} style={{marginBottom: '10px'}}>
                                 <strong>{author.name}</strong>
                                 <p>Number: {author.number}</p>
