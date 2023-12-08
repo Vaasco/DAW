@@ -1,7 +1,13 @@
 import React, {useState} from "react";
-import {useLoaderData} from "react-router-dom";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
+import {useLoaderData} from "react-router-dom";
+
+async function statsLoader(): Promise<Stat[]>{
+    const fetch = await useFetch('/stats')
+    const body = await fetch.json()
+    return body.properties
+}
 
 type Stat = {
     username: string,
@@ -11,90 +17,22 @@ type Stat = {
     lostGames: number
 }
 
-enum StatType {
-    Individual,
-    All
-}
-
-async function statsLoader() {
-    const res = await fetch("http://localhost:8081/api/stats");
-    const data = await res.json();
-    return data.properties
-}
-
 function GetStats() {
     const [username, setUsername] = useState('');
-    const [nameStats, setNameStats] = useState(null);
-    const [everyStats, setEveryStats] = useState(null);
     const [error, setError] = useState(null);
-    const [statType, setStatType] = useState(StatType.All)
-    //const auth = useLoaderData() as Stat[]
-    const handleIndividualStats = (e) => {
+    const allStats = useLoaderData() as Stat[]
+    const [stats, setStats] = useState(allStats);
+
+    const getUsernameStats = (e) => {
         e.preventDefault();
 
-        /*try {
-            if (!username) setStatType(StatType.All)
-            else {
-                setStatType(StatType.Individual)
-                const response = await fetch(`http://localhost:8081/api/stats/${username}`);
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const userStats = data.properties;
-                    console.log(userStats)
-
-                    if (userStats) {
-                        setIndividualStats(userStats);
-                        setError(null);
-                    } else {
-                        setError(`User '${username}' not found in the response.`);
-                        setIndividualStats(null);
-                    }
-                } else {
-                    const errorData = await response.json();
-                    setError(`Error: ${errorData.message}`);
-                    setIndividualStats(null);
-                }
-            }
-
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setError('Error fetching data. Please try again.');
-            setIndividualStats(null);
-        }*/
+        if (username.trim() === '') {
+            setStats(allStats);
+        } else {
+            const userStats = allStats.filter((stat) => stat.username.startsWith(username));
+            setStats(userStats);
+        }
     };
-
-    function allStats() {
-        setNameStats(null)
-        const fetchAll = await useFetch('/stats')
-        const body = await fetchAll.json()
-        if (!fetchAll.ok) {
-            setError(body.properties)
-        }
-
-        if (fetchAll.ok) {
-            setEveryStats(body.properties)
-        }
-
-        if (error) {
-            alert(error)
-            window.location
-        }
-    }
-
-    const usernameStats = () => {
-        setEveryStats(null)
-        const fetchAll = await useFetch(`/stats/${username}`)
-        const body = await fetchAll.json()
-
-        if (!fetchAll.ok) {
-            setError(body.properties)
-        }
-
-        if (fetchAll.ok) {
-            setNameStats(body.properties)
-        }
-    }
 
     return (
         <div>

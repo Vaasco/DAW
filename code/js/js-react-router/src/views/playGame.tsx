@@ -12,8 +12,10 @@ export function GetGame() {
 
         try {
             const response = await useFetch(`games/${id}`)
+            const body = await response.json()
+            const properties = body.properties
             console.log("this is response", response)
-            setResponse(response)
+            setResponse(properties)
         } catch (error) {
             console.error('Error fetching game:', error.message);
             setResponse(null);
@@ -56,7 +58,17 @@ export function GetGame() {
                                     textAlign: 'center',
                                 }}
                             >
-                                {cell}
+                                <img
+                                    src={"../utils/pieces/blackstone.png"}
+                                    alt={`Cell at ${rowIndex}, ${colIndex}`}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover', // Adjust based on your image aspect ratio requirements
+                                        cursor: 'pointer',
+                                    }}
+                                    //onClick={() => handleCellClick(rowIndex, colIndex)}
+                                />
                             </td>
                         ))}
                     </tr>
@@ -87,11 +99,6 @@ export function GetGame() {
                     <p>ID: {response.id}</p>
                     <p>Rules: {response.board.rules}</p>
                     <p>Variant: {response.board.variant}</p>
-                    <p>Turn: {response.board.turn}</p>
-                    <p>State: {response.state}</p>
-                    <p>Player B: {response.playerB}</p>
-                    <p>Player W: {response.playerW}</p>
-                    <p>Board Size: {response.boardSize}</p>
                     <div>
                         <h3>Board:</h3>
                         {renderBoard()}

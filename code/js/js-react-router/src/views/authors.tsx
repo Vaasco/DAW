@@ -13,6 +13,8 @@ export function Authors() {
         }
     }
 
+    if(!authors) fetch()
+
     return (
         <div>
             <Navbar/>

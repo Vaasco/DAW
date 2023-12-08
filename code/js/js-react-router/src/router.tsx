@@ -31,17 +31,22 @@ const router = createBrowserRouter(
             element: <SignIn/>
         },
         {
-            path: "/play",
+            path: "/lobby",
             element: <CreateLobby/>
         },
         {
             path: "/stats",
             element: <GetStats/>,
+            loader: statsLoader
         },
         {
             path: "/game",
             element: <GetGame/>
-        }
+        },
+        /*{
+            path: "/play",
+            element: <PlayGame/>
+        }*/
     ]
 )
 
