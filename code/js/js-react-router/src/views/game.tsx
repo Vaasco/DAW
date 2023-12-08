@@ -4,7 +4,6 @@ import {Navbar} from "../utils/navBar";
 
 //const blackstone = require('../../../../jvm/demo/src/main/kotlin/com/example/demo/pieces/blackstone.png').default;
 
-
 export function GetGame() {
     const [id, setId] = useState('');
     const [response, setResponse] = useState(null);
@@ -19,17 +18,20 @@ export function GetGame() {
             setResponse(properties)
         } catch (error) {
             console.error('Error fetching game:', error.message);
-            setResponse(null);
+            setResponse(null)
         }
     };
 
     const play = async (rowIndex, colIndex) => {
-        
-        const rsp = await  useFetch(`games/${id}`,'POST',)
-        const body = await rsp.json()
-
+        const swap = response.board.variant =='Swap' ? 1 : null
+        const requestBody = {
+            rowIndex,
+            colIndex,
+            swap
+        }
+        const rsp = await  useFetch(`games/${id}`,'POST',requestBody)
+        //const body = await rsp.json()
     }
-
 
     const generateBoard = () => {
         const board = Array.from({length: response.boardSize}, () =>
