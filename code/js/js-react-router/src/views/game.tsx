@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { useFetch } from "../utils/useFetch";
+import React, {useState} from "react";
+import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
+
 //const blackstone = require('../../../../jvm/demo/src/main/kotlin/com/example/demo/pieces/blackstone.png').default;
+
 
 export function GetGame() {
     const [id, setId] = useState('');
@@ -9,20 +11,27 @@ export function GetGame() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const response = await useFetch(`games/${id}`)
+            const body = await response.json()
+            const properties = body.properties
             console.log("this is response", response)
-            setResponse(response)
+            setResponse(properties)
         } catch (error) {
             console.error('Error fetching game:', error.message);
             setResponse(null);
         }
     };
 
+    const play = async (rowIndex, colIndex) => {
+        const fetch = await  useFetch(`games/${id}`,'POST',)
+
+    }
+
+
     const generateBoard = () => {
-        const board = Array.from({ length: response.boardSize }, () =>
-            Array.from({ length: response.boardSize }, () => ' ')
+        const board = Array.from({length: response.boardSize}, () =>
+            Array.from({length: response.boardSize}, () => ' ')
         );
 
         if (response.board.moves) {
@@ -42,7 +51,7 @@ export function GetGame() {
         const board = generateBoard();
 
         return (
-            <table style={{ borderCollapse: 'collapse', border: '1px solid black' }}>
+            <table style={{borderCollapse: 'collapse', border: '1px solid black'}}>
                 <tbody>
                 {board.map((row, rowIndex) => (
                     <tr key={rowIndex}>
@@ -56,7 +65,22 @@ export function GetGame() {
                                     textAlign: 'center',
                                 }}
                             >
-                                {cell}
+                                {cell === ' ' && response.state === 'Playing' && (
+                                    <button
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={() => play(rowIndex, colIndex)}
+                                    >
+                                        {/* Pode colocar aqui o conteúdo do botão, como um ícone ou texto */}
+
+                                    </button>
+                                )}
+                                {cell !== ' ' && (
+                                    cell
+                                )}
                             </td>
                         ))}
                     </tr>
@@ -68,7 +92,7 @@ export function GetGame() {
 
     return (
         <div>
-            <Navbar />
+            <Navbar/>
             <form onSubmit={handleSubmit}>
                 <label>
                     Game ID:
@@ -87,11 +111,6 @@ export function GetGame() {
                     <p>ID: {response.id}</p>
                     <p>Rules: {response.board.rules}</p>
                     <p>Variant: {response.board.variant}</p>
-                    <p>Turn: {response.board.turn}</p>
-                    <p>State: {response.state}</p>
-                    <p>Player B: {response.playerB}</p>
-                    <p>Player W: {response.playerW}</p>
-                    <p>Board Size: {response.boardSize}</p>
                     <div>
                         <h3>Board:</h3>
                         {renderBoard()}
