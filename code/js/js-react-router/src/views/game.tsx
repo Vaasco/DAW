@@ -45,7 +45,6 @@ export function GetGame() {
                 board[row][col] = player as string;
             }
         }
-
         return board;
     };
 

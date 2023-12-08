@@ -1,7 +1,6 @@
 package com.example.demo.http.pipeline
 
 import com.example.demo.domain.AuthenticatedUser
-
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -15,7 +14,7 @@ class AuthenticationInterceptor(
 ) : HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         logger.info("Calling $handler")
-        if (handler is HandlerMethod && handler.methodParameters.any {
+        if ((handler is HandlerMethod) && handler.methodParameters.any {
                 it.parameterType == AuthenticatedUser::class.java
             }
         ) {
