@@ -12,7 +12,7 @@ export function Home() {
                 <br/>
                 <Link to="/sign">Sign In</Link>
                 <br/>
-                <Link to="/play">Create Lobby</Link>
+                <Link to="/lobby">Create Lobby</Link>
                 <br/>
                 <Link to="/game">Get Game By Id</Link>
             </div>

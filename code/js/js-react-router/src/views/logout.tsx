@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";

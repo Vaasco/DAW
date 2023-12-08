@@ -38,24 +38,29 @@ export function CreateLobby() {
             setError(body.properties)
         }
 
-        useEffect(() => {
+        /*useEffect(() => {
             const period = 2000;
             if (body.properties) {
                 const tid = setInterval(async () => {
                     const rsp2 = await useFetch(`games/${body.properties.id}`);
                     const body2 = await rsp2.json()
                     if (body2.properties) {
-                        window.location.href = `games/${body.properties.id}`;
+                        window.location.href = `games/${body.properties.id}`; //TODO(): Tá mal Arão
                     }
                 }, period);
                 return () => clearInterval(tid);
             }
-        }, [rsp]);
+        }, [rsp]);*/
     }
 
     return (
         <div>
             <Navbar/>
+            {submitting && (
+                <div>
+                    <h1>Submitting...</h1>
+                </div>
+            )}
             {error && (
                 <div>
                     <h1> Error ${error} </h1>

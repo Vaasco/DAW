@@ -1,15 +1,13 @@
-import {useFetch} from "./utils/useFetch";
 import {Home} from "./views/home";
 import {GetStats, statsLoader} from "./views/statistics";
 import {CreateLobby} from "./views/lobby";
 import {GetGame} from "./views/game";
 import {Authors} from "./views/authors";
 import {Login} from "./views/login";
-import {SignIn} from "./views/signin";
+import {SignUp} from "./views/signup";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {createRoot} from "react-dom/client";
 import React from "react";
-import {ErrorComp} from "./Errors/ErrorLogin";
 
 
 const router = createBrowserRouter(
@@ -28,7 +26,7 @@ const router = createBrowserRouter(
         },
         {
             path: "/sign",
-            element: <SignIn/>
+            element: <SignUp/>
         },
         {
             path: "/lobby",
@@ -43,10 +41,10 @@ const router = createBrowserRouter(
             path: "/game",
             element: <GetGame/>
         },
-        /*{
+        {
             path: "/play",
-            element: <PlayGame/>
-        }*/
+            element: <GetGame/>
+        }
     ]
 )
 

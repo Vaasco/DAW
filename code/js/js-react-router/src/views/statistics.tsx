@@ -37,7 +37,7 @@ function GetStats() {
     return (
         <div>
             <Navbar/>
-            <form onSubmit={usernameStats}>
+            <form onSubmit={getUsernameStats}>
                 <label>
                     Username:
                     <input
@@ -48,36 +48,18 @@ function GetStats() {
                 </label>
                 <button type="submit">Get Stats</button>
             </form>
-
-            {nameStats && (
-                <div>
-                    {nameStats.map((userStats, index) => (
-                        <div key={index}>
-                            <h2>Username: {userStats.username}</h2>
-                            <p>Rank: {userStats.rank}</p>
-                            <p>Played Games: {userStats.playedGames}</p>
-                            <p>Won Games: {userStats.wonGames}</p>
-                            <p>Lost Games: {userStats.lostGames}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {everyStats && (
-                <div>
-                    <h2>All Player Stats:</h2>
-                    {everyStats.map((playerStats, index) => (
-                        <div key={index}>
-                            <h3>{playerStats.username}</h3>
-                            <p>Rank: {playerStats.rank}</p>
-                            <p>Played Games: {playerStats.playedGames}</p>
-                            <p>Won Games: {playerStats.wonGames}</p>
-                            <p>Lost Games: {playerStats.lostGames}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
-
+            <div>
+                <h2>All Player Stats:</h2>
+                {stats.map((playerStats, index) => (
+                    <div key={index}>
+                        <h3>{playerStats.username}</h3>
+                        <p>Rank: {playerStats.rank}</p>
+                        <p>Played Games: {playerStats.playedGames}</p>
+                        <p>Won Games: {playerStats.wonGames}</p>
+                        <p>Lost Games: {playerStats.lostGames}</p>
+                    </div>
+                ))}
+            </div>
             {error && <p style={{color: 'red'}}>{error}</p>}
         </div>
     );

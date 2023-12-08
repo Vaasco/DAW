@@ -15,6 +15,11 @@ export function SignUp() {
         setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setSubmitting(true);
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             if (submitting) {
