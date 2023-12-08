@@ -24,7 +24,9 @@ export function GetGame() {
     };
 
     const play = async (rowIndex, colIndex) => {
-        const fetch = await  useFetch(`games/${id}`,'POST',)
+        
+        const rsp = await  useFetch(`games/${id}`,'POST',)
+        const body = await rsp.json()
 
     }
 
