@@ -39,7 +39,7 @@ const router = createBrowserRouter(
             loader: statsLoader
         },
         {
-            path: "/games",
+            path: "/games/:id",
             element: <GetGame />
         },
         {

@@ -7,11 +7,10 @@ import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
 import {useParams} from "react-router-dom";
 
-export function GetGame() {
-    const [gameId, setGameId] = useState('');
+function GetGame() {
+    const gameId = useParams().id
     const [response, setResponse] = useState(null);
     const [playerId, setPlayerId] = useState('');
-    const [submitting, setSubmitting] = useState(false);
     const [played, setPlayed] = useState(false);
     const [playerB, setPlayerB] = useState('');
     const [playerW, setPlayerW] = useState('');
@@ -55,7 +54,6 @@ export function GetGame() {
             timeOut: 5000,
             extendedTimeOut: 1000,
             iconClass: 'custom-error-icon',
-            onHidden: () => setSubmitting(false)
         }
         toastr.error(error)
     }
@@ -79,7 +77,7 @@ export function GetGame() {
             handleError(body.error)
         } else {
             setResponse(properties)
-            setSubmitting(true)
+            checkGameState()
         }
     }
 
@@ -93,10 +91,25 @@ export function GetGame() {
                 const [row, col] = position.split('').map((c) =>
                     (c >= '1' && c <= '9') ? parseInt(c, 10) - 1 : c.charCodeAt(0) - 'A'.charCodeAt(0)
                 );
-
                 board[row][col] = player as string;
             }
         }
+
+        useFetch(`users/${response.playerB}`).then(p => {
+            p.json().then(p2 => {
+                if (p.ok) {
+                    setPlayerB(p2.properties.username)
+                }
+            })
+        })
+
+        useFetch(`users/${response.playerW}`).then(p => {
+            p.json().then(p2 => {
+                if (p.ok) {
+                    setPlayerW(p2.properties.username)
+                }
+            })
+        })
         return board;
     };
 
@@ -120,7 +133,11 @@ export function GetGame() {
         if (win !== '') {
             alert(win);
         }
-    }, [submitting, played]);
+    }, [win]);
+
+    useEffect(() => {
+        fetchGame();
+    }, []);
 
     const renderBoard = () => {
         const board = generateBoard();
@@ -177,12 +194,15 @@ export function GetGame() {
             {response && (
                 <div>
                     <h2>Game Details</h2>
-                    <p>ID: {response.id}</p>
                     <p>Rules: {response.board.rules}</p>
                     <p>Variant: {response.board.variant}</p>
+                    <h4><p>{`Black pieces - ${playerB}`}</p>
+                        <p>{`White pieces - ${playerW}`}</p></h4>
                     {renderBoard()}
                 </div>
             )}
         </div>
     );
 }
+
+export {GetGame};
