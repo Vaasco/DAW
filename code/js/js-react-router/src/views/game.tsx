@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useFetch } from "../utils/useFetch";
-import { Navbar } from "../utils/navBar";
+import React, {useEffect, useState} from "react";
+import {useFetch} from "../utils/useFetch";
+import {Navbar} from "../utils/navBar";
 import toastr from 'toastr'
 import {fontStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
-import { useParams } from "react-router-dom";
 import whitestone from "../utils/images/whitestone.png"
+import {useParams} from "react-router-dom";
 
 export function GetGame() {
     const [gameId, setGameId] = useState('');
@@ -13,25 +13,40 @@ export function GetGame() {
     const [playerId, setPlayerId] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [played, setPlayed] = useState(false);
+    const [playerB, setPlayerB] = useState('');
+    const [playerW, setPlayerW] = useState('');
+    const [win, setWin] = useState('');
+
+    const fetchGame = async () => {
+        if (response === null) {
+            const rsp = await useFetch(`games/${gameId}`)
+            const body = await rsp.json()
+            if (rsp.ok) {
+                setResponse(body.properties)
+            }
+            if (!rsp.ok) {
+                handleError(body.error)
+            }
+        }
+    }
 
     useEffect(() => {
         const id = document.cookie.replace(/.*id\s*=\s*([^;]*).*/, "$1")
         setPlayerId(id)
     }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const rsp = await useFetch(`games/${gameId}`)
-        const body = await rsp.json()
-        const properties = body.properties
-        setResponse(properties)
-        if (!rsp.ok) {
-            setResponse(null)
-            errorHandler(body.error)
+    const checkGameState = () => {
+        const player = response.playerB == playerId ? 'B' : 'W'
+        if (response.state) {
+            if (response.state === 'Ended B' && player == 'B') setWin('You Won')
+            if (response.state === 'Ended W' && player == 'W') setWin('You Won')
+            if (response.state === 'Ended B' && player == 'W') setWin('You Lost')
+            if (response.state === 'Ended W' && player == 'B') setWin('You Lost')
+            if (response.state === 'Ended D') setWin('The game ended with a draw')
         }
-    };
+    }
 
-    const errorHandler = (error) => {
+    const handleError = (error) => {
         toastr.options = {
             positionClass: 'toast-top',
             progressBar: true,
@@ -56,21 +71,21 @@ export function GetGame() {
             col: colIndex,
             swap: swap
         }
+
         const rsp = await useFetch(`games/${gameId}`, 'POST', requestBody)
         const body = await rsp.json()
         const properties = body.properties
         if (!rsp.ok) {
-            errorHandler(body.error)
-        }
-        else {
+            handleError(body.error)
+        } else {
             setResponse(properties)
             setSubmitting(true)
         }
     }
 
     const generateBoard = () => {
-        const board = Array.from({ length: response.boardSize }, () =>
-            Array.from({ length: response.boardSize }, () => ' ')
+        const board = Array.from({length: response.boardSize}, () =>
+            Array.from({length: response.boardSize}, () => ' ')
         );
 
         if (response.board.moves) {
@@ -87,19 +102,23 @@ export function GetGame() {
 
     useEffect(() => {
         const period = 2000;
-        if (submitting || !played) {
-            const tid = setInterval(async () => {
-                const rsp2 = await useFetch(`games/${gameId}`)
-                const body2 = await rsp2.json()
-                if (body2.properties && response) {
-                    if (body2.properties.board.moves !== response.board.moves) {
-                        setResponse(body2.properties)
-                        setPlayed(true);
-                        setSubmitting(false);
-                    }
+        const tid = setInterval(async () => {
+            const rsp2 = await useFetch(`games/${gameId}`);
+            const body2 = await rsp2.json();
+            if (body2.properties) {
+                if (body2.properties.board.moves !== response.board.moves) {
+                    setResponse(body2.properties);
+                    if(!played) setPlayed(true);
+                    checkGameState();
                 }
-            }, period);
-            return () => clearInterval(tid);
+            }
+        }, period);
+        return () => clearInterval(tid);
+    }, [played, gameId, response]);
+
+    useEffect(() => {
+        if (win !== '') {
+            alert(win);
         }
     }, [submitting, played]);
 
@@ -107,8 +126,8 @@ export function GetGame() {
         const board = generateBoard();
 
         return (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <table style={{ borderCollapse: 'collapse', border: '1px solid black', backgroundColor: '#D2B48C' }}>
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <table style={{borderCollapse: 'collapse', border: '1px solid black', backgroundColor: '#D2B48C'}}>
                     <tbody>
                     {board.map((row, rowIndex) => (
                         <tr key={rowIndex}>
@@ -136,7 +155,8 @@ export function GetGame() {
                                         </button>
                                     )}
                                     {cell !== ' ' && (
-                                        <img src={cell === 'B' ? blackstone : whitestone} style={{ width: '100%', height: '100%' }} />
+                                        <img src={cell === 'B' ? blackstone : whitestone}
+                                             style={{width: '100%', height: '100%'}}/>
                                     )}
                                 </td>
                             ))}
@@ -150,18 +170,10 @@ export function GetGame() {
 
     return (
         <div style={fontStyle}>
-            <Navbar />
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Game ID:
-                    <input
-                        type="text"
-                        value={gameId}
-                        onChange={(e) => setGameId(e.target.value)}
-                    />
-                </label>
-                <button type="submit">Submit</button>
-            </form>
+            <Navbar/>
+            {response === null && (
+                <h1>Loading</h1>
+            )}
             {response && (
                 <div>
                     <h2>Game Details</h2>
