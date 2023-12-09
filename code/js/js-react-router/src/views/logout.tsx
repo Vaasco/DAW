@@ -11,7 +11,6 @@ export function Logout() {
             const response = await fetch.json()
             setBody(response)
         }
-
         fetch()
     }, []);
 

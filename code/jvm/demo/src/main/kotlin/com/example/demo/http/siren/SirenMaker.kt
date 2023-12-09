@@ -22,8 +22,6 @@ import java.net.URI
 
 class SirenMaker {
 
-    //TODO()fun sirenHome(body: Result<>)
-
     fun sirenGetUserById(body: UserOutputModel): SirenModel<UserOutputModel> {
         return siren(body) {
             clazz("user by id")

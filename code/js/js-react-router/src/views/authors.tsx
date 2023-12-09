@@ -1,4 +1,3 @@
-import {useLoaderData} from "react-router-dom";
 import React, {useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";

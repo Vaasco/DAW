@@ -1,8 +1,3 @@
-import {
-    useState,
-    useEffect,
-} from 'react'
-
 const BASE_URL = "http://localhost:8081/api/"
 
 export function useFetch(path:string, method:string = "GET", body?:object) {

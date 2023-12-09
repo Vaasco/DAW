@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
+import {fontStyle} from "../utils/styles";
 
 export function CreateLobby() {
     const [rules, setRules] = useState('Pro');
@@ -9,6 +10,7 @@ export function CreateLobby() {
     const [boardSize, setBoardSize] = useState(15);
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
+    const [gameId, setGameId] = useState(0)
 
     const handleRulesChange = (e) => {
         setRules(e.target.value);
@@ -40,7 +42,8 @@ export function CreateLobby() {
 
         if (body.properties) {
             setSubmitting(false)
-            window.location.href = `/games/${body.properties.id}`
+            setGameId(body.properties.id)
+            //window.location.href = `games/${body.properties.id}`/>
         }
     }
 
@@ -62,13 +65,14 @@ export function CreateLobby() {
     }, [submitting]);
 
     return (
-        <div>
+        <div style={fontStyle}>
             <Navbar/>
             {submitting && (
                 <div>
                     <h1>Waiting for opponent...</h1>
                 </div>
             )}
+            {gameId != 0 && <Navigate to={`/games/${gameId}`} replace={true}/>}
             {error && (
                 <div>
                     <h1> Error ${error} </h1>

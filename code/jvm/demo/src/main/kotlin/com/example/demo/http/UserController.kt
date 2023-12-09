@@ -13,8 +13,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.http.ResponseCookie
-import org.springframework.web.servlet.function.EntityResponse
-
 
 @RestController
 class UserController(private val usersService: UsersService) {
@@ -51,12 +49,14 @@ class UserController(private val usersService: UsersService) {
     @PostMapping(PathTemplate.LOGIN)
     fun login(@RequestBody userModel: UserModel, response: HttpServletResponse): ResponseEntity<*> {
         val res = usersService.logIn(userModel.username, userModel.password)
-        val token = usersService.getUserToken(userModel.username)
-        val userId = usersService.getUserByToken(token.token)?.id
 
-        val cookies = createCookies(userModel, token, userId)
+        if (res is Either.Right) {
+            val token = usersService.getUserToken(userModel.username)
+            val userId = usersService.getUserByToken(token.token)?.id
 
-        cookies.forEach { response.addHeader(HttpHeaders.SET_COOKIE, it.toString()) }
+            val cookies = createCookies(userModel, token, userId)
+            cookies.forEach { response.addHeader(HttpHeaders.SET_COOKIE, it.toString()) }
+        }
 
         return handleResponse(res) {
             val siren = SirenMaker().sirenLogIn(it)

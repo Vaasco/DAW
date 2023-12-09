@@ -8,7 +8,6 @@ import {fontStyle} from "../utils/styles";
 export function Login(): React.ReactElement {
     const [inputs, setInputs] = useState({username: "", password: ""});
     const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState("");
     const [loginSuccess, setLoginSuccess] = useState(false);
 
     const handleChange = (e) => {
