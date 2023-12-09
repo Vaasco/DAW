@@ -37,7 +37,7 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
         return when (this) {
             is BoardRun -> {
                 if (rules != "Default") {
-                    val distance = if (rules == "Pro") 3 else 4 //If it isn't "Pro" it's "Long Pro"
+                    val distance = if (rules == "Pro") 3 else 4
                     val centralPiece = getCentralPosition(size)
                     when (this.moves.size) {
                         0 -> if (centralPiece != position) return this

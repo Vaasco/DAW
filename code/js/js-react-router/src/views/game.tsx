@@ -1,18 +1,28 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
 
 //const blackstone = require('../../../../jvm/demo/src/main/kotlin/com/example/demo/pieces/blackstone.png').default;
 
 export function GetGame() {
-    const [id, setId] = useState('');
+    const [gameId, setGameId] = useState('');
+    //const gameId = useParams().id
     const [response, setResponse] = useState(null);
+    const [playerId, setPlayerId] = useState('');
+    const [submitting, setSubmitting] = useState(false)
+    const [played, setPlayed] = useState(false)
+
+    useEffect(() => {
+        const id = document.cookie.replace(/.*id\s*=\s*([^;]*).*/, "$1")
+        setPlayerId(id)
+    }, []);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await useFetch(`games/${id}`)
-            const body = await response.json()
+            const rsp = await useFetch(`games/${gameId}`)
+            const body = await rsp.json()
             const properties = body.properties
             console.log("this is response", response)
             setResponse(properties)
@@ -25,9 +35,9 @@ export function GetGame() {
     const play = async (rowIndex, colIndex) => {
         const swap = response.board.variant =='Swap' ? 1 : null
         const requestBody = {
-            rowIndex,
-            colIndex,
-            swap
+            row: rowIndex,
+            col: colIndex,
+            swap: swap
         }
         const rsp = await  useFetch(`games/${id}`,'POST',requestBody)
         //const body = await rsp.json()
@@ -101,13 +111,12 @@ export function GetGame() {
                     Game ID:
                     <input
                         type="text"
-                        value={id}
-                        onChange={(e) => setId(e.target.value)}
+                        value={gameId}
+                        onChange={(e) => setGameId(e.target.value)}
                     />
                 </label>
                 <button type="submit">Submit</button>
             </form>
-
             {response && (
                 <div>
                     <h2>Game Details</h2>

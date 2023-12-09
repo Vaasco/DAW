@@ -1,7 +1,7 @@
 package com.example.demo.domain
 
 class Column private constructor(val symbol: Char, val boardSize: Int) {
-    val index get() = values.indexOf(this)
+    val index get() = symbol - 'A' //values.indexOf(this)
 
     companion object {
         lateinit var values: List<Column>

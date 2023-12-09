@@ -3,6 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export function Navbar() {
+    const username = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
     const navbarStyle = {
         display: 'flex',
         justifyContent: 'space-between',
@@ -43,13 +45,25 @@ export function Navbar() {
                 <Link to="/authors" style={linkStyle}>
                     <button style={buttonStyle}>About Us</button>
                 </Link>
-                <Link to="/login" style={linkStyle}>
-                    <button style={buttonStyle}>Login</button>
-                </Link>
-                <Link to="/sign" style={linkStyle}>
-                    <button style={buttonStyle}>Sign In</button>
-                </Link>
+                {!username ? (
+                    <>
+                        <Link to="/login" style={linkStyle}>
+                            <button style={buttonStyle}>Login</button>
+                        </Link>
+                        <Link to="/sign" style={linkStyle}>
+                            <button style={buttonStyle}>Sign Up</button>
+                        </Link>
+                    </>
+                ) : (
+                    <>
+                        <span style={linkStyle}>{username}</span>
+                        <Link to="/logout" style={linkStyle}>
+                            <button style={buttonStyle}>Log out</button>
+                        </Link>
+                    </>
+                )}
             </div>
+
         </nav>
     );
 }

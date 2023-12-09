@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
+import {Navigate} from "react-router-dom";
 
 export function CreateLobby() {
     const [rules, setRules] = useState('Pro');
     const [variant, setVariant] = useState('Freestyle');
     const [boardSize, setBoardSize] = useState(15);
     const [submitting, setSubmitting] = useState(false)
-    const [response, setResponse] = useState(null)
     const [error, setError] = useState('')
     //const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
 
@@ -38,20 +38,30 @@ export function CreateLobby() {
             setError(body.properties)
         }
 
-        /*useEffect(() => {
-            const period = 2000;
-            if (body.properties) {
-                const tid = setInterval(async () => {
-                    const rsp2 = await useFetch(`games/${body.properties.id}`);
-                    const body2 = await rsp2.json()
-                    if (body2.properties) {
-                        window.location.href = `games/${body.properties.id}`; //TODO(): Tá mal Arão
-                    }
-                }, period);
-                return () => clearInterval(tid);
-            }
-        }, [rsp]);*/
+        setSubmitting(true)
+
+        if (body.properties) {
+            setSubmitting(false)
+            window.location.href = `/games/${body.properties.id}`
+        }
     }
+
+    useEffect(() => {
+        const period = 2000;
+        if (submitting) {
+            const tid = setInterval(async () => {
+                const username = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                const rsp3 = await useFetch(`games/user/${username}`)
+                const body3 = await rsp3.json()
+                if (body3.properties) {
+                    setSubmitting(false)
+                    window.location.href = `games/${body3.properties.id}`;
+                }
+            }, period);
+            return () => clearInterval(tid);
+        }
+    }, [submitting]);
+
 
     return (
         <div>

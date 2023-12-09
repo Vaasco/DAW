@@ -8,6 +8,7 @@ import {SignUp} from "./views/signup";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {createRoot} from "react-dom/client";
 import React from "react";
+import {Logout} from "./views/logout";
 
 
 const router = createBrowserRouter(
@@ -38,8 +39,12 @@ const router = createBrowserRouter(
             loader: statsLoader
         },
         {
-            path: "/game",
-            element: <GetGame/>
+            path: "/games",
+            element: <GetGame />
+        },
+        {
+            path: "/logout",
+            element: <Logout/>
         }
     ]
 )
