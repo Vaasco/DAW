@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {useLoaderData} from "react-router-dom";
+import {fontStyle} from "../utils/styles";
 
 async function statsLoader(): Promise<Stat[]>{
     const fetch = await useFetch('/stats')
@@ -23,6 +24,7 @@ function GetStats() {
     const allStats = useLoaderData() as Stat[]
     const [stats, setStats] = useState(allStats);
 
+
     const getUsernameStats = (e) => {
         e.preventDefault();
 
@@ -35,7 +37,7 @@ function GetStats() {
     };
 
     return (
-        <div>
+        <div style={fontStyle}>
             <Navbar/>
             <form onSubmit={getUsernameStats}>
                 <label>

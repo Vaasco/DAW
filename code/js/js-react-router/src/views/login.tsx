@@ -1,19 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { Navbar } from "../utils/navBar";
-import { useFetch } from "../utils/useFetch";
-import { Navigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Navbar} from "../utils/navBar";
+import {useFetch} from "../utils/useFetch";
+import {Navigate} from "react-router-dom";
+import toastr from 'toastr'
+import {fontStyle} from "../utils/styles";
 
 export function Login(): React.ReactElement {
-    const [inputs, setInputs] = useState({ username: "", password: "" });
+    const [inputs, setInputs] = useState({username: "", password: ""});
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [loginSuccess, setLoginSuccess] = useState(false);
 
     const handleChange = (e) => {
         e.preventDefault();
-        const { name, value } = e.target;
-        setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
+        const {name, value} = e.target;
+        setInputs((prevInputs) => ({...prevInputs, [name]: value}));
     };
+
+    const errorHandler = (error) => {
+        toastr.options = {
+            positionClass: 'toast-center',
+            progressBar: true,
+            closeButton: true,
+            preventDuplicates: true,
+            timeOut: 5000,
+            extendedTimeOut: 1000,
+            iconClass: 'custom-error-icon',
+            onHidden: () => setSubmitting(false)
+        }
+        toastr.error(error)
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,7 +42,7 @@ export function Login(): React.ReactElement {
                 const body = await rsp.json();
 
                 if (!rsp.ok) {
-                    setError(body.properties);
+                    errorHandler(body.error)
                 }
 
                 if (rsp.ok) {
@@ -46,14 +62,9 @@ export function Login(): React.ReactElement {
     };
 
     return (
-        <div>
-            <Navbar />
-            {error && (
-                <div>
-                    <h1>Error: ${error}</h1>
-                </div>
-            )}
-            {loginSuccess && <Navigate to="/" replace={true} />}
+        <div style={fontStyle}>
+            <Navbar/>
+            {loginSuccess && <Navigate to="/" replace={true}/>}
             <form onSubmit={handleSubmit}>
                 <fieldset disabled={submitting}>
                     <div>

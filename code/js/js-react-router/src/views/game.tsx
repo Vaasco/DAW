@@ -1,36 +1,49 @@
-import React, {useEffect, useState} from "react";
-import {useFetch} from "../utils/useFetch";
-import {Navbar} from "../utils/navBar";
-import {useParams} from "react-router-dom";
-
-//const blackstone = require('../../../../jvm/demo/src/main/kotlin/com/example/demo/pieces/blackstone.png').default;
+import React, { useEffect, useState } from "react";
+import { useFetch } from "../utils/useFetch";
+import { Navbar } from "../utils/navBar";
+import toastr from 'toastr'
+import {fontStyle} from "../utils/styles";
+import blackstone from "../utils/images/blackstone.png"
+import { useParams } from "react-router-dom";
+import whitestone from "../utils/images/whitestone.png"
 
 export function GetGame() {
     const [gameId, setGameId] = useState('');
-    //const gameId = useParams().id
     const [response, setResponse] = useState(null);
     const [playerId, setPlayerId] = useState('');
-    const [submitting, setSubmitting] = useState(false)
-    const [played, setPlayed] = useState(false)
+    const [submitting, setSubmitting] = useState(false);
+    const [played, setPlayed] = useState(false);
 
     useEffect(() => {
         const id = document.cookie.replace(/.*id\s*=\s*([^;]*).*/, "$1")
         setPlayerId(id)
     }, []);
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const rsp = await useFetch(`games/${gameId}`)
-            const body = await rsp.json()
-            const properties = body.properties
-            setResponse(properties)
-        } catch (error) {
-            console.error('Error fetching game:', error.message);
+        const rsp = await useFetch(`games/${gameId}`)
+        const body = await rsp.json()
+        const properties = body.properties
+        setResponse(properties)
+        if (!rsp.ok) {
             setResponse(null)
+            errorHandler(body.error)
         }
     };
+
+    const errorHandler = (error) => {
+        toastr.options = {
+            positionClass: 'toast-top',
+            progressBar: true,
+            closeButton: true,
+            preventDuplicates: true,
+            timeOut: 5000,
+            extendedTimeOut: 1000,
+            iconClass: 'custom-error-icon',
+            onHidden: () => setSubmitting(false)
+        }
+        toastr.error(error)
+    }
 
     const playable = response && response.state === 'Playing' &&
         ((playerId == response.playerB && response.board.turn == 'B') ||
@@ -46,13 +59,18 @@ export function GetGame() {
         const rsp = await useFetch(`games/${gameId}`, 'POST', requestBody)
         const body = await rsp.json()
         const properties = body.properties
-        setResponse(properties)
-        setSubmitting(true)
+        if (!rsp.ok) {
+            errorHandler(body.error)
+        }
+        else {
+            setResponse(properties)
+            setSubmitting(true)
+        }
     }
 
     const generateBoard = () => {
-        const board = Array.from({length: response.boardSize}, () =>
-            Array.from({length: response.boardSize}, () => ' ')
+        const board = Array.from({ length: response.boardSize }, () =>
+            Array.from({ length: response.boardSize }, () => ' ')
         );
 
         if (response.board.moves) {
@@ -71,11 +89,10 @@ export function GetGame() {
         const period = 2000;
         if (submitting || !played) {
             const tid = setInterval(async () => {
-                console.log("ESTOU À ESPERA")
                 const rsp2 = await useFetch(`games/${gameId}`)
                 const body2 = await rsp2.json()
-                if (body2.properties) {
-                    if(body2.properties.board.moves !== response.board.moves) {
+                if (body2.properties && response) {
+                    if (body2.properties.board.moves !== response.board.moves) {
                         setResponse(body2.properties)
                         setPlayed(true);
                         setSubmitting(false);
@@ -84,54 +101,56 @@ export function GetGame() {
             }, period);
             return () => clearInterval(tid);
         }
-    },[submitting, played]);
+    }, [submitting, played]);
 
     const renderBoard = () => {
         const board = generateBoard();
 
         return (
-            <table style={{borderCollapse: 'collapse', border: '1px solid black'}}>
-                <tbody>
-                {board.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                        {row.map((cell, colIndex) => (
-                            <td
-                                key={colIndex}
-                                style={{
-                                    border: '1px solid black',
-                                    width: '40px',
-                                    height: '40px',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                {cell === ' ' && playable && (
-                                    <button
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            cursor: 'pointer',
-                                            backgroundColor: rowIndex == 7 && colIndex == 7 ? 'red' : 'rgba(255, 255, 255, 0.0)',
-                                            border: 'none'
-                                        }}
-                                        onClick={() => play(rowIndex, colIndex)}
-                                    >
-                                    </button>
-                                )}
-                                {cell !== ' ' && (
-                                    cell
-                                )}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <table style={{ borderCollapse: 'collapse', border: '1px solid black', backgroundColor: '#D2B48C' }}>
+                    <tbody>
+                    {board.map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                            {row.map((cell, colIndex) => (
+                                <td
+                                    key={colIndex}
+                                    style={{
+                                        border: '1px solid black',
+                                        width: '40px',
+                                        height: '40px',
+                                        textAlign: 'center',
+                                    }}
+                                >
+                                    {cell === ' ' && playable && (
+                                        <button
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                cursor: 'pointer',
+                                                backgroundColor: rowIndex === 7 && colIndex === 7 ? 'red' : 'rgba(255, 255, 255, 0.0)',
+                                                border: 'none'
+                                            }}
+                                            onClick={() => play(rowIndex, colIndex)}
+                                        >
+                                        </button>
+                                    )}
+                                    {cell !== ' ' && (
+                                        <img src={cell === 'B' ? blackstone : whitestone} style={{ width: '100%', height: '100%' }} />
+                                    )}
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
         );
     };
 
     return (
-        <div>
-            <Navbar/>
+        <div style={fontStyle}>
+            <Navbar />
             <form onSubmit={handleSubmit}>
                 <label>
                     Game ID:
@@ -149,10 +168,7 @@ export function GetGame() {
                     <p>ID: {response.id}</p>
                     <p>Rules: {response.board.rules}</p>
                     <p>Variant: {response.board.variant}</p>
-                    <div>
-                        <h3>Board:</h3>
-                        {renderBoard()}
-                    </div>
+                    {renderBoard()}
                 </div>
             )}
         </div>

@@ -1,6 +1,7 @@
 package com.example.demo.http
 
 import com.example.demo.domain.AuthenticatedUser
+import com.example.demo.domain.Either
 import com.example.demo.domain.Token
 import com.example.demo.http.model.UserModel
 import com.example.demo.service.*
@@ -31,12 +32,15 @@ class UserController(private val usersService: UsersService) {
     @PostMapping(PathTemplate.CREATE_USER)
     fun createUser(@RequestBody userModel: UserModel, response: HttpServletResponse): ResponseEntity<*> {
         val res = usersService.createUser(userModel.username, userModel.password)
-        val token = usersService.getUserToken(userModel.username)
-        val userId = usersService.getUserByToken(token.token)?.id
 
-        val cookies = createCookies(userModel, token, userId)
+        if(res is Either.Right) {
+            val token = usersService.getUserToken(userModel.username)
+            val userId = usersService.getUserByToken(token.token)?.id
 
-        cookies.forEach {response.addHeader(HttpHeaders.SET_COOKIE, it.toString())}
+            val cookies = createCookies(userModel, token, userId)
+
+            cookies.forEach { response.addHeader(HttpHeaders.SET_COOKIE, it.toString()) }
+        }
 
         return handleResponse(res) {
             val siren = SirenMaker().sirenSignIn(it)

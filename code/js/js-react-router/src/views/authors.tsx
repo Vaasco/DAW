@@ -2,6 +2,7 @@ import {useLoaderData} from "react-router-dom";
 import React, {useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
+import {fontStyle} from "../utils/styles";
 
 export function Authors() {
     const [authors, setAuthors] = useState(null)
@@ -16,7 +17,7 @@ export function Authors() {
     if(!authors) fetch()
 
     return (
-        <div>
+        <div style={fontStyle}>
             <Navbar/>
             {!authors ?
                 <div>

@@ -1,35 +1,10 @@
 // Navbar.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link}  from 'react-router-dom';
+import {navbarStyle, linkStyle, buttonStyle, linkContainerStyle} from "./styles";
 
 export function Navbar() {
     const username = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-    const navbarStyle = {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '10px',
-        backgroundColor: 'white',
-        fontFamily: 'Nova Square, sans-serif',
-    };
-
-    const linkContainerStyle = {
-        display: 'flex',
-        alignItems: 'center',
-    };
-
-    const linkStyle = {
-        textDecoration: 'none',
-        color: 'black',
-        marginRight: '10px',
-    };
-
-    const buttonStyle = {
-        background: 'none',
-        border: 'none',
-        cursor: 'pointer',
-    };
 
     return (
         <nav style={navbarStyle}>

@@ -53,13 +53,13 @@ export function CreateLobby() {
                 const body3 = await rsp3.json()
                 if (body3.properties) {
                     setSubmitting(false)
-                    window.location.href = `games/${body3.properties.id}`;
+                    //window.location.href = `games/${body3.properties.id}`;
+                    setGameId(body3.properties.id)
                 }
             }, period);
             return () => clearInterval(tid);
         }
     }, [submitting]);
-
 
     return (
         <div>
