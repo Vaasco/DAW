@@ -9,7 +9,6 @@ export function CreateLobby() {
     const [boardSize, setBoardSize] = useState(15);
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
-    //const [pageDesign, setPageDesign] = useState<PageDesign>(PageDesign.Default);
 
     const handleRulesChange = (e) => {
         setRules(e.target.value);
@@ -24,7 +23,6 @@ export function CreateLobby() {
     };
 
     const handleSubmit = async () => {
-        setSubmitting(true)
         const requestBody = {
             rules,
             variant,
@@ -68,7 +66,7 @@ export function CreateLobby() {
             <Navbar/>
             {submitting && (
                 <div>
-                    <h1>Submitting...</h1>
+                    <h1>Waiting for opponent...</h1>
                 </div>
             )}
             {error && (

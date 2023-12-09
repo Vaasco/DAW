@@ -96,12 +96,13 @@ class JdbiUsersRepository(private val handle: Handle) : UsersRepository {
             .execute()
     }
 
-    override fun deleteAuthentication(username: String?) {
+    override fun deleteAuthentication(username: String?): Boolean {
         val query = "delete from authentication using player where " +
                 "authentication.player_id = player.id and player.username = :username;"
         handle.createUpdate(query)
             .bind("username", username)
             .execute()
+        return true
     }
 
     override fun getCurrDate(): Date {

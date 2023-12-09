@@ -8,7 +8,7 @@ export function Navbar() {
     const navbarStyle = {
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',  // Center items vertically
+        alignItems: 'center',
         padding: '10px',
         backgroundColor: 'white',
         fontFamily: 'Nova Square, sans-serif',

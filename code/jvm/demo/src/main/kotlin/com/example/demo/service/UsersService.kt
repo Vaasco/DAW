@@ -21,6 +21,7 @@ typealias StatisticsByIdFetchResult = Either<Error, List<StatisticsByIdModel>>
 
 typealias StatisticsFetchResult = Either<Error, List<StatisticsModel>>
 
+typealias LogOutResult = Either<Error, Boolean>
 
 private val authors = listOf(
     AuthorsModel("Vasco Branco", "48259"),
@@ -78,9 +79,9 @@ class UsersService(
         }
     }
 
-    fun logOut(username: String?) {
+    fun logOut(username: String?): LogOutResult {
         return transactionManager.run {
-            it.usersRepository.deleteAuthentication(username)
+            success(it.usersRepository.deleteAuthentication(username))
         }
     }
 

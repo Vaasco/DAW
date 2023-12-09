@@ -28,7 +28,7 @@ interface UsersRepository {
 
     fun createAuthentication(token: Authentication)
 
-    fun deleteAuthentication(username: String?)
+    fun deleteAuthentication(username: String?): Boolean
 
     fun getCurrDate(): Date
 

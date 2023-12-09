@@ -59,11 +59,10 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
 
     private fun isOver(position: Position, newMoves: Moves, turn: Player, boardSize: Int): Board {
         if (newMoves.size.toDouble() == maxMoves(boardSize)) return BoardDraw(newMoves, size, rules, variant)
-        Direction.values().forEach { dir ->
-            //Ver as peças numa certa direção
+        val dirs = arrayOf(Direction.DOWN, Direction.DOWN_LEFT, Direction.DOWN_RIGHT, Direction.LEFT)
+        dirs.forEach { dir ->
             if (cellsInDirection(moves, turn, position, dir) >= 5)
                 return BoardWin(newMoves, size, rules, variant, turn)
-            //Ver se estão 5 peças em linha da cor que se quer
         }
            return BoardRun(newMoves, size, rules, variant, turn.other())
     }

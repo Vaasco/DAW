@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
+import {useParams} from "react-router-dom";
 
 //const blackstone = require('../../../../jvm/demo/src/main/kotlin/com/example/demo/pieces/blackstone.png').default;
 
@@ -24,7 +25,6 @@ export function GetGame() {
             const rsp = await useFetch(`games/${gameId}`)
             const body = await rsp.json()
             const properties = body.properties
-            console.log("this is response", response)
             setResponse(properties)
         } catch (error) {
             console.error('Error fetching game:', error.message);
@@ -32,15 +32,22 @@ export function GetGame() {
         }
     };
 
-    const play = async (rowIndex, colIndex) => {
-        const swap = response.board.variant =='Swap' ? 1 : null
+    const playable = response && response.state === 'Playing' &&
+        ((playerId == response.playerB && response.board.turn == 'B') ||
+            (playerId == response.playerW && response.board.turn == 'W'))
+
+    const play = async (rowIndex: number, colIndex: number) => {
+        const swap = response.board.variant == 'Swap' ? 1 : null
         const requestBody = {
             row: rowIndex,
             col: colIndex,
             swap: swap
         }
-        const rsp = await  useFetch(`games/${id}`,'POST',requestBody)
-        //const body = await rsp.json()
+        const rsp = await useFetch(`games/${gameId}`, 'POST', requestBody)
+        const body = await rsp.json()
+        const properties = body.properties
+        setResponse(properties)
+        setSubmitting(true)
     }
 
     const generateBoard = () => {
@@ -60,6 +67,25 @@ export function GetGame() {
         return board;
     };
 
+    useEffect(() => {
+        const period = 2000;
+        if (submitting || !played) {
+            const tid = setInterval(async () => {
+                console.log("ESTOU À ESPERA")
+                const rsp2 = await useFetch(`games/${gameId}`)
+                const body2 = await rsp2.json()
+                if (body2.properties) {
+                    if(body2.properties.board.moves !== response.board.moves) {
+                        setResponse(body2.properties)
+                        setPlayed(true);
+                        setSubmitting(false);
+                    }
+                }
+            }, period);
+            return () => clearInterval(tid);
+        }
+    },[submitting, played]);
+
     const renderBoard = () => {
         const board = generateBoard();
 
@@ -78,17 +104,17 @@ export function GetGame() {
                                     textAlign: 'center',
                                 }}
                             >
-                                {cell === ' ' && response.state === 'Playing' && (
+                                {cell === ' ' && playable && (
                                     <button
                                         style={{
                                             width: '100%',
                                             height: '100%',
                                             cursor: 'pointer',
+                                            backgroundColor: rowIndex == 7 && colIndex == 7 ? 'red' : 'rgba(255, 255, 255, 0.0)',
+                                            border: 'none'
                                         }}
                                         onClick={() => play(rowIndex, colIndex)}
                                     >
-                                        {/* Pode colocar aqui o conteúdo do botão, como um ícone ou texto */}
-
                                     </button>
                                 )}
                                 {cell !== ' ' && (

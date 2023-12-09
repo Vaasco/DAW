@@ -60,7 +60,7 @@ class SirenMaker {
         }
     }
 
-    fun sirenLogOut(body: Token): SirenModel<Token> {
+    fun sirenLogOut(body: Boolean): SirenModel<Boolean> {
         return siren(body) {
             clazz("log out")
             action(HOME, URI(HOME), GET)

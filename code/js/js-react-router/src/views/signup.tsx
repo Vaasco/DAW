@@ -15,11 +15,6 @@ export function SignUp() {
         setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setSubmitting(true);
-    }
-
     useEffect(() => {
         const fetchData = async () => {
             if (submitting) {
@@ -34,13 +29,20 @@ export function SignUp() {
                 }
 
                 if (rsp.ok) {
+                    // Set signup success flag
                     setSignupSuccess(true);
                     setSubmitting(false);
                 }
             }
         };
+
         fetchData();
     }, [submitting, inputs]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+    };
 
     return (
         <div>

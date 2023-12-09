@@ -10,11 +10,11 @@ export function Home() {
             <div>
                 <Link to="/login">Login</Link>
                 <br/>
-                <Link to="/sign">Sign In</Link>
+                <Link to="/sign">Sign Up</Link>
                 <br/>
                 <Link to="/lobby">Create Lobby</Link>
                 <br/>
-                <Link to="/game">Get Game By Id</Link>
+                <Link to="/games">Get Game By Id</Link>
             </div>
         </div>
     );
