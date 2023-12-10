@@ -156,7 +156,8 @@ function GetGame() {
                                 <td
                                     key={colIndex}
                                     style={{
-                                        border: '1px solid black',
+                                        background: 'linear-gradient(to bottom, transparent 47%, #000 47%, #000 53%,  transparent 53%), linear-gradient(to right, transparent 47%, #000 47%, #000 53%, transparent 53%)',
+                                        border: 'none',//'1px solid black',
                                         width: '40px',
                                         height: '40px',
                                         textAlign: 'center',
