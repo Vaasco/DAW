@@ -85,10 +85,10 @@ begin
         if (new.state = 'Ended D') then
             update ranking set played_games = played_games + 1 where player_id = new.player_B or player_id = new.player_W;
             return new;
-        elseif (new.state = 'Ended B') then
+        elseif (new.state = 'Ended B' or new.state = 'W Forfeited') then
             Winner := new.player_B;
             Loser := new.player_W;
-        elseif (new.state = 'Ended W') then
+        elseif (new.state = 'Ended W' or new.state = 'B Forfeited') then
             Winner := new.player_W;
             Loser := new.player_B;
         end if;

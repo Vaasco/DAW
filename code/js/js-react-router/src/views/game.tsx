@@ -16,6 +16,7 @@ function GetGame() {
     const [playerW, setPlayerW] = useState('');
     const [win, setWin] = useState('');
 
+
     const fetchGame = async () => {
         if (response === null) {
             const rsp = await useFetch(`games/${gameId}`)
@@ -24,7 +25,7 @@ function GetGame() {
                 setResponse(body.properties)
             }
             if (!rsp.ok) {
-                handleError(body.error)
+                errorHandler(body.error)
             }
         }
     }
@@ -45,7 +46,7 @@ function GetGame() {
         }
     }
 
-    const handleError = (error) => {
+    const errorHandler = (error) => {
         toastr.options = {
             positionClass: 'toast-top',
             progressBar: true,
@@ -63,18 +64,16 @@ function GetGame() {
             (playerId == response.playerW && response.board.turn == 'W'))
 
     const play = async (rowIndex: number, colIndex: number) => {
-        const swap = response.board.variant == 'Swap' ? 1 : null
         const requestBody = {
             row: rowIndex,
-            col: colIndex,
-            swap: swap
+            col: colIndex
         }
 
         const rsp = await useFetch(`games/${gameId}`, 'POST', requestBody)
         const body = await rsp.json()
         const properties = body.properties
         if (!rsp.ok) {
-            handleError(body.error)
+            errorHandler(body.error)
         } else {
             setResponse(properties)
             checkGameState()
@@ -95,21 +94,25 @@ function GetGame() {
             }
         }
 
-        useFetch(`users/${response.playerB}`).then(p => {
-            p.json().then(p2 => {
-                if (p.ok) {
-                    setPlayerB(p2.properties.username)
-                }
+        if (playerB == ''){
+            useFetch(`users/${response.playerB}`).then(p => {
+                p.json().then(p2 => {
+                    if (p.ok) {
+                        setPlayerB(p2.properties.username)
+                    }
+                })
             })
-        })
+        }
 
-        useFetch(`users/${response.playerW}`).then(p => {
-            p.json().then(p2 => {
-                if (p.ok) {
-                    setPlayerW(p2.properties.username)
-                }
+        if (playerW == '') {
+            useFetch(`users/${response.playerW}`).then(p => {
+                p.json().then(p2 => {
+                    if (p.ok) {
+                        setPlayerW(p2.properties.username)
+                    }
+                })
             })
-        })
+        }
         return board;
     };
 
@@ -124,6 +127,7 @@ function GetGame() {
                     if(!played) setPlayed(true);
                     checkGameState();
                 }
+
             }
         }, period);
         return () => clearInterval(tid);
@@ -161,10 +165,10 @@ function GetGame() {
                                     {cell === ' ' && playable && (
                                         <button
                                             style={{
-                                                width: '100%',
-                                                height: '100%',
+                                                width: '70%',
+                                                height: '70%',
                                                 cursor: 'pointer',
-                                                backgroundColor: rowIndex === 7 && colIndex === 7 ? 'red' : 'rgba(255, 255, 255, 0.0)',
+                                                backgroundColor: rowIndex == Math.floor(response.boardSize / 2) && colIndex == Math.floor(response.boardSize / 2) ? 'red' : 'rgba(255, 255, 255, 0.0)',
                                                 border: 'none'
                                             }}
                                             onClick={() => play(rowIndex, colIndex)}

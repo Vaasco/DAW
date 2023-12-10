@@ -60,4 +60,12 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
             .bind("id", gameId)
             .execute()
     }
+
+    override fun forfeitGame(id: Int, player: String): Boolean {
+        val query = "update game g set state = :playerForfeited where id = :id"
+        return handle.createUpdate(query)
+            .bind("playerForfeited", "$player Forfeited")
+            .bind("id", id)
+            .execute() == 1
+    }
 }

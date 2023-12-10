@@ -17,6 +17,9 @@ object PathTemplate {
     //Allow a user to play a round.POST
     const val PLAY = "/games/{id}"
 
+    //Allow a user to forfeit a game
+    const val FORFEIT = "/games/forfeit/{id}"
+
     //No authorization needed
     const val HOME = "/home"
 

@@ -5,6 +5,7 @@ import {GetGame} from "./views/game";
 import {Authors} from "./views/authors";
 import {Login} from "./views/login";
 import {SignUp} from "./views/signup";
+import {GetGameById} from "./views/getgame";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {createRoot} from "react-dom/client";
 import React from "react";

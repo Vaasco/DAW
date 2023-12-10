@@ -12,6 +12,8 @@ typealias GameIdFetchResult = Either<Error, GameModel>
 
 typealias PlayResult = Either<Error, GameModel>
 
+typealias ForfeitResult = Either<Error, Boolean>
+
 @Component
 class GamesService(private val transactionManager: TransactionManager) {
     private val validRules = listOf("Pro", "Long Pro")
@@ -94,15 +96,16 @@ class GamesService(private val transactionManager: TransactionManager) {
 
             if (game.board.moves[position] != null) return@run failure(Error.positionOccupied)
 
-            val turn = if (play.swap != null && board.moves.size == 2 && board.variant == "Swap after 1st move") {
-                it.gameRepository.swapPlayers(gameId)
+            val turn = if (play.swap != null && board.moves.size == 1 && board.variant == "Swap after 1st move") {
                 board.turn.other()
             } else board.turn
 
             val newBoard = game.board.play(position, turn)
+
             if (newBoard is BoardRun && newBoard.moves == board.moves) return@run failure(Error.wrongPlace)
 
-            //if (newBoard == game.board) return@run failure(Error.gameEnded)TODO: check if does anything if not remove
+            if(board.variant == "Swap after 1st move" && board.moves.size == 2) it.gameRepository.swapPlayers(gameId)
+
             val state = when (newBoard) {
                 is BoardDraw -> "Ended D"
                 is BoardWin -> "Ended ${board.turn}"
@@ -112,6 +115,24 @@ class GamesService(private val transactionManager: TransactionManager) {
             success(newGame)
         }
     }
+
+    fun forfeitGame(gameId: Int?, user: AuthenticatedUser?): ForfeitResult {
+        return transactionManager.run {
+            if (user == null) return@run failure(Error.unauthorized)
+            if (gameId == null) return@run failure(Error.invalidGameId)
+
+            val game = it.gameRepository.getGameById(gameId) ?: return@run failure(Error.nonExistentGame)
+            if (user.user.id != game.playerW && user.user.id != game.playerB) return@run failure(Error.wrongGame)
+            if (game.state != "Playing") return@run failure(Error.gameEnded)
+
+            val player = if (user.user.id == game.playerW) "W" else "B"
+
+            val forfeited = it.gameRepository.forfeitGame(gameId, player)
+
+            success(forfeited)
+        }
+    }
+
 }
 
 private fun handleDatabaseException(e: Exception): CreateLobbyResult {

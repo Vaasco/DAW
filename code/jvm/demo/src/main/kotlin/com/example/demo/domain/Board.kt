@@ -41,18 +41,12 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
                     val centralPiece = getCentralPosition(size)
                     when (this.moves.size) {
                         0 -> if (centralPiece != position) return this
-                        2 -> if (!isPositionsAway(centralPiece, position, distance)) return this
+                        1 -> if (this.variant == "Swap after 1st move" && !isPositionsAway(centralPiece, position, distance)) return this
+                        2 -> if (this.variant != "Swap after 1st move" && !isPositionsAway(centralPiece, position, distance)) return this
                     }
                 }
                 isOver(position, moves + (position to player), turn, size)
-
-                /*
-                require(player == turn) { "Not your turn" }
-                require(position != Position.INVALID) { "Invalid position" }
-                require(moves[position] == null) { "Position already occupied" }
-                */
             }
-
             is BoardDraw, is BoardWin -> this
         }
     }
@@ -67,14 +61,16 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
            return BoardRun(newMoves, size, rules, variant, turn.other())
     }
 
-        //Função "hashCode" que será igual ao valor do hashcode de moves.
-        override fun hashCode(): Int = moves.hashCode()
+    override fun hashCode(): Int = moves.hashCode()
 
-        override fun toString() = when (this) {
-            is BoardRun -> turn.string + size.toString() + rules + variant + '\n' + moves.toString()
+    override fun toString(): String {
+        return when (this) {
+            is BoardRun -> (if (moves.size == 2 && variant == "Swap after 1st move") this.turn.other().toString()
+                else this.turn.toString()) + size.toString() + rules + variant + '\n' + moves.toString()
             is BoardWin -> winner.string + size.toString() + rules + variant + '\n' + moves.toString()
             is BoardDraw -> moves.toString()
         }
+    }
 }
 
 /**

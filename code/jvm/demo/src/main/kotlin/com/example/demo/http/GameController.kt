@@ -56,4 +56,13 @@ class GameController(private val gamesService: GamesService) {
             siren.response(200)
         }
     }
+
+    @PostMapping(PathTemplate.FORFEIT)
+    fun forfeit(@PathVariable id: Int, user:AuthenticatedUser?): ResponseEntity<*> {
+        val res = gamesService.forfeitGame(id, user)
+        return handleResponse(res) {
+            val siren = SirenMaker().sirenForfeit(it)
+            siren.response(200)
+        }
+    }
 }

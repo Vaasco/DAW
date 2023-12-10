@@ -6,13 +6,15 @@ import com.example.demo.http.model.GameModel
 interface GamesRepository {
     fun updateGame(id: Int, board: Board, state: String): GameModel
 
-    fun swapPlayers(gameId : Int)
+    fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int)
+
+    fun getGameId(playerId: Int): String?
 
     fun getGameById(id : Int): GameModel?
 
     fun getLastGame(username : String) : GameModel?
 
-    fun createLobby(playerId: Int, rules: String, variant: String, boardSize: Int)
+    fun swapPlayers(gameId : Int)
 
-    fun getGameId(playerId: Int): String?
+    fun forfeitGame(id: Int, player: String): Boolean
 }

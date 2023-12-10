@@ -143,4 +143,11 @@ class SirenMaker {
             link(playUri.toString(), LinkRelation(playUri.toString()))
         }
     }
+
+    fun sirenForfeit(body: Boolean): SirenModel<Boolean> {
+        return siren(body) {
+            clazz("forfeit")
+            action(HOME, URI(HOME), GET)
+        }
+    }
 }
