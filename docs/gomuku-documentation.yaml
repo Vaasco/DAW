@@ -1,13 +1,13 @@
 info:
   title: Gomuku
-  version: 1.0
+  version: 2.0
   description: API for Gomuku game.
   base_url: https://localhost:8080/
 
 
 paths:
   - name: Get Game by ID
-    path: /games/check/{id}
+    path: /games/{id}
     method: GET
     description: Get game information by ID.
     parameters:
@@ -17,14 +17,104 @@ paths:
         required: true
         description: Game ID.
     security:
-      - BearerToken: [] 
+      - BearerToken: []
     responses:
         '200':
-          description: Successful response
+          application/vnd.siren+json:
+            #schema:
+              class:
+                - game by id
+              properties:
+                id:
+                  type: int
+                username:
+                  type: String
+              entities: []
+              links:
+                - rel:
+                    - "{id}"
+                  href: /users/{id}
+              actions:
+                - name: /home
+                  href: /home
+                  method: GET
+                  fields: []
+        '404':
+          application/problem+json:
+            error: "There's no game with the given id"
         '400':
-          description: Game does not exist or invalid ID
+          application/problem+json:
+            error: "Invalid game id"
         '500':
-          description: Internal Server Error
+          application/problem+json:
+            timestamp:
+              type: String
+            status: 500
+            error: "Internal server error"
+            path: /game/{id}
+
+  - name: Get Last Game
+    path: /games/user/{username}
+    method: GET
+    description: Gets the last game played by the user.
+    parameters:
+      -name: username
+      in: path
+      type: String
+      required: true
+      description: User's username.
+    responses:
+      '200':
+        application/vnd.siren+json:
+          #schema:
+            class:
+              - create lobby
+            properties:
+              id:
+                type: int
+              board:
+                - moves:
+                    type: object
+                  rules:
+                    type: String
+                  variant:
+                    type: String
+                  turn:
+                    type: String
+              state:
+                type: String
+              playerB:
+                type: int
+              playerW:
+                type: int
+              boardSize:
+                type: int
+            entities: [ ]
+            links:
+              - rel:
+                  - /games/{id}
+                href: /games/{id}
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+              - name: /games{id}
+                href: /games{id}
+                method: POST
+                fields: [ ]
+    '400':
+      application/problem+json:
+        error: "Invalid username"
+    '500':
+      application/problem+json:
+        timestamp:
+          type: String
+        status: 500
+        error: "Internal server error"
+        path: /games/user/{username}
+    security:
+       - BearerToken
 
   - name: Create Lobby
     path: /games
@@ -37,38 +127,65 @@ paths:
         required: true
         description: Lobby model containing playerId, rules, variant, and boardSize.
     responses:
-        '200':
-          description: Lobby created successfully
+        '201':
+          application/vnd.siren+json:
+            schema:
+              class:
+                - create lobby
+              properties:
+                id:
+                  type: int
+                board:
+                  - moves:
+                      type: object
+                    rules:
+                      type: String
+                    variant:
+                      type: String
+                    turn:
+                      type: String
+                state:
+                  type: String
+                playerB:
+                  type: int
+                playerW:
+                  type: int
+                boardSize:
+                  type: int
+              entities: []
+              links:
+                - rel:
+                    - /games
+                  href: /games
+              actions:
+                - name: /home
+                  href: /home
+                  method: GET
+                  fields: [ ]
+                - name: /games{id}
+                  href: /games{id}
+                  method: POST
+                  fields: [ ]
         '400':
+          application/problem+json:
+            error:
+              type: String
           description: Bad Request - Invalid id, rules, variant or boardSize
         '401':
-          description: Unauthorized - Invalid player
+          application/problem+json:
+            error: "Unauthorized"
         '500':
-          description: Internal Server Error
+          application/problem+json:
+            timestamp:
+              type: String
+            status: 500
+            error: "Internal server error"
+            path: /games
     security:
-      - BearerToken: [] 
-
-  - name: Get Game State
-    path: /games/state/{id}
-    method: GET
-    description: Get the state of the game by ID.
-    parameters:
-      - name: id
-        in: path
-        type: integer
-        required: true
-        description: Game ID.
-    security:
-      - BearerToken: [] 
-    responses:
-        '200':
-          description: Successful response
-        '400':
-          description: Bad Request - Invalid ID
-        '404':
-          description: Game not found
-        '500':
-          description: Internal Server Error
+      - BearerToken: []
+    headers:
+      - name: "Cookie"
+        value: "id=playerId; token=bearerToken; username=playerUsername"
 
   - name: Play Move
     path: /games/{id}
@@ -80,31 +197,41 @@ paths:
         type: integer
         required: true
         description: Game ID.
-      - name: pl
+      - name: playModel
         in: body
         type: object
         required: true
         description: Play model containing row, col, and playerId.
-      - name: user
-        in: header
-        type: object
-        required: true
-        description: Authenticated user information.
     responses:
       '200':
         description: Move successful, updated game
       '400':
-        description: Bad Request - Game Ended , Not oyur turn or  Invalid column, row , game id, player id or position
+        application/problem+json:
+          error:
+            type: String
+        description: Bad Request - Game Ended , Not your turn or  Invalid column, row , game id, player id or position.
       '401':
-        description: Unauthorized - Invalid player or user account
+        application/problem+json:
+          error:
+            type: String
+          description: Unauthorized - Unauthorized user or play, not user's turn or user can't play in the game.
       '404':
-        description: Game not found or user not found
-      '409':
-        description: Conflict - Invalid move, game ended, or not player's turn
+        application/problem+json:
+          error:
+            type: String
+        description: Not Found - Game not found.
       '500':
-        description: Internal Server Error
+        application/problem+json:
+          timestamp:
+            type: String
+          status: 500
+          error: "Internal server error"
+          path: /games/{id}
     security:
       - BearerToken: []
+    headers:
+      - name: "Cookie"
+        value: "id=playerId; token=bearerToken; username=playerUsername"
 
   - name: Get User by ID
     path: /users/{id}
@@ -117,12 +244,43 @@ paths:
         required: true
         description: User ID.
     responses:
-        '200':
-          description: Successful response
-        '400':
-          description: Bad Request - Invalid ID, or non exiting user
-        '500':
-        description: Internal Server Error
+      '200':
+        application/vnd.siren+json:
+          schema:
+            class:
+              - user by id
+            properties:
+              id:
+                type: int
+              username:
+                type: String
+            entities: [ ]
+            links:
+              - rel:
+                  - "{id}"
+                href: /users/{id}
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+      '400':
+        application/problem+json:
+          error:
+            type: String
+        description: Bad Request - Invalid ID, or non exiting user
+      '404':
+        application/problem+json:
+          error: "There's no user with the given id"
+      '500':
+        application/problem+json:
+          timestamp:
+            type: String
+          status: 500
+          error: "Internal server error"
+          path: /users/{id}
+      security:
+        - BearerToken: [ ]
 
   - name: Create User
     path: /users
@@ -135,51 +293,186 @@ paths:
         required: true
         description: User model containing username and password.
     responses:
-        '201':
-          description: User created successfully
+      '201':
+        application/vnd.siren+json:
+          schema:
+            class:
+              - sign in
+            properties:
+              token:
+                type: String
+            entities: [ ]
+            links:
+              - rel:
+                  - /users
+                href: /users
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+              - name: /users/login
+                href: /users/login
+                method: POST
+                fields: [ ]
         '400':
-          description: Bad Request - Invalid username or password
-        '409':
-          description: Conflict - Repeated username
+          application/problem+json:
+            error:
+              type: String
+          description: Bad Request - Invalid username/password or Repeated username
+        '500':
+          application/problem+json:
+            timestamp:
+              type: String
+            status: 500
+            error: "Internal server error"
+            path: /users
+      security:
+        - BearerToken: [ ]
 
-  - name: Get Statistics by ID
-    path: /home/stats/{id}
-    method: GET
-    description: Get statistics for a user by ID.
+  - name: Login
+    path: /users/login
+    method: POST
+    description: Login.
     parameters:
-      - name: id
-        in: path
-        type: integer
+      - name: userModel
+        in: body
+        type: object
         required: true
-        description: User ID.
+        description: User model containing username and password.
     responses:
-        '200':
-          description: Successful response
-        '400':
-          description: Bad Request - Invalid ID
-        '404':
-          description: User not found
+      '200':
+        application/vnd.siren+json:
+          schema:
+            class:
+              - login
+            properties:
+              token:
+                type: String
+            entities: [ ]
+            links:
+              - rel:
+                  - /users/login
+                href: /users/login
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+              - name: /users
+                href: /users
+                method: POST
+                fields: [ ]
+      '400':
+        application/problem+json:
+          error:
+            type: String
+        description: Bad Request - Invalid username/password or wrong password.
+      '404':
+        application/problem+json:
+          error: "There's no user with the given username"
+      '500':
+        application/problem+json:
+          timestamp:
+            type: String
+          status: 500
+          error: "Internal server error"
+          path: /users/login
+    security:
+      - BearerToken: [ ]
 
-
-  - name: Get Games Count
-    path: /home/stats/games/{id}
-    method: GET
-    description: Get the count of games played by a user.
-    parameters:
-      - name: id
-        in: path
-        type: integer
-        required: true
-        description: User ID.
+  - name: Logout
+    path: /users/logout
+    method: POST
+    description: Log out the user's session.
     responses:
-        '200':
-          description: Successful response
-        '404':
-          description: Invalid Id
-
-
+      '200':
+        application/vnd.siren+json:
+          schema:
+            class:
+              - logout
+            properties:
+              type: Boolean
+            entities: [ ]
+            links:
+              - rel:
+                  - "{username}"
+                href: /stats/{username}
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+              - name: /stats
+                href: /stats
+                method: GET
+                fields: [ ]
+      '400':
+        application/problem+json:
+          error:
+            type: String
+        description: Bad Request - Invalid username/password or wrong password.
+      '404':
+        application/problem+json:
+          error: "There's no user with the given username"
+      '500':
+        application/problem+json:
+          timestamp:
+            type: String
+          status: 500
+          error: "Internal server error"
+          path: /users/logout
+    security:
+      - BearerToken: [ ]
   - name: Get User by Username
     path: /users/username/{username}
+    method: GET
+    description: Get user by username.
+    parameters:
+      - name: username
+        in: path
+        type: string
+        required: true
+        description: User username.
+    responses:
+      '200':
+        application/vnd.siren+json:
+          schema:
+            class:
+              - statistics by id
+            properties:
+              id:
+                type: int
+              username:
+                type: String
+            entities: [ ]
+            links:
+              - rel:
+                  - "{username}"
+                href: /users/username/{username}
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+      '400':
+        application/problem+json:
+          error: "Invalid username"
+      '404':
+        application/problem+json:
+          error: "There's no user with the given username"
+      '500':
+        application/problem+json:
+          timestamp:
+            type: String
+          status: 500
+          error: "Internal server error"
+          path: /users/username/{username}
+    security:
+      - BearerToken: [ ]
+
+  - name: Get statistics by Username
+    path: /stats/{username}
     method: GET
     description: Get user information by username.
     parameters:
@@ -189,12 +482,95 @@ paths:
         required: true
         description: User username.
     responses:
-        '200':
-          description: Successful response
-          content:
-        '404':
-          description: Invalid username or non existing user
-
+      '200':
+        application/vnd.siren+json:
+          schema:
+            class:
+              - statistics by id
+            properties:
+              username:
+                type: String
+              rank:
+                type: int
+              playedGames:
+                type: int
+              wonGames:
+                type: int
+              lostGames:
+                type: int
+            entities: [ ]
+            links:
+              - rel:
+                  - /users
+                href: /users
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+              - name: /users/login
+                href: /users/login
+                method: POST
+                fields: [ ]
+      '400':
+        application/problem+json:
+          error: "Invalid username"
+      '404':
+        application/problem+json:
+          error: "There's no user with the given username"
+      '500':
+        application/problem+json:
+          timestamp:
+            type: String
+          status: 500
+          error: "Internal server error"
+          path: /stats/{username}
+    security:
+      - BearerToken: [ ]
+  - name: Get statistics
+    path: /stats
+    method: GET
+    description: Get  all users information by username.
+    responses:
+      '200':
+        application/vnd.siren+json:
+          schema:
+            class:
+              - statistics
+            properties:
+              - username:
+                  type: String
+                rank:
+                  type: int
+                playedGames:
+                 type: int
+                wonGames:
+                  type: int
+                lostGames:
+                  type: int
+            entities: [ ]
+            links:
+              - rel:
+                  - /stats
+                href: /stats
+            actions:
+              - name: /home
+                href: /home
+                method: GET
+                fields: [ ]
+              - name: /stats/{username}
+                href: /users/{username}
+                method: POST
+                fields: [ ]
+      '500':
+        application/problem+json:
+          timestamp:
+            type: String
+          status: 500
+          error: "Internal server error"
+          path: /stats
+    security:
+      - BearerToken: [ ]
 
   - name: Get Authors
     path: /users/authors
@@ -202,4 +578,4 @@ paths:
     description: Get information about authors.
     responses:
         '200':
-          description: Successful response
+          description: Successful response with the list of authors.
