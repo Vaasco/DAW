@@ -1,15 +1,18 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
 import toastr from 'toastr'
 import {fontStyle} from "../utils/styles";
+import {context} from "../utils/AuthContainer";
 
 export function SignUp() {
     const [inputs, setInputs] = useState({username: "", password: ""});
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [signupSuccess, setSignupSuccess] = useState(false);
+    const signupContext = useContext(context)
+
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -46,9 +49,10 @@ export function SignUp() {
                 }
 
                 if (rsp.ok) {
-                    // Set signup success flag
                     setSignupSuccess(true);
                     setSubmitting(false);
+                    signupContext.username = inputs.username
+                    signupContext.id = body.properties.userId
                 }
             }
         };

@@ -1,11 +1,12 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { Link } from "react-router-dom";
 import {Navbar} from "../utils/navBar";
 import{fontStyle} from "../utils/styles";
+import {context} from "../utils/AuthContainer";
 
 export function Home() {
-    const username = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
+    const homeContext = useContext(context)
+    const username = homeContext.username
     return (
         <div style={fontStyle}>
             <Navbar />

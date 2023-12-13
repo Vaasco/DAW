@@ -43,6 +43,8 @@ object PathTemplate {
     const val LOGIN = "/users/login"
 
     const val LOGOUT = "/users/logout"
+
+    const val COOKIES = "/cookies"
 }
 
 fun gameByIdURI(id: Int) = UriTemplate(PathTemplate.GAME_BY_ID).expand(id)

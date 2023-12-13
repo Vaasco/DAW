@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
 import toastr from 'toastr'
@@ -6,16 +6,16 @@ import {fontStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
 import {useParams} from "react-router-dom";
-
+import {context} from "../utils/AuthContainer";
 function GetGame() {
+    const gameContext = useContext(context)
+    const playerId = gameContext.id
     const gameId = useParams().id
     const [response, setResponse] = useState(null);
-    const [playerId, setPlayerId] = useState('');
     const [played, setPlayed] = useState(false);
     const [playerB, setPlayerB] = useState('');
     const [playerW, setPlayerW] = useState('');
     const [win, setWin] = useState('');
-
 
     const fetchGame = async () => {
         if (response === null) {
@@ -29,11 +29,6 @@ function GetGame() {
             }
         }
     }
-
-    useEffect(() => {
-        const id = document.cookie.replace(/.*id\s*=\s*([^;]*).*/, "$1")
-        setPlayerId(id)
-    }, []);
 
     const checkGameState = () => {
         const player = response.playerB == playerId ? 'B' : 'W'

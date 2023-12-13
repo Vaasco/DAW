@@ -10,6 +10,7 @@ import com.example.demo.http.PathTemplate.STATISTICS
 import com.example.demo.http.gameByIdURI
 import com.example.demo.http.model.AuthorsModel
 import com.example.demo.http.model.GameModel
+import com.example.demo.http.model.SignUpModel
 import com.example.demo.http.model.StatisticsByIdModel
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserOutputModel
@@ -40,7 +41,7 @@ class SirenMaker {
         }
     }
 
-    fun sirenSignIn(body: Token): SirenModel<Token> {
+    fun sirenSignIn(body: SignUpModel): SirenModel<SignUpModel> {
         return siren(body) {
             clazz("sign in")
             action(HOME, URI(LOGIN), GET)

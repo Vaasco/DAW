@@ -1,11 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
 import toastr from 'toastr'
 import {fontStyle} from "../utils/styles";
+import {context} from "../utils/AuthContainer";
 
 export function Login(): React.ReactElement {
+    const loginContext = useContext(context)
     const [inputs, setInputs] = useState({username: "", password: ""});
     const [submitting, setSubmitting] = useState(false);
     const [loginSuccess, setLoginSuccess] = useState(false);
@@ -45,7 +47,8 @@ export function Login(): React.ReactElement {
                 }
 
                 if (rsp.ok) {
-                    // Set login success flag
+                    loginContext.username = inputs.username
+                    loginContext.id = body.properties.id
                     setLoginSuccess(true);
                     setSubmitting(false);
                 }

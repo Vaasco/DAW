@@ -1,14 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
 import toastr from 'toastr'
 import {fontStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
+import {context} from "../utils/AuthContainer";
 
 export function GetGameById() {
+    const gameContext = useContext(context)
     const [response, setResponse] = useState(null);
-    const [playerId, setPlayerId] = useState('');
+    const [playerId, setPlayerId] = useState(0);
     const [played, setPlayed] = useState(false);
     const [playerB, setPlayerB] = useState('');
     const [playerW, setPlayerW] = useState('');
@@ -28,7 +30,7 @@ export function GetGameById() {
     }
 
     useEffect(() => {
-        const id = document.cookie.replace(/.*id\s*=\s*([^;]*).*/, "$1")
+        const id = gameContext.id
         setPlayerId(id)
     }, []);
 
@@ -144,7 +146,6 @@ export function GetGameById() {
                                                 backgroundColor: rowIndex === 7 && colIndex === 7 ? 'red' : 'rgba(255, 255, 255, 0.0)',
                                                 border: 'none'
                                             }}
-                                            //onClick={() => play(rowIndex, colIndex)}
                                         >
                                         </button>
                                     )}

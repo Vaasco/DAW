@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
 import {fontStyle} from "../utils/styles";
+import {context} from "../utils/AuthContainer";
 
 export function CreateLobby() {
+    const lobbyContext = useContext(context)
     const [rules, setRules] = useState('Pro');
     const [variant, setVariant] = useState('Freestyle');
     const [boardSize, setBoardSize] = useState(15);
@@ -43,7 +45,6 @@ export function CreateLobby() {
         if (body.properties) {
             setSubmitting(false)
             setGameId(body.properties.id)
-            //window.location.href = `games/${body.properties.id}`/>
         }
     }
 
@@ -51,7 +52,7 @@ export function CreateLobby() {
         const period = 2000;
         if (submitting) {
             const tid = setInterval(async () => {
-                const username = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                const username = lobbyContext.username
                 const rsp3 = await useFetch(`games/user/${username}`)
                 const body3 = await rsp3.json()
                 if (body3.properties) {

@@ -8,6 +8,7 @@ import com.example.demo.service.*
 import com.example.demo.http.siren.SirenMaker
 import com.example.demo.http.siren.response
 import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -131,6 +132,11 @@ class UserController(private val usersService: UsersService) {
             val siren = SirenMaker().sirenAuthors(it)
             siren.response(200)
         }
+    }
+
+    @GetMapping(PathTemplate.COOKIES)
+    fun getCookies(request :HttpServletRequest): List<Cookie> {
+        return request.cookies.filter { it.name == "username" || it.name == "id" }
     }
 }
 

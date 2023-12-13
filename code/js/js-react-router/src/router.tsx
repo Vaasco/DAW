@@ -10,6 +10,7 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {createRoot} from "react-dom/client";
 import React from "react";
 import {Logout} from "./views/logout";
+import {AuthContainer} from "./utils/AuthContainer";
 
 
 const router = createBrowserRouter(
@@ -54,10 +55,17 @@ const router = createBrowserRouter(
     ]
 )
 
+function App() {
+    return (
+        <AuthContainer>
+        <RouterProvider router={router}/>
+        </AuthContainer>
+    );
+}
+
 export function main() {
     const root = createRoot(document.getElementById("container"))
     root.render(
-        <RouterProvider router={router}/>
+        <App/>
     );
-
 }

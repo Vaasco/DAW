@@ -3,6 +3,7 @@ package com.example.demo.service
 import com.example.demo.domain.*
 import com.example.demo.domain.Error
 import com.example.demo.http.model.AuthorsModel
+import com.example.demo.http.model.SignUpModel
 import com.example.demo.http.model.StatisticsByIdModel
 import com.example.demo.http.model.StatisticsModel
 import com.example.demo.http.model.UserModel
@@ -14,6 +15,8 @@ import java.time.Instant
 typealias UserIdFetchResult = Either<Error, UserOutputModel>
 
 typealias TokenResult = Either<Error, Token>
+
+typealias SignUpResult = Either<Error, SignUpModel>
 
 typealias UsernameFetchResult = Either<Error, List<UserOutputModel>>
 
@@ -47,7 +50,7 @@ class UsersService(
         }
     }
 
-    fun createUser(username: String?, password: String?): TokenResult {
+    fun createUser(username: String?, password: String?): SignUpResult {
         return transactionManager.run {
             when {
                 username.isNullOrEmpty() -> failure(Error.invalidUsername)
@@ -56,7 +59,8 @@ class UsersService(
                 else -> {
                     val userId = it.usersRepository.createUser(username, password)
                     val token = createToken(userId)
-                    success(token)
+                    val signUpModel = SignUpModel(token.token, userId)
+                    success(signUpModel)
                 }
             }
         }

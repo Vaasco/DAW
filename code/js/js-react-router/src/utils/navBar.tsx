@@ -1,10 +1,11 @@
-// Navbar.jsx
-import React from 'react';
+import React, {useContext} from 'react';
 import {Link}  from 'react-router-dom';
 import {navbarStyle, linkStyle, buttonStyle, linkContainerStyle} from "./styles";
+import {context} from "./AuthContainer";
+
 
 export function Navbar() {
-    const username = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    const navContext = useContext(context)
 
     return (
         <nav style={navbarStyle}>
@@ -20,7 +21,7 @@ export function Navbar() {
                 <Link to="/authors" style={linkStyle}>
                     <button style={buttonStyle}>About Us</button>
                 </Link>
-                {!username ? (
+                {navContext.username === '' ? (
                     <>
                         <Link to="/login" style={linkStyle}>
                             <button style={buttonStyle}>Login</button>
@@ -31,7 +32,7 @@ export function Navbar() {
                     </>
                 ) : (
                     <>
-                        <span style={linkStyle}>{username}</span>
+                        <span style={linkStyle}>{navContext.username}</span>
                         <Link to="/logout" style={linkStyle}>
                             <button style={buttonStyle}>Log out</button>
                         </Link>
