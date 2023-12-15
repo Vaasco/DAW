@@ -20,7 +20,7 @@ class GomokuApp {
     @Bean
     fun jdbi(): Jdbi {
         val password = System.getenv("PASSWORD")
-        val jdbcDbURl = "jdbc:postgresql://localhost/postgres?user=postgres&password=${password}"
+        val jdbcDbURl = "jdbc:postgresql://db-tests:5432/db?user=dbuser&password=${password}"
         val dataSrc = PGSimpleDataSource()
         dataSrc.setUrl(jdbcDbURl)
         return Jdbi.create(dataSrc)

@@ -1,0 +1,13 @@
+FROM postgres
+
+USER postgres
+WORKDIR /app
+
+COPY ../src/main/kotlin/com/example/demo/SQL/createTable.sql /docker-entrypoint-initdb.d/1_create.sql
+COPY ../src/main/kotlin/com/example/demo/SQL/triggers.sql /docker-entrypoint-initdb.d/2_triggers.sql
+COPY ../src/main/kotlin/com/example/demo/SQL/insertTable.sql /docker-entrypoint-initdb.d/3_insert-test-data.sql
+
+COPY --chown=postgres:postgres ./tests/scripts/wait-for-postgres.sh ./bin/wait-for-postgres.sh
+RUN chmod +x ./bin/wait-for-postgres.sh
+
+EXPOSE 5432
