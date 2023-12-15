@@ -14,15 +14,19 @@ function GetGame() {
     const [response, setResponse] = useState(null);
     const [played, setPlayed] = useState(false);
     const [playerB, setPlayerB] = useState('');
+    const [playerBId, setPlayerBId] = useState(0);
     const [playerW, setPlayerW] = useState('');
     const [win, setWin] = useState('');
+    const [swapping, setSwapping] = useState(false);
 
     const fetchGame = async () => {
         if (response === null) {
             const rsp = await useFetch(`games/${gameId}`)
             const body = await rsp.json()
+            const properties = body.properties
             if (rsp.ok) {
-                setResponse(body.properties)
+                setResponse(properties)
+                setPlayerBId(properties.playerB)
             }
             if (!rsp.ok) {
                 errorHandler(body.error)
@@ -61,7 +65,8 @@ function GetGame() {
     const play = async (rowIndex: number, colIndex: number) => {
         const requestBody = {
             row: rowIndex,
-            col: colIndex
+            col: colIndex,
+            swap: swapping ? 1 : null
         }
 
         const rsp = await useFetch(`games/${gameId}`, 'POST', requestBody)
@@ -70,7 +75,16 @@ function GetGame() {
         if (!rsp.ok) {
             errorHandler(body.error)
         } else {
-            setResponse(properties)
+            if (properties !== response) {
+                setResponse(properties)
+                if (swapping && Object.keys(properties.board.moves).length === 2) {
+                    const temp = playerB
+                    setPlayerB(playerW)
+                    setPlayerW(temp)
+                    setSwapping(false)
+                    setPlayerBId(properties.playerB)
+                }
+            }
             checkGameState()
         }
     }
@@ -89,7 +103,7 @@ function GetGame() {
             }
         }
 
-        if (playerB == ''){
+        if (playerB === ''){
             useFetch(`users/${response.playerB}`).then(p => {
                 p.json().then(p2 => {
                     if (p.ok) {
@@ -99,7 +113,7 @@ function GetGame() {
             })
         }
 
-        if (playerW == '') {
+        if (playerW === '') {
             useFetch(`users/${response.playerW}`).then(p => {
                 p.json().then(p2 => {
                     if (p.ok) {
@@ -114,15 +128,20 @@ function GetGame() {
     useEffect(() => {
         const period = 2000;
         const tid = setInterval(async () => {
-            const rsp2 = await useFetch(`games/${gameId}`);
-            const body2 = await rsp2.json();
-            if (body2.properties) {
-                if (body2.properties.board.moves !== response.board.moves) {
-                    setResponse(body2.properties);
-                    if(!played) setPlayed(true);
-                    checkGameState();
+            const rsp = await useFetch(`games/${gameId}`);
+            const body = await rsp.json();
+            const properties = body.properties;
+            if (properties && properties !== response) {
+                setResponse(properties);
+                if(!played) setPlayed(true);
+                if (properties.board.variant.includes("Swap") && Object.keys(properties.board.moves).length === 2
+                    && playerBId !== properties.playerB) {
+                        const temp = playerB
+                        setPlayerB(playerW)
+                        setPlayerW(temp)
+                        setPlayerBId(properties.playerB)
                 }
-
+                checkGameState();
             }
         }, period);
         return () => clearInterval(tid);
@@ -152,7 +171,7 @@ function GetGame() {
                                     key={colIndex}
                                     style={{
                                         background: 'linear-gradient(to bottom, transparent 47%, #000 47%, #000 53%,  transparent 53%), linear-gradient(to right, transparent 47%, #000 47%, #000 53%, transparent 53%)',
-                                        border: 'none',//'1px solid black',
+                                        border: 'none',
                                         width: '40px',
                                         height: '40px',
                                         textAlign: 'center',
@@ -190,6 +209,10 @@ function GetGame() {
             <Navbar/>
             {response === null && (
                 <h1>Loading</h1>
+            )}
+            {response && response.board.variant.includes("Swap") && Object.keys(response.board.moves).length === 1
+                && playerId === response.playerW && (
+                    <button onClick={() => setSwapping(true)}>Swap</button>
             )}
             {response && (
                 <div>

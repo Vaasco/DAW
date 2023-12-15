@@ -10,7 +10,7 @@ import {context} from "../utils/AuthContainer";
 export function GetGameById() {
     const gameContext = useContext(context)
     const [response, setResponse] = useState(null);
-    const [playerId, setPlayerId] = useState(0);
+    const playerId = gameContext.id;
     const [played, setPlayed] = useState(false);
     const [playerB, setPlayerB] = useState('');
     const [playerW, setPlayerW] = useState('');
@@ -28,11 +28,6 @@ export function GetGameById() {
             }
         }
     }
-
-    useEffect(() => {
-        const id = gameContext.id
-        setPlayerId(id)
-    }, []);
 
     const errorHandler = (error) => {
         toastr.options = {

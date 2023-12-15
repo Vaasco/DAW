@@ -11,7 +11,7 @@ const context = createContext<contextValues>({username: '', id: 0});
 function AuthContainer({children}: {children: React.ReactNode}) {
     const [username, setUsername] = React.useState('')
     const [userId, setId] = React.useState(0)
-    const fetchUsername = async () => {
+    const fetchCookies = async () => {
         const rsp = await useFetch('cookies', 'GET');
         const body = await rsp.json();
 
@@ -25,7 +25,7 @@ function AuthContainer({children}: {children: React.ReactNode}) {
 
 
     useEffect(() => {
-        fetchUsername()
+        fetchCookies()
     }, []);
 
     return (

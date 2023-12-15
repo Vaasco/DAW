@@ -8,7 +8,7 @@ export function Logout() {
     const [body, setBody] = useState(null)
 
     const fetch = async () => {
-        const fetch = await useFetch("/users/logout","POST")
+        const fetch = await useFetch("users/logout","POST")
         const response = await fetch.json()
         setBody(response)
         logoutContext.username = ""

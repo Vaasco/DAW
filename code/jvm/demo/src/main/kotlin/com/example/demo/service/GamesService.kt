@@ -96,7 +96,7 @@ class GamesService(private val transactionManager: TransactionManager) {
 
             if (game.board.moves[position] != null) return@run failure(Error.positionOccupied)
 
-            val turn = if (play.swap != null && board.moves.size == 1 && board.variant == "Swap after 1st move") {
+            val turn = if (play.swap != null && board.moves.size == 1 && board.variant.contains("Swap")) {
                 board.turn.other()
             } else board.turn
 
@@ -104,7 +104,9 @@ class GamesService(private val transactionManager: TransactionManager) {
 
             if (newBoard is BoardRun && newBoard.moves == board.moves) return@run failure(Error.wrongPlace)
 
-            if(board.variant == "Swap after 1st move" && board.moves.size == 2) it.gameRepository.swapPlayers(gameId)
+            if(newBoard.variant.contains("Swap") && newBoard.moves.size == 2) {
+                it.gameRepository.swapPlayers(gameId)
+            }
 
             val state = when (newBoard) {
                 is BoardDraw -> "Ended D"

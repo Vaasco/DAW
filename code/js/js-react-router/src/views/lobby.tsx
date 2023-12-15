@@ -79,6 +79,7 @@ export function CreateLobby() {
                     <h1> Error ${error} </h1>
                 </div>
             )}
+            {!submitting && (
             <div>
                 Rules:
                 <div>
@@ -150,6 +151,7 @@ export function CreateLobby() {
                 <br/>
                 <button onClick={handleSubmit}>Submit</button>
             </div>
+            )}
         </div>
     );
 }
