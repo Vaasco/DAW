@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: ./tests/Dockerfile-db-test
     environment:
-      - POSTGRES_USER=dbuser
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=Fuukaisdead13
-      - POSTGRES_DB=db
+      - POSTGRES_DB=postgres
     ports:
       - 5432:5432
 
@@ -21,10 +21,12 @@ services:
       context: .
       dockerfile: ./tests/Dockerfile-spring
     environment:
-      PORT: 8081
-      DB_URL: "jdbc:postgresql://db-tests:5432/db?user=dbuser&password=Fuukaisdead13"
+      SERVER_PORT: 8083
+      DB_URL: "jdbc:postgresql://db-tests:5432/postgres?user=postgres&password=Fuukaisdead13"
     ports:
-      - 8081:8081
+      - 8083:8083
+    depends_on:
+      - db-tests
 
   spring-service-2:
     container_name: spring-service-2
@@ -33,10 +35,12 @@ services:
       context: .
       dockerfile: ./tests/Dockerfile-spring
     environment:
-      PORT: 8082
-      DB_URL: "jdbc:postgresql://db-tests:5432/db?user=dbuser&password=Fuukaisdead13"
+      SERVER_PORT: 8082
+      DB_URL: "jdbc:postgresql://db-tests:5432/postgres?user=postgres&password=Fuukaisdead13"
     ports:
       - 8082:8082
+    depends_on:
+      - db-tests
 
   # spring-service is used to illustrate scenario with a dynamic number of servers
   # without static and well know names.
@@ -46,8 +50,10 @@ services:
       context: .
       dockerfile: ./tests/Dockerfile-spring
     environment:
-      PORT: 8080
-      DB_URL: "jdbc:postgresql://db-tests:5432/db?user=dbuser&password=Fuukaisdead13"
+      SERVER_PORT: 8080
+      DB_URL: "jdbc:postgresql://db-tests:5432/postgres?user=postgres&password=Fuukaisdead13"
+    depends_on:
+      - db-tests
 
   # The service running the load-balancer
   nginx:
@@ -57,7 +63,6 @@ services:
       dockerfile: ./tests/Dockerfile-nginx
     ports:
       - 8080:8080
-      - 8088:8088
     volumes:
       - ./tests/nginx:/etc/nginx
     depends_on:
