@@ -1,16 +1,13 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
 import toastr from 'toastr'
 import {fontStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
-import {context} from "../utils/AuthContainer";
 
 export function GetGameById() {
-    const gameContext = useContext(context)
     const [response, setResponse] = useState(null);
-    const playerId = gameContext.id;
     const [played, setPlayed] = useState(false);
     const [playerB, setPlayerB] = useState('');
     const [playerW, setPlayerW] = useState('');
@@ -41,10 +38,6 @@ export function GetGameById() {
         }
         toastr.error(error)
     }
-
-    const playable = response && response.state === 'Playing' &&
-        ((playerId == response.playerB && response.board.turn == 'B') ||
-            (playerId == response.playerW && response.board.turn == 'W'))
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -132,18 +125,6 @@ export function GetGameById() {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    {cell === ' ' && playable && (
-                                        <button
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                cursor: 'pointer',
-                                                backgroundColor: rowIndex === 7 && colIndex === 7 ? 'red' : 'rgba(255, 255, 255, 0.0)',
-                                                border: 'none'
-                                            }}
-                                        >
-                                        </button>
-                                    )}
                                     {cell !== ' ' && (
                                         <img src={cell === 'B' ? blackstone : whitestone}
                                              style={{width: '100%', height: '100%'}}/>

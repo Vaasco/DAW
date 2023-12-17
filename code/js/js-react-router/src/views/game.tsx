@@ -192,7 +192,7 @@ function GetGame() {
                                     )}
                                     {cell !== ' ' && (
                                         <img src={cell === 'B' ? blackstone : whitestone}
-                                             style={{width: '100%', height: '100%'}}/>
+                                             style={{width: '90%', height: '90%'}}/>
                                     )}
                                 </td>
                             ))}

@@ -99,7 +99,7 @@ class GamesService(private val transactionManager: TransactionManager) {
             val turn =  if (play.swap != null && board.moves.size == 1) board.turn.other()
                         else board.turn
 
-            val newBoard = game.board.play(position, turn)
+            val newBoard = game.board.play(position, turn, play.swap)
 
             if (newBoard is BoardRun && newBoard.moves == board.moves) return@run failure(Error.wrongPlace)
 

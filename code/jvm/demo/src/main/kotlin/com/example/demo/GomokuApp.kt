@@ -19,10 +19,10 @@ class GomokuApp {
 
     @Bean
     fun jdbi(): Jdbi {
-        val password = System.getenv("DB_URL")
-        val jdbcDbURl = password
+        val jdbcDbURL = System.getenv("LOCALHOST_URL")
+        //val jdbcDbURL = System.getenv("DB_URL")
         val dataSrc = PGSimpleDataSource()
-        dataSrc.setUrl(jdbcDbURl)
+        dataSrc.setUrl(jdbcDbURL)
         return Jdbi.create(dataSrc)
             .installPlugin(KotlinPlugin())
             .registerColumnMapper(BoardMapper())

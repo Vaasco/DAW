@@ -33,7 +33,7 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
         return moves.size == other.moves.size
     }
 
-    fun play(position: Position, player: Player): Board {
+    fun play(position: Position, player: Player, swap: Int? = null): Board {
         return when (this) {
             is BoardRun -> {
                 if (rules != "Default") {
@@ -45,28 +45,28 @@ sealed class Board(val moves: Moves, private val size: Int, val rules: String, v
                         2 -> if (this.variant != "Swap after 1st move" && !isPositionsAway(centralPiece, position, distance)) return this
                     }
                 }
-                isOver(position, moves + (position to player), turn, size)
+                isOver(position, moves + (position to player), turn, size, swap)
             }
             is BoardDraw, is BoardWin -> this
         }
     }
 
-    private fun isOver(position: Position, newMoves: Moves, turn: Player, boardSize: Int): Board {
+    private fun isOver(position: Position, newMoves: Moves, turn: Player, boardSize: Int, swap: Int?): Board {
         if (newMoves.size.toDouble() == maxMoves(boardSize)) return BoardDraw(newMoves, size, rules, variant)
         val dirs = arrayOf(Direction.DOWN, Direction.DOWN_LEFT, Direction.DOWN_RIGHT, Direction.LEFT)
         dirs.forEach { dir ->
             if (cellsInDirection(moves, turn, position, dir) >= 5)
                 return BoardWin(newMoves, size, rules, variant, turn)
         }
-           return BoardRun(newMoves, size, rules, variant, turn.other())
+        return if (swap != null) BoardRun(newMoves, size, rules, variant, turn)
+        else BoardRun(newMoves, size, rules, variant, turn.other())
     }
 
     override fun hashCode(): Int = moves.hashCode()
 
     override fun toString(): String {
         return when (this) {
-            is BoardRun -> (if (moves.size == 2 && variant == "Swap after 1st move") this.turn.other().toString()
-                else this.turn.toString()) + size.toString() + rules + variant + '\n' + moves.toString()
+            is BoardRun -> this.turn.toString() + size.toString() + rules + variant + '\n' + moves.toString()
             is BoardWin -> winner.string + size.toString() + rules + variant + '\n' + moves.toString()
             is BoardDraw -> moves.toString()
         }
