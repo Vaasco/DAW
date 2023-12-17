@@ -112,6 +112,7 @@ class GamesService(private val transactionManager: TransactionManager) {
                 is BoardWin -> "Ended ${board.turn}"
                 else -> game.state
             }
+
             val newGame = it.gameRepository.updateGame(game.id, newBoard, state)
             success(newGame)
         }
