@@ -7,6 +7,7 @@ import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
 import {useParams} from "react-router-dom";
 import {context} from "../utils/AuthContainer";
+
 function GetGame() {
     const gameContext = useContext(context)
     const playerId = gameContext.id
@@ -96,14 +97,21 @@ function GetGame() {
 
         if (response.board.moves) {
             for (const [position, player] of Object.entries(response.board.moves)) {
-                const [row, col] = position.split('').map((c) =>
-                    (c >= '1' && c <= '9') ? parseInt(c, 10) - 1 : c.charCodeAt(0) - 'A'.charCodeAt(0)
-                );
-                board[row][col] = player as string;
+                const substring = position.substring(0, 2);
+
+                if (!isNaN(Number(substring))) {
+                    const row = parseInt(substring, 10) - 1;
+                    const col = position[2].charCodeAt(0) - 'A'.charCodeAt(0);
+                    board[row][col] = player as string;
+                } else {
+                    const row = parseInt(position[0], 10) - 1;
+                    const col = position[1].charCodeAt(0) - 'A'.charCodeAt(0);
+                    board[row][col] = player as string;
+                }
             }
         }
 
-        if (playerB === ''){
+        if (playerB === '') {
             useFetch(`users/${response.playerB}`).then(p => {
                 p.json().then(p2 => {
                     if (p.ok) {
@@ -126,20 +134,20 @@ function GetGame() {
     };
 
     useEffect(() => {
-        const period = 2000;
+        const period = 1000;
         const tid = setInterval(async () => {
             const rsp = await useFetch(`games/${gameId}`);
             const body = await rsp.json();
             const properties = body.properties;
             if (properties && properties !== response) {
                 setResponse(properties);
-                if(!played) setPlayed(true);
+                if (!played) setPlayed(true);
                 if (properties.board.variant.includes("Swap") && Object.keys(properties.board.moves).length === 2
                     && playerBId !== properties.playerB) {
-                        const temp = playerB
-                        setPlayerB(playerW)
-                        setPlayerW(temp)
-                        setPlayerBId(properties.playerB)
+                    const temp = playerB
+                    setPlayerB(playerW)
+                    setPlayerW(temp)
+                    setPlayerBId(properties.playerB)
                 }
                 checkGameState();
             }
@@ -213,7 +221,7 @@ function GetGame() {
             {response && response.board.variant.includes("Swap") && Object.keys(response.board.moves).length === 1
                 && playerId === response.playerW && (
                     <button onClick={() => setSwapping(true)}>Swap</button>
-            )}
+                )}
             {response && (
                 <div>
                     <h2>Game Details</h2>

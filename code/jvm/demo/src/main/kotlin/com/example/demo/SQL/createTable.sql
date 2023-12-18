@@ -43,8 +43,8 @@ create table lobby(
     constraint player2_id foreign key (player2_id) references player(id),
     constraint game_id foreign key (game_id) references game(id),
     constraint same_player check(player1_id <> player2_id),
-    constraint invalid_rules check(rules in ('Default', 'Pro', 'Long Pro')),--TODO("Add more rules maybe?")
-    constraint invalid_variant check(variant in ('Freestyle', 'Swap after 1st move')),--TODO("Add more variants maybe?"
+    constraint invalid_rules check(rules in ('Default', 'Pro', 'Long Pro')),
+    constraint invalid_variant check(variant in ('Freestyle', 'Swap after 1st move')),
     constraint invalid_player_state check (state in ('Waiting', 'Playing', 'Played', 'Left'))
 );
 
