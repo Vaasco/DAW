@@ -81,7 +81,7 @@ export function CreateLobby() {
             )}
             {!submitting && (
             <div>
-                Rules:
+                Choose the rules:
                 <div>
                     <label>
                         <input
@@ -104,7 +104,7 @@ export function CreateLobby() {
                 </div>
                 <br/>
                 <div>
-                    Variant:
+                    Choose the variant:
                     <div>
                         <label>
                             <input
@@ -126,7 +126,7 @@ export function CreateLobby() {
                         </label>
                     </div>
                     <br/>
-                    Board Size:
+                    Choose the board size:
                     <div>
                         <label>
                             <input

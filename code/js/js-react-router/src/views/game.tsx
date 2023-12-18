@@ -161,6 +161,11 @@ function GetGame() {
         const board = generateBoard();
 
         return (
+            <div>
+                {response && response.board.variant.includes("Swap") && Object.keys(response.board.moves).length === 1
+                    && playerId === response.playerW && (
+                        <button onClick={() => setSwapping(true)}>Swap</button>
+                    )}
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <table style={{borderCollapse: 'collapse', border: '1px solid black', backgroundColor: '#D2B48C'}}>
                     <tbody>
@@ -201,6 +206,7 @@ function GetGame() {
                     </tbody>
                 </table>
             </div>
+            </div>
         );
     };
 
@@ -210,15 +216,11 @@ function GetGame() {
             {response === null && (
                 <h1>Loading</h1>
             )}
-            {response && response.board.variant.includes("Swap") && Object.keys(response.board.moves).length === 1
-                && playerId === response.playerW && (
-                    <button onClick={() => setSwapping(true)}>Swap</button>
-            )}
             {response && (
                 <div>
-                    <h2>Game Details</h2>
-                    <p>Rules: {response.board.rules}</p>
-                    <p>Variant: {response.board.variant}</p>
+                    <h2>Game Details:</h2>
+                    <p>Rules - {response.board.rules}</p>
+                    <p>Variant - {response.board.variant}</p>
                     <h4><p>{`Black pieces - ${playerB}`}</p>
                         <p>{`White pieces - ${playerW}`}</p></h4>
                     {renderBoard()}

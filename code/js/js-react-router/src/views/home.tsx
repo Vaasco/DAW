@@ -15,7 +15,7 @@ export function Home() {
                 <Link to="/games">Get Game By Id</Link>
                 <br/>
                 {username && (
-                    <Link to="/lobby">Create Lobby</Link>
+                    <Link to="/lobby">Start a game</Link>
                 )}
             </div>
         </div>

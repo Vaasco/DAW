@@ -2,7 +2,11 @@ create table player(
     id serial,
     username varchar(30) unique not null,
     password varchar(30) not null,
-    primary key (id)
+    primary key (id),
+    constraint invalid_username check (username ~ '^[a-zA-Z0-9_]+$'),
+    constraint invalid_password check (password ~ '^[a-zA-Z0-9_]+$'),
+    constraint invalid_username_length check (length(username) >= 3 and length(username) <= 30),
+    constraint invalid_password_length check (length(password) >= 6 and length(password) <= 30)
 );
 
 create table authentication(

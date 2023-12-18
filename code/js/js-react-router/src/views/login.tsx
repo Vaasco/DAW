@@ -3,7 +3,7 @@ import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
 import toastr from 'toastr'
-import {fontStyle} from "../utils/styles";
+import {fontStyle, inputStyle, buttonStyle} from "../utils/styles";
 import {context} from "../utils/AuthContainer";
 
 export function Login(): React.ReactElement {
@@ -71,7 +71,7 @@ export function Login(): React.ReactElement {
                 <fieldset disabled={submitting}>
                     <div>
                         <label htmlFor="username">Username</label>
-                        <input
+                        <input style={inputStyle}
                             id="username"
                             type="text"
                             name="username"
@@ -81,7 +81,7 @@ export function Login(): React.ReactElement {
                     </div>
                     <div>
                         <label htmlFor="password">Password</label>
-                        <input
+                        <input style={inputStyle}
                             id="password"
                             type="password"
                             name="password"
@@ -90,7 +90,7 @@ export function Login(): React.ReactElement {
                         />
                     </div>
                     <div>
-                        <button type="submit">Login</button>
+                        <button style={buttonStyle} type="submit">Login</button>
                     </div>
                 </fieldset>
             </form>

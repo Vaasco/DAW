@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
 import toastr from 'toastr'
-import {fontStyle} from "../utils/styles";
+import {fontStyle, inputStyle, buttonStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
 
@@ -147,14 +147,15 @@ export function GetGameById() {
             <div style={fontStyle}>
                 <form onSubmit={handleSubmit}>
                     <label>
-                        Game ID:
-                        <input
+                        Search for a game:
+                        <input style={inputStyle}
+                            placeholder={"Game id"}
                             type="text"
                             value={gameId}
                             onChange={(e) => setGameId(e.target.value)}
                         />
                     </label>
-                    <button type="submit">Submit</button>
+                    <button style={buttonStyle} type="submit">Submit</button>
                 </form>
 
                 {response && (

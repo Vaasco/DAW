@@ -137,7 +137,7 @@ class GamesService(private val transactionManager: TransactionManager) {
 
 }
 
-private fun handleDatabaseException(e: Exception): CreateLobbyResult {
+fun handleDatabaseException(e: Exception): CreateLobbyResult {
     return when {
         e is org.jdbi.v3.core.statement.UnableToExecuteStatementException -> {
             val constraintViolation = extractConstraintViolation(e)
@@ -152,6 +152,6 @@ private fun handleDatabaseException(e: Exception): CreateLobbyResult {
     }
 }
 
-private fun extractConstraintViolation(e: Exception): String {
+fun extractConstraintViolation(e: Exception): String {
     return e.message ?: e.cause?.message ?: ""
 }

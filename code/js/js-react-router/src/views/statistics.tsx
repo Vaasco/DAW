@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {useLoaderData} from "react-router-dom";
-import {fontStyle} from "../utils/styles";
+import {fontStyle, inputStyle, buttonStyle} from "../utils/styles";
 
 async function statsLoader(): Promise<Stat[]>{
     const fetch = await useFetch('/stats')
@@ -20,10 +20,8 @@ type Stat = {
 
 function GetStats() {
     const [username, setUsername] = useState('');
-    const [error, setError] = useState(null);
-    const allStats = useLoaderData() as Stat[]
+    const allStats = useLoaderData() as Stat[];
     const [stats, setStats] = useState(allStats);
-
 
     const getUsernameStats = (e) => {
         e.preventDefault();
@@ -36,35 +34,49 @@ function GetStats() {
         }
     };
 
+    const lineStyle = { textAlign: 'center', border: '3px solid #000', padding: '8px' } as const;
+    const usernameStyle = { textAlign: 'left', border: '3px solid #000', padding: '8px' } as const;
+
     return (
         <div style={fontStyle}>
-            <Navbar/>
+            <Navbar />
             <form onSubmit={getUsernameStats}>
                 <label>
-                    Username:
-                    <input
+                    Search for username:
+                    <input style={inputStyle}
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                 </label>
-                <button type="submit">Get Stats</button>
+                <button style={buttonStyle} type="submit">Search</button>
             </form>
-            <div>
-                <h2>All Player Stats:</h2>
+            <p/>
+            <table style={{ borderCollapse: 'collapse', width: '40%', background: '#D3D3D3' }}>
+                <thead>
+                <tr>
+                    <th style={usernameStyle}>Username</th>
+                    <th style={lineStyle}>Rank</th>
+                    <th style={lineStyle}>Played Games</th>
+                    <th style={lineStyle}>Won Games</th>
+                    <th style={lineStyle}>Lost Games</th>
+                </tr>
+                </thead>
+                <tbody>
                 {stats.map((playerStats, index) => (
-                    <div key={index}>
-                        <h3>{playerStats.username}</h3>
-                        <p>Rank: {playerStats.rank}</p>
-                        <p>Played Games: {playerStats.playedGames}</p>
-                        <p>Won Games: {playerStats.wonGames}</p>
-                        <p>Lost Games: {playerStats.lostGames}</p>
-                    </div>
+                    <tr key={index}>
+                        <td style={usernameStyle}>{playerStats.username}</td>
+                        <td style={lineStyle}>{playerStats.rank}</td>
+                        <td style={lineStyle}>{playerStats.playedGames}</td>
+                        <td style={lineStyle}>{playerStats.wonGames}</td>
+                        <td style={lineStyle}>{playerStats.lostGames}</td>
+                    </tr>
                 ))}
-            </div>
-            {error && <p style={{color: 'red'}}>{error}</p>}
+                </tbody>
+            </table>
         </div>
     );
 }
 
-export {GetStats, statsLoader}
+export { GetStats, statsLoader }
+

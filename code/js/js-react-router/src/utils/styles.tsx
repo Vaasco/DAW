@@ -24,10 +24,26 @@ const linkStyle = {
     marginRight: '10px',
 };
 
-const buttonStyle = {
+const playButtonStyle = {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
 };
 
-export {fontStyle, buttonStyle, linkStyle, linkContainerStyle, navbarStyle}
+const buttonStyle = {
+    background: '#D3D3D3',
+    fontSize: '16px',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    border: '1px solid black',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+}
+
+const inputStyle = {
+    backgroundColor: '#D3D3D3',
+    fontSize: '16px',
+    border: '1px solid black',
+    outline: 'none'
+}
+
+export {fontStyle, playButtonStyle, linkStyle, linkContainerStyle, navbarStyle, buttonStyle, inputStyle}
