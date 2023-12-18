@@ -116,7 +116,8 @@ fun fromString(boardString: String): Board {
     for (i in pairs) {
         val str = i.last()
         val player = str.toString().toPlayer()
-        val position = i.substring(0, 2).toPosition(size)
+        val maxLength = if(i.substring(0, 2).toIntOrNull() == null) 2 else 3
+        val position = i.substring(0, maxLength).toPosition(size)
         boardMap[position] = player
     }
     return BoardRun(boardMap, size, rules, variant, turn)
