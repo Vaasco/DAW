@@ -48,6 +48,9 @@ class Error(val code: Int, val message: ErrorMessage) {
         val wrongGame = Error(401, ErrorMessage("You can't play in this game"))
         val wrongPlace = Error(400, ErrorMessage("You can't place the piece here"))
 
+        //Get Last Game
+        val notPlaying = Error(400, ErrorMessage("This player is not playing a game at the moment"))
+
         //Database exceptions
         val databaseExceptions = listOf(
             "You cannot play two games at the same time"

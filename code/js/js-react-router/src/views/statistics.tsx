@@ -44,6 +44,7 @@ function GetStats() {
             <form onSubmit={getUsernameStats}>
                 {"Search for username:"}
                     <CreateStringInput
+                        type={"text"}
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />

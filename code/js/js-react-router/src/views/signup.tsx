@@ -2,11 +2,10 @@ import React, {useState, useEffect, useContext} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
-import toastr from 'toastr'
 import {fontStyle} from "../utils/styles";
 import {context} from "../utils/AuthContainer";
 import {CreateButton, CreateStringInput} from "../utils/models";
-
+import {errorHandler} from "../utils/errorHandler";
 export function SignUp() {
     const [inputs, setInputs] = useState({username: "", password: ""});
     const [submitting, setSubmitting] = useState(false);
@@ -20,20 +19,6 @@ export function SignUp() {
         const {name, value} = e.target;
         setInputs((prevInputs) => ({...prevInputs, [name]: value}));
     };
-
-    const errorHandler = (error) => {
-        toastr.options = {
-            positionClass: 'toast-center',
-            progressBar: true,
-            closeButton: true,
-            preventDuplicates: true,
-            timeOut: 5000,
-            extendedTimeOut: 1000,
-            iconClass: 'custom-error-icon',
-            onHidden: () => setSubmitting(false)
-        }
-        toastr.error(error)
-    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -79,6 +64,7 @@ export function SignUp() {
                 <fieldset disabled={submitting}>
                     <div>
                         <CreateStringInput
+                            type={"text"}
                             label={"username"}
                             display={"Username"}
                             id={"username"}
@@ -89,6 +75,7 @@ export function SignUp() {
                     </div>
                     <div>
                         <CreateStringInput
+                            type={"password"}
                             label={"password"}
                             display={"Password"}
                             id={"password"}

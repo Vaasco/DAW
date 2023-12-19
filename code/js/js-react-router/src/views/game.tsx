@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
-import toastr from 'toastr'
 import {fontStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
 import {useParams} from "react-router-dom";
 import {context} from "../utils/AuthContainer";
 import {CreateButton} from "../utils/models";
+import {errorHandler} from "../utils/errorHandler";
 
 function GetGame() {
     const gameContext = useContext(context)
@@ -37,7 +37,13 @@ function GetGame() {
     }
 
     const checkGameState = () => {
-        const player = response.playerB == playerId ? 'B' : 'W'
+        let player = 'D'
+        if (response.playerB === playerId) {
+            player = 'B'
+        }
+        if (response.playerW === playerId) {
+            player = 'W'
+        }
         if (response.state) {
             if (response.state === 'Ended B' && player == 'B') setWin('You Won')
             if (response.state === 'Ended W' && player == 'W') setWin('You Won')
@@ -45,19 +51,6 @@ function GetGame() {
             if (response.state === 'Ended W' && player == 'B') setWin('You Lost')
             if (response.state === 'Ended D') setWin('The game ended with a draw')
         }
-    }
-
-    const errorHandler = (error) => {
-        toastr.options = {
-            positionClass: 'toast-top',
-            progressBar: true,
-            closeButton: true,
-            preventDuplicates: true,
-            timeOut: 5000,
-            extendedTimeOut: 1000,
-            iconClass: 'custom-error-icon',
-        }
-        toastr.error(error)
     }
 
     const playable = response && response.state === 'Playing' &&
@@ -230,8 +223,11 @@ function GetGame() {
                     <h2>Game Details:</h2>
                     <p>Rules - {response.board.rules}</p>
                     <p>Variant - {response.board.variant}</p>
-                    <h4><p>{`Black pieces - ${playerB}`}</p>
-                        <p>{`White pieces - ${playerW}`}</p></h4>
+                    <h4>
+                        <p>{`Black pieces - ${playerB}`}</p>
+                        <p>{`White pieces - ${playerW}`}</p>
+                        {response.board.turn === 'B' ? <p>Turn: Black</p> : <p>Turn: White</p>}
+                    </h4>
                     {renderBoard()}
                 </div>
             )}

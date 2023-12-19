@@ -9,9 +9,11 @@ type CreateButtonProps = {
 };
 
 type CreateInputProps = {
+    placeholder?: string;
     label?: string;
     display?: string;
     id?: string;
+    type: string;
     name?: string;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,18 +33,18 @@ const CreateButton: React.FC<CreateButtonProps> = ({ onClick, label,type }) => {
     );
 };
 
-const CreateStringInput: React.FC<CreateInputProps> = ({label, display, id, name, value, onChange}) => {
+const CreateStringInput: React.FC<CreateInputProps> = ({placeholder, label, display, id, type, name, value, onChange}) => {
     return (
-        <div>
-            <label htmlFor={label}> {display}</label>
+        <label htmlFor={label}> {display}
             <input style={inputStyle}
                    id={id}
-                   type="text"
+                   type={type}
                    name={name}
                    value={value}
                    onChange={onChange}
+                   placeholder={placeholder}
             />
-        </div>
+        </label>
     );
 }
 

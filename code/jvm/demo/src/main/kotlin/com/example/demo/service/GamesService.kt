@@ -21,11 +21,10 @@ class GamesService(private val transactionManager: TransactionManager) {
 
     fun getLastGame(username: String?): CreateLobbyResult {
         return transactionManager.run {
-            if (username == null) failure(Error.invalidUsername)
-            else {
-                val game = it.gameRepository.getLastGame(username)
-                success(game)
-            }
+            if (username == null) return@run failure(Error.invalidUsername)
+            if (it.usersRepository.getUserByUsername(username) == null) return@run failure(Error.nonExistentUsername)
+            val game = it.gameRepository.getLastGame(username) ?: return@run failure(Error.notPlaying)
+            return@run success(game)
         }
     }
 

@@ -12,7 +12,6 @@ export function CreateLobby() {
     const [variant, setVariant] = useState('Freestyle');
     const [boardSize, setBoardSize] = useState(15);
     const [submitting, setSubmitting] = useState(false)
-    const [error, setError] = useState('')
     const [gameId, setGameId] = useState(0)
 
     const handleRulesChange = (e) => {
@@ -36,10 +35,6 @@ export function CreateLobby() {
 
         const rsp = await useFetch("games", "POST", requestBody)
         const body = await rsp.json()
-
-        if (!rsp.ok) {
-            setError(body.properties)
-        }
 
         setSubmitting(true)
 
@@ -74,11 +69,6 @@ export function CreateLobby() {
                 </div>
             )}
             {gameId != 0 && <Navigate to={`/games/${gameId}`} replace={true}/>}
-            {error && (
-                <div>
-                    <h1> Error ${error} </h1>
-                </div>
-            )}
             {!submitting && (
             <div>
                 Choose the rules:
