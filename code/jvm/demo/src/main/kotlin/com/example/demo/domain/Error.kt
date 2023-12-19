@@ -35,6 +35,7 @@ class Error(val code: Int, val message: ErrorMessage) {
         val invalidRules = Error(400, ErrorMessage("Invalid rules"))
         val invalidVariant = Error(400, ErrorMessage("Invalid variant"))
         val invalidBoardSize = Error(400, ErrorMessage("The board size must be either 15 or 19"))
+        //val wrongAccount = Error(401,ErrorMessage("This is not your account"))
 
         //Play
         val notYourTurn = Error(401, ErrorMessage("It's not your turn"))

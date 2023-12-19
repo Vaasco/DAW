@@ -31,7 +31,7 @@ export function SignUp() {
 
                 if (!rsp.ok) {
                     setError(body.properties);
-                    errorHandler(body.error)
+                    errorHandler(body.error,() => {setSubmitting(false)})
                 }
 
                 if (rsp.ok) {

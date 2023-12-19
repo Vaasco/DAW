@@ -58,11 +58,20 @@ class GameController(private val gamesService: GamesService) {
     }
 
     @PostMapping(PathTemplate.FORFEIT)
-    fun forfeit(@PathVariable id: Int, user:AuthenticatedUser?): ResponseEntity<*> {
+    fun forfeit(@PathVariable id: Int, user: AuthenticatedUser?): ResponseEntity<*> {
         val res = gamesService.forfeitGame(id, user)
         return handleResponse(res) {
             val siren = SirenMaker().sirenForfeit(it)
             siren.response(200)
         }
     }
+
+    /*@PostMapping(PathTemplate.CANCEL)
+    fun cancelLobby(@RequestBody lobbyId : Int,user: AuthenticatedUser?): ResponseEntity<*> {
+        val res = gamesService.cancelLobby(lobbyId,user)
+        return handleResponse(res) {
+            val siren = SirenMaker().sirenCancel(it)
+            siren.response(200)
+        }
+    }*/
 }

@@ -68,4 +68,19 @@ class JdbiGamesRepository(private val handle: Handle) : GamesRepository {
             .bind("id", id)
             .execute() == 1
     }
+
+    /*override fun cancelLobby(userId : Int) {
+        val query = "delete from lobby where player1_id = :userId and player2_id is null"
+        handle.createUpdate(query)
+            .bind("userId", userId)
+            .execute()
+    }
+
+    override fun getLobbyId(userId: Int): Int? {
+        val query = "select id from lobby where player1_id = :userId"
+        return handle.createQuery(query)
+            .bind("userId", userId)
+            .mapTo(Int::class.java)
+            .singleOrNull()
+    }*/
 }

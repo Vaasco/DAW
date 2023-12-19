@@ -148,7 +148,14 @@ class SirenMaker {
     fun sirenForfeit(body: Boolean): SirenModel<Boolean> {
         return siren(body) {
             clazz("forfeit")
-            action(HOME, URI(HOME), GET)
+            action(HOME, URI(HOME), POST)
+        }
+    }
+
+    fun sirenCancel(body:Unit):SirenModel<Unit>{
+        return siren(body){
+            clazz("cancel")
+            action(HOME,URI(HOME), POST)
         }
     }
 }

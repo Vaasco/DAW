@@ -10,11 +10,15 @@ interface GamesRepository {
 
     fun getGameId(playerId: Int): String?
 
-    fun getGameById(id : Int): GameModel?
+    fun getGameById(id: Int): GameModel?
 
-    fun getLastGame(username : String) : GameModel?
+    fun getLastGame(username: String): GameModel?
 
-    fun swapPlayers(gameId : Int)
+    fun swapPlayers(gameId: Int)
 
     fun forfeitGame(id: Int, player: String): Boolean
+
+    /*fun cancelLobby(id: Int)
+
+    fun getLobbyId(userId: Int): Int?*/
 }

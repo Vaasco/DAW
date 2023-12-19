@@ -30,7 +30,7 @@ export function Login(): React.ReactElement {
                 const body = await rsp.json();
 
                 if (!rsp.ok) {
-                    errorHandler(body.error)
+                    errorHandler(body.error,() => {setSubmitting(false)})
                 }
 
                 if (rsp.ok) {

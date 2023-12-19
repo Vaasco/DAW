@@ -1,6 +1,6 @@
 import toastr from 'toastr'
 
-export const errorHandler = (error) => {
+export const errorHandler = (error,onHidden = () => {}) => {
         toastr.options = {
             positionClass: 'toast-top',
             progressBar: true,
@@ -9,6 +9,7 @@ export const errorHandler = (error) => {
             timeOut: 5000,
             extendedTimeOut: 1000,
             iconClass: 'custom-error-icon',
+            onHidden: onHidden
         }
         toastr.error(error)
     }

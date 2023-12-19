@@ -4,7 +4,7 @@ import {Navbar} from "../utils/navBar";
 import {fontStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
-import {useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import {context} from "../utils/AuthContainer";
 import {CreateButton} from "../utils/models";
 import {errorHandler} from "../utils/errorHandler";
@@ -20,6 +20,7 @@ function GetGame() {
     const [playerW, setPlayerW] = useState('');
     const [win, setWin] = useState('');
     const [swapping, setSwapping] = useState(false);
+    const [forfeit, setForfeit] = useState(false);
 
     const fetchGame = async () => {
         if (response === null) {
@@ -45,10 +46,10 @@ function GetGame() {
             player = 'W'
         }
         if (response.state) {
-            if (response.state === 'Ended B' && player == 'B') setWin('You Won')
-            if (response.state === 'Ended W' && player == 'W') setWin('You Won')
-            if (response.state === 'Ended B' && player == 'W') setWin('You Lost')
-            if (response.state === 'Ended W' && player == 'B') setWin('You Lost')
+            if ((response.state === 'Ended B' || response.state === 'W Forfeited') && player === 'B') setWin('You Won')
+            if ((response.state === 'Ended W' || response.state === 'B Forfeited') && player === 'W') setWin('You Won')
+            if ((response.state === 'Ended B' || response.state === 'W Forfeited') && player === 'W') setWin('You Lost')
+            if ((response.state === 'Ended W' || response.state === 'B Forfeited') && player === 'B') setWin('You Lost')
             if (response.state === 'Ended D') setWin('The game ended with a draw')
         }
     }
@@ -81,6 +82,16 @@ function GetGame() {
                 }
             }
             checkGameState()
+        }
+    }
+
+    const handleForfeit = async () => {
+        const rsp = await useFetch(`games/forfeit/${gameId}`, "POST")
+        const body = await rsp.json()
+        if (!rsp.ok) {
+            errorHandler(body.error)
+        } else {
+            setForfeit(true)
         }
     }
 
@@ -138,10 +149,10 @@ function GetGame() {
                 if (!played) setPlayed(true);
                 if (properties.board.variant.includes("Swap") && Object.keys(properties.board.moves).length === 2
                     && playerBId !== properties.playerB) {
-                        const temp = playerB
-                        setPlayerB(playerW)
-                        setPlayerW(temp)
-                        setPlayerBId(properties.playerB)
+                    const temp = playerB
+                    setPlayerB(playerW)
+                    setPlayerW(temp)
+                    setPlayerBId(properties.playerB)
                 }
                 checkGameState();
             }
@@ -164,50 +175,57 @@ function GetGame() {
 
         return (
             <div>
+                {forfeit && (
+                    <Navigate to={"/"}/>
+                )}
+                {playable && (
+                    <CreateButton onClick={handleForfeit} label={"Forfeit"}/>
+                )}
+
                 {response && response.board.variant.includes("Swap") && Object.keys(response.board.moves).length === 1
                     && playerId === response.playerW && (
-                        <CreateButton onClick={()=> setSwapping(!swapping)} label={!swapping ? "Swap" : "Unswap"}/>
+                        <CreateButton onClick={() => setSwapping(!swapping)} label={!swapping ? "Swap" : "Unswap"}/>
                     )}
-            <div style={{display: 'flex', justifyContent: 'center'}}>
-                <table style={{borderCollapse: 'collapse', border: '1px solid black', backgroundColor: '#D2B48C'}}>
-                    <tbody>
-                    {board.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {row.map((cell, colIndex) => (
-                                <td
-                                    key={colIndex}
-                                    style={{
-                                        background: 'linear-gradient(to bottom, transparent 47%, #000 47%, #000 53%,  transparent 53%), linear-gradient(to right, transparent 47%, #000 47%, #000 53%, transparent 53%)',
-                                        border: 'none',
-                                        width: '40px',
-                                        height: '40px',
-                                        textAlign: 'center',
-                                    }}
-                                >
-                                    {cell === ' ' && playable && (
-                                        <button
-                                            style={{
-                                                width: '70%',
-                                                height: '70%',
-                                                cursor: 'pointer',
-                                                backgroundColor: rowIndex == Math.floor(response.boardSize / 2) && colIndex == Math.floor(response.boardSize / 2) ? 'red' : 'rgba(255, 255, 255, 0.0)',
-                                                border: 'none'
-                                            }}
-                                            onClick={() => play(rowIndex, colIndex)}
-                                        >
-                                        </button>
-                                    )}
-                                    {cell !== ' ' && (
-                                        <img src={cell === 'B' ? blackstone : whitestone}
-                                             style={{width: '90%', height: '90%'}}/>
-                                    )}
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <table style={{borderCollapse: 'collapse', border: '1px solid black', backgroundColor: '#D2B48C'}}>
+                        <tbody>
+                        {board.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                                {row.map((cell, colIndex) => (
+                                    <td
+                                        key={colIndex}
+                                        style={{
+                                            background: 'linear-gradient(to bottom, transparent 47%, #000 47%, #000 53%,  transparent 53%), linear-gradient(to right, transparent 47%, #000 47%, #000 53%, transparent 53%)',
+                                            border: 'none',
+                                            width: '40px',
+                                            height: '40px',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        {cell === ' ' && playable && (
+                                            <button
+                                                style={{
+                                                    width: '70%',
+                                                    height: '70%',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: rowIndex == Math.floor(response.boardSize / 2) && colIndex == Math.floor(response.boardSize / 2) ? 'red' : 'rgba(255, 255, 255, 0.0)',
+                                                    border: 'none'
+                                                }}
+                                                onClick={() => play(rowIndex, colIndex)}
+                                            >
+                                            </button>
+                                        )}
+                                        {cell !== ' ' && (
+                                            <img src={cell === 'B' ? blackstone : whitestone}
+                                                 style={{width: '90%', height: '90%'}}/>
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         );
     };

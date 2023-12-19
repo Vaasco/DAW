@@ -32,7 +32,7 @@ class UserController(private val usersService: UsersService) {
     fun createUser(@RequestBody userModel: UserModel, response: HttpServletResponse): ResponseEntity<*> {
         val res = usersService.createUser(userModel.username, userModel.password)
 
-        if(res is Either.Right) {
+        if (res is Either.Right) {
             val token = usersService.getUserToken(userModel.username)
             val userId = usersService.getUserByToken(token.token)?.id
 
@@ -135,7 +135,7 @@ class UserController(private val usersService: UsersService) {
     }
 
     @GetMapping(PathTemplate.COOKIES)
-    fun getCookies(request :HttpServletRequest): List<Cookie> {
+    fun getCookies(request: HttpServletRequest): List<Cookie> {
         return request.cookies.filter { it.name == "username" || it.name == "id" }
     }
 }

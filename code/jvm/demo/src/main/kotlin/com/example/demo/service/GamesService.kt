@@ -14,6 +14,9 @@ typealias PlayResult = Either<Error, GameModel>
 
 typealias ForfeitResult = Either<Error, Boolean>
 
+typealias CancelResult = Either<Error, Unit>
+
+
 @Component
 class GamesService(private val transactionManager: TransactionManager) {
     private val validRules = listOf("Pro", "Long Pro")
@@ -95,14 +98,14 @@ class GamesService(private val transactionManager: TransactionManager) {
 
             if (game.board.moves[position] != null) return@run failure(Error.positionOccupied)
 
-            val turn =  if (play.swap != null && board.moves.size == 1) board.turn.other()
-                        else board.turn
+            val turn = if (play.swap != null && board.moves.size == 1) board.turn.other()
+            else board.turn
 
             val newBoard = game.board.play(position, turn, play.swap)
 
             if (newBoard is BoardRun && newBoard.moves == board.moves) return@run failure(Error.wrongPlace)
 
-            if(play.swap != null && newBoard.moves.size == 2) {
+            if (play.swap != null && newBoard.moves.size == 2) {
                 it.gameRepository.swapPlayers(gameId)
             }
 
@@ -134,6 +137,16 @@ class GamesService(private val transactionManager: TransactionManager) {
         }
     }
 
+    /*fun cancelLobby( lobbyId :Int,user: AuthenticatedUser?): CancelResult {
+        return transactionManager.run {
+            if (user == null) return@run failure(Error.unauthorized)
+            val lobby = it.gameRepository.getLobbyId(user.user.id)
+            if (lobbyId != lobby) return@run failure(Error.unauthorized)
+            success(it.gameRepository.cancelLobby(user.user.id))
+        }
+    }*/
+
+
 }
 
 fun handleDatabaseException(e: Exception): CreateLobbyResult {
@@ -150,6 +163,7 @@ fun handleDatabaseException(e: Exception): CreateLobbyResult {
         else -> failure(Error.internalServerError)
     }
 }
+
 
 fun extractConstraintViolation(e: Exception): String {
     return e.message ?: e.cause?.message ?: ""

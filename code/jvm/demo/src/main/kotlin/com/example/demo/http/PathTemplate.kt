@@ -20,6 +20,9 @@ object PathTemplate {
     //Allow a user to forfeit a game
     const val FORFEIT = "/games/forfeit/{id}"
 
+    //Allow a user to cancel waiting for an opponent
+    const val CANCEL = "/games/cancel"
+
     //No authorization needed
     const val HOME = "/home"
 
