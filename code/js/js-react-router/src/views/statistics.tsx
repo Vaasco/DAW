@@ -2,7 +2,8 @@ import React, {useState} from "react";
 import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {useLoaderData} from "react-router-dom";
-import {fontStyle, inputStyle, buttonStyle} from "../utils/styles";
+import {fontStyle} from "../utils/styles";
+import {CreateButton, CreateStringInput} from "../utils/models";
 
 async function statsLoader(): Promise<Stat[]>{
     const fetch = await useFetch('/stats')
@@ -41,15 +42,12 @@ function GetStats() {
         <div style={fontStyle}>
             <Navbar />
             <form onSubmit={getUsernameStats}>
-                <label>
-                    Search for username:
-                    <input style={inputStyle}
-                        type="text"
+                {"Search for username:"}
+                    <CreateStringInput
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
-                </label>
-                <button style={buttonStyle} type="submit">Search</button>
+                <CreateButton onClick={()=>{}} label={"Search"} type={"submit"}/>
             </form>
             <p/>
             <table style={{ borderCollapse: 'collapse', width: '40%', background: '#D3D3D3' }}>

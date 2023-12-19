@@ -4,6 +4,7 @@ import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
 import {fontStyle} from "../utils/styles";
 import {context} from "../utils/AuthContainer";
+import {CreateButton, CreateRadioInput} from "../utils/models";
 
 export function CreateLobby() {
     const lobbyContext = useContext(context)
@@ -57,7 +58,6 @@ export function CreateLobby() {
                 const body3 = await rsp3.json()
                 if (body3.properties) {
                     setSubmitting(false)
-                    //window.location.href = `games/${body3.properties.id}`;
                     setGameId(body3.properties.id)
                 }
             }, period);
@@ -83,73 +83,33 @@ export function CreateLobby() {
             <div>
                 Choose the rules:
                 <div>
-                    <label>
-                        <input
-                            type="radio"
-                            value="Pro"
-                            checked={rules === 'Pro'}
-                            onChange={handleRulesChange}
-                        />
-                        Pro
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            value="Long Pro"
-                            checked={rules === 'Long Pro'}
-                            onChange={handleRulesChange}
-                        />
-                        Long Pro
-                    </label>
+                    <CreateRadioInput name={"Pro"} checked={rules === 'Pro'} onChange={handleRulesChange} />
+                    <CreateRadioInput name={"Long Pro"} checked={rules === 'Long Pro'} onChange={handleRulesChange} />
                 </div>
                 <br/>
                 <div>
                     Choose the variant:
                     <div>
-                        <label>
-                            <input
-                                type="radio"
-                                value="Freestyle"
-                                checked={variant === 'Freestyle'}
-                                onChange={handleVariantChange}
-                            />
-                            Freestyle
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                value="Swap after 1st move"
-                                checked={variant === "Swap after 1st move"}
-                                onChange={handleVariantChange}
-                            />
-                            Swap
-                        </label>
+                        <CreateRadioInput
+                            name={"Freestyle"}
+                            checked={variant === 'Freestyle'}
+                            onChange={handleVariantChange}
+                        />
+                        <CreateRadioInput
+                            name={"Swap after 1st move"}
+                            checked={variant === "Swap after 1st move"}
+                            onChange={handleVariantChange}
+                        />
                     </div>
                     <br/>
                     Choose the board size:
                     <div>
-                        <label>
-                            <input
-                                type="radio"
-                                value={15}
-                                checked={boardSize === 15}
-                                onChange={handleBoardSizeChange}
-                            />
-                            15
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                value={19}
-                                checked={boardSize === 19}
-                                onChange={handleBoardSizeChange}
-                            />
-                            19
-                        </label>
+                        <CreateRadioInput name={"15"} checked={boardSize === 15} onChange={handleBoardSizeChange} />
+                        <CreateRadioInput name={"19"} checked={boardSize === 19} onChange={handleBoardSizeChange} />
                     </div>
                 </div>
                 <br/>
-                <button onClick={handleSubmit}>Submit</button>
+                <CreateButton onClick={handleSubmit} label={"Search for game"}/>
             </div>
             )}
         </div>

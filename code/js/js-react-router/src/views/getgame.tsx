@@ -2,9 +2,10 @@ import React, {useEffect, useState} from "react";
 import {useFetch} from "../utils/useFetch";
 import {Navbar} from "../utils/navBar";
 import toastr from 'toastr'
-import {fontStyle, inputStyle, buttonStyle} from "../utils/styles";
+import {fontStyle, inputStyle} from "../utils/styles";
 import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
+import {CreateButton} from "../utils/models";
 
 export function GetGameById() {
     const [response, setResponse] = useState(null);
@@ -155,7 +156,7 @@ export function GetGameById() {
                             onChange={(e) => setGameId(e.target.value)}
                         />
                     </label>
-                    <button style={buttonStyle} type="submit">Submit</button>
+                    <CreateButton onClick={()=>{}} label={"Search"} type={"submit"} />
                 </form>
 
                 {response && (

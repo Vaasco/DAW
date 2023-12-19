@@ -7,6 +7,7 @@ import blackstone from "../utils/images/blackstone.png"
 import whitestone from "../utils/images/whitestone.png"
 import {useParams} from "react-router-dom";
 import {context} from "../utils/AuthContainer";
+import {CreateButton} from "../utils/models";
 
 function GetGame() {
     const gameContext = useContext(context)
@@ -172,7 +173,7 @@ function GetGame() {
             <div>
                 {response && response.board.variant.includes("Swap") && Object.keys(response.board.moves).length === 1
                     && playerId === response.playerW && (
-                        <button onClick={() => setSwapping(true)}>Swap</button>
+                        <CreateButton onClick={()=> setSwapping(!swapping)} label={!swapping ? "Swap" : "Unswap"}/>
                     )}
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <table style={{borderCollapse: 'collapse', border: '1px solid black', backgroundColor: '#D2B48C'}}>

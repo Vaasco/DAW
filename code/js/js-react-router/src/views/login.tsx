@@ -3,8 +3,9 @@ import {Navbar} from "../utils/navBar";
 import {useFetch} from "../utils/useFetch";
 import {Navigate} from "react-router-dom";
 import toastr from 'toastr'
-import {fontStyle, inputStyle, buttonStyle} from "../utils/styles";
+import {fontStyle} from "../utils/styles";
 import {context} from "../utils/AuthContainer";
+import {CreateButton, CreateStringInput} from "../utils/models";
 
 export function Login(): React.ReactElement {
     const loginContext = useContext(context)
@@ -70,27 +71,27 @@ export function Login(): React.ReactElement {
             <form onSubmit={handleSubmit}>
                 <fieldset disabled={submitting}>
                     <div>
-                        <label htmlFor="username">Username</label>
-                        <input style={inputStyle}
-                            id="username"
-                            type="text"
-                            name="username"
+                        <CreateStringInput
+                            label="username"
+                            display={"Username"}
+                            id={"username"}
+                            name={"username"}
                             value={inputs.username}
                             onChange={handleChange}
                         />
                     </div>
                     <div>
-                        <label htmlFor="password">Password</label>
-                        <input style={inputStyle}
-                            id="password"
-                            type="password"
-                            name="password"
+                        <CreateStringInput
+                            label="password"
+                            display={"Password"}
+                            id={"password"}
+                            name={"password"}
                             value={inputs.password}
                             onChange={handleChange}
                         />
                     </div>
                     <div>
-                        <button style={buttonStyle} type="submit">Login</button>
+                        <CreateButton onClick={()=>{}} label={"Login"} type={"submit"} />
                     </div>
                 </fieldset>
             </form>
