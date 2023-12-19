@@ -30,7 +30,7 @@ function AuthContainer({children}: {children: React.ReactNode}) {
 
     return (
         <context.Provider value={{username: username, id: userId}}>
-            {children}
+            <div> {children} </div>
         </context.Provider>
     )
 

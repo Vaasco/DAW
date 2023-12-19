@@ -1,8 +1,17 @@
+import background from './images/background.png'
+
 const fontFamily = 'Nova Square, sans-serif'
 
 const fontStyle = {
     fontFamily:fontFamily
 }
+
+const containerStyle: React.CSSProperties = {
+    background: `url(${background})`,
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    minHeight: "100vh",
+};
 
 const navbarStyle = {
     display: 'flex',
@@ -46,4 +55,4 @@ const inputStyle = {
     outline: 'none'
 }
 
-export {fontStyle, playButtonStyle, linkStyle, linkContainerStyle, navbarStyle, buttonStyle, inputStyle}
+export {fontStyle, playButtonStyle, linkStyle, linkContainerStyle, navbarStyle, buttonStyle, inputStyle, containerStyle}

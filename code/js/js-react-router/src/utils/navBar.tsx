@@ -3,7 +3,6 @@ import {Link}  from 'react-router-dom';
 import {navbarStyle, linkStyle, playButtonStyle, linkContainerStyle} from "./styles";
 import {context} from "./AuthContainer";
 
-
 export function Navbar() {
     const navContext = useContext(context)
 
