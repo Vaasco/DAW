@@ -1,6 +1,7 @@
 package com.example.demo.service
 
 import com.example.demo.domain.*
+import com.example.demo.http.handleDatabaseException
 import com.example.demo.http.model.GameModel
 import com.example.demo.http.model.PlayModel
 import com.example.demo.repository.TransactionManager
@@ -14,7 +15,7 @@ typealias PlayResult = Either<Error, GameModel>
 
 typealias ForfeitResult = Either<Error, Boolean>
 
-typealias CancelResult = Either<Error, Unit>
+//typealias CancelResult = Either<Error, Unit>
 
 
 @Component
@@ -149,22 +150,3 @@ class GamesService(private val transactionManager: TransactionManager) {
 
 }
 
-fun handleDatabaseException(e: Exception): CreateLobbyResult {
-    return when {
-        e is org.jdbi.v3.core.statement.UnableToExecuteStatementException -> {
-            val constraintViolation = extractConstraintViolation(e)
-            Error.databaseExceptions.forEach {
-                if (constraintViolation.contains(it)) return failure(Error(400, ErrorMessage(it)))
-            }
-            println(constraintViolation)
-            failure(Error.internalServerError)
-        }
-
-        else -> failure(Error.internalServerError)
-    }
-}
-
-
-fun extractConstraintViolation(e: Exception): String {
-    return e.message ?: e.cause?.message ?: ""
-}

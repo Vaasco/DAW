@@ -55,6 +55,8 @@ class UsersService(
             when {
                 username.isNullOrEmpty() -> failure(Error.invalidUsername)
                 password.isNullOrEmpty() -> failure(Error.invalidPassword)
+                username.length < 3 || username.length > 30 -> failure(Error.invalidUsernameLength)
+                password.length < 6 || password.length > 30 -> failure(Error.invalidPasswordLength)
                 it.usersRepository.getUserByUsername(username) != null -> failure(Error.repeatedUsername)
                 else -> {
                     val userId = it.usersRepository.createUser(username, password)

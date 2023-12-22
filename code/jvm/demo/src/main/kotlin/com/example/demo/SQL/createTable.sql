@@ -60,5 +60,5 @@ create table ranking(
     lost_games integer not null,
     primary key(player_id),
     constraint player_id foreign key (player_id) references player(id),
-    constraint invalid_games check ( played_games >= won_games + lost_games )
+    constraint invalid_games check (played_games >= won_games + lost_games)
 );

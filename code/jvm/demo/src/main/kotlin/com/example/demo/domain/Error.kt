@@ -19,6 +19,8 @@ class Error(val code: Int, val message: ErrorMessage) {
         val invalidUsername = Error(400, ErrorMessage("Invalid username"))
         val repeatedUsername = Error(400, ErrorMessage("There's is already a user with that username"))
         val wrongPassword = Error(400, ErrorMessage("Wrong Password"))
+        val invalidUsernameLength = Error(400, ErrorMessage("Username must have between 3 and 30 characters"))
+        val invalidPasswordLength = Error(400, ErrorMessage("Password must have between 6 and 30 characters"))
 
         //Get User
         val invalidUserId = Error(400, ErrorMessage("Invalid id"))
@@ -54,7 +56,8 @@ class Error(val code: Int, val message: ErrorMessage) {
 
         //Database exceptions
         val databaseExceptions = listOf(
-            "You cannot play two games at the same time"
+            "You cannot play two games at the same time",
+            "The game has already ended!"
         )
     }
 }

@@ -19,8 +19,8 @@ class GomokuApp {
 
     @Bean
     fun jdbi(): Jdbi {
-        //val jdbcDbURL = System.getenv("LOCALHOST_URL")
-        val jdbcDbURL = System.getenv("DB_URL")
+        val jdbcDbURL = System.getenv("LOCALHOST_URL")
+        //val jdbcDbURL = System.getenv("DB_URL")
         val dataSrc = PGSimpleDataSource()
         dataSrc.setUrl(jdbcDbURL)
         return Jdbi.create(dataSrc)
