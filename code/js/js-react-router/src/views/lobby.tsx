@@ -5,7 +5,6 @@ import {Navigate} from "react-router-dom";
 import {fontStyle} from "../utils/styles";
 import {context} from "../utils/AuthContainer";
 import {CreateButton, CreateRadioInput} from "../utils/models";
-import {renderToPipeableStream} from "react-dom/server";
 
 export function CreateLobby() {
     const lobbyContext = useContext(context)

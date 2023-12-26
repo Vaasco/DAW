@@ -15,9 +15,6 @@ typealias PlayResult = Either<Error, GameModel>
 
 typealias ForfeitResult = Either<Error, Boolean>
 
-//typealias CancelResult = Either<Error, Unit>
-
-
 @Component
 class GamesService(private val transactionManager: TransactionManager) {
     private val validRules = listOf("Pro", "Long Pro")

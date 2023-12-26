@@ -12,7 +12,6 @@ import React from "react";
 import {Logout} from "./views/logout";
 import {AuthContainer} from "./utils/AuthContainer";
 
-
 const router = createBrowserRouter(
     [
         {

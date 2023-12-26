@@ -18,7 +18,8 @@ class AuthenticationInterceptor(
                 it.parameterType == AuthenticatedUser::class.java
             }
         ) {
-            val cookie = request.cookies.find { it.name == "token" }
+
+            val cookie = if (request.cookies != null) request.cookies.find { it.name == "token" } else null
             val bearer = request.getHeader(NAME_AUTHORIZATION_HEADER)
             val user = if (cookie != null) authorizationHeaderProcessor.processAuthorizationCookieValue(cookie.value)
             else authorizationHeaderProcessor.processAuthorizationHeaderValue(bearer)
