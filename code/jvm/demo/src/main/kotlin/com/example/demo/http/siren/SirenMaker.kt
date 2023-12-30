@@ -44,7 +44,7 @@ class SirenMaker {
     fun sirenSignIn(body: SignUpModel): SirenModel<SignUpModel> {
         return siren(body) {
             clazz("sign in")
-            action(HOME, URI(LOGIN), GET)
+            action(HOME, URI(HOME), GET)
             action(LOGIN, URI(LOGIN), POST)
             link(CREATE_USER, LinkRelation(CREATE_USER))
         }
