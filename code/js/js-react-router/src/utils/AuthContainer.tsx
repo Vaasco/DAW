@@ -20,7 +20,6 @@ function AuthContainer({children}: { children: React.ReactNode }) {
             const idCookie = body.find(cookie => cookie.name === 'id').value;
             setUsername(usernameCookie);
             setId(idCookie);
-
         } catch (e) {}
     };
 
@@ -32,7 +31,6 @@ function AuthContainer({children}: { children: React.ReactNode }) {
             <div> {children} </div>
         </context.Provider>
     )
-
 }
 
 export {context, AuthContainer}
