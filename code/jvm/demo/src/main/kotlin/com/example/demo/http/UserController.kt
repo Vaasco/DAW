@@ -135,8 +135,8 @@ class UserController(private val usersService: UsersService) {
     }
 
     @GetMapping(PathTemplate.COOKIES)
-    fun getCookies(request: HttpServletRequest): List<Cookie> {
-        return request.cookies.filter { it.name == "username" || it.name == "id" }
+    fun getCookies(request: HttpServletRequest): Array<out Cookie>? {
+        return request.cookies
     }
 }
 

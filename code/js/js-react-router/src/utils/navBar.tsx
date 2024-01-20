@@ -1,11 +1,12 @@
 import React, {useContext} from 'react';
-import {Link}  from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {navbarStyle, linkStyle, playButtonStyle, linkContainerStyle} from "./styles";
 import {context} from "./AuthContainer";
 
 export function Navbar() {
     const navContext = useContext(context)
-
+    console.log("navContext username: " + navContext.username)
+    console.log("navContext id: " + navContext.id)
     return (
         <nav style={navbarStyle}>
             <div>

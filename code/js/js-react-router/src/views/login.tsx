@@ -27,10 +27,12 @@ export function Login(): React.ReactElement {
                     password: inputs.password,
                 });
 
-                const body = await rsp.json();
+                const body = await rsp.json()
 
                 if (!rsp.ok) {
-                    errorHandler(body.error,() => {setSubmitting(false)})
+                    errorHandler(body.error, () => {
+                        setSubmitting(false)
+                    })
                 }
 
                 if (rsp.ok) {
@@ -79,7 +81,8 @@ export function Login(): React.ReactElement {
                         />
                     </div>
                     <div>
-                        <CreateButton onClick={()=>{}} label={"Login"} type={"submit"} />
+                        <CreateButton onClick={() => {
+                        }} label={"Login"} type={"submit"}/>
                     </div>
                 </fieldset>
             </form>

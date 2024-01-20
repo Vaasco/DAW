@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Navbar} from "../utils/navBar";
-import{fontStyle} from "../utils/styles";
+import {fontStyle} from "../utils/styles";
 import {context} from "../utils/AuthContainer";
 
 export function Home() {
@@ -9,7 +9,7 @@ export function Home() {
     const username = homeContext.username
     return (
         <div style={fontStyle}>
-            <Navbar />
+            <Navbar/>
             <h1>Home</h1>
             <div>
                 <Link to="/games">Get Game By Id</Link>

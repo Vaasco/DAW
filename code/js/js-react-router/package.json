@@ -4,13 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start": "webpack serve"
+    "start": "webpack serve",
+    "test": "playwright test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@playwright/test": "^1.41.1",
+    "@types/node": "^20.11.5",
     "@types/react": "^18.2.35",
     "@types/react-dom": "^18.2.14",
     "css-loader": "^6.8.1",
@@ -25,8 +27,8 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "file-loader": "^6.2.0",
     "js-cookie": "^3.0.5",
-    "toastr": "^2.1.4",
-    "file-loader": "^6.2.0"
+    "toastr": "^2.1.4"
   }
 }

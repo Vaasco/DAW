@@ -8,26 +8,25 @@ type contextValues = {
 
 const context = createContext<contextValues>({username: '', id: 0});
 
-function AuthContainer({children}: {children: React.ReactNode}) {
+function AuthContainer({children}: { children: React.ReactNode }) {
     const [username, setUsername] = React.useState('')
     const [userId, setId] = React.useState(0)
     const fetchCookies = async () => {
-        const rsp = await useFetch('cookies', 'GET');
-        const body = await rsp.json();
+        try {
+            const rsp = await useFetch('cookies', 'GET');
+            const body = await rsp.json();
 
-        if (body.size > 0) {
             const usernameCookie = body.find(cookie => cookie.name === 'username').value;
             const idCookie = body.find(cookie => cookie.name === 'id').value;
             setUsername(usernameCookie);
             setId(idCookie);
-        }
-    };
 
+        } catch (e) {}
+    };
 
     useEffect(() => {
         fetchCookies()
     }, []);
-
     return (
         <context.Provider value={{username: username, id: userId}}>
             <div> {children} </div>
