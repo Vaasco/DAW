@@ -85,7 +85,7 @@ export function SignUp() {
                         />
                     </div>
                     <div>
-                        <CreateButton onClick={()=>{}} label={"Sign Up"} type={"submit"} />
+                        <CreateButton onClick={()=>{}} label={"Sign Up"} type={"submit"} testId={'teste'} />
                     </div>
                 </fieldset>
             </form>

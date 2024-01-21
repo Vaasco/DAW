@@ -47,6 +47,7 @@ function GetStats() {
                         type={"text"}
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        placeholder={"username"}
                     />
                 <CreateButton onClick={()=>{}} label={"Search"} type={"submit"}/>
             </form>

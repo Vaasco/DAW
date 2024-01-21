@@ -6,6 +6,7 @@ type CreateButtonProps = {
     onClick: () => void;
     label: string;
     type?: "button" | "submit" | "reset";
+    testId?: string
 };
 
 type CreateInputProps = {
@@ -25,9 +26,9 @@ type CreateRadioProps = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const CreateButton: React.FC<CreateButtonProps> = ({ onClick, label,type }) => {
+const CreateButton: React.FC<CreateButtonProps> = ({ onClick, label,type,testId }) => {
     return (
-        <button style={buttonStyle} type={type} onClick={onClick}>
+        <button style={buttonStyle} type={type} onClick={onClick} data-testid={testId}>
             {label}
         </button>
     );
