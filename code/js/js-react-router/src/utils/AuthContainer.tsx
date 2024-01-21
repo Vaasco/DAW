@@ -15,7 +15,6 @@ function AuthContainer({children}: { children: React.ReactNode }) {
         try {
             const rsp = await useFetch('cookies', 'GET');
             const body = await rsp.json();
-
             const usernameCookie = body.find(cookie => cookie.name === 'username').value;
             const idCookie = body.find(cookie => cookie.name === 'id').value;
             setUsername(usernameCookie);

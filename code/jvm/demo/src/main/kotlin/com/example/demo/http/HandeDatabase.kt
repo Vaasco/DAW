@@ -18,7 +18,6 @@ fun <T> handleDatabaseException(e: Exception): Either<Error, T> {
     }
 }
 
-
 fun extractConstraintViolation(e: Exception): String {
     return e.message ?: e.cause?.message ?: ""
 }

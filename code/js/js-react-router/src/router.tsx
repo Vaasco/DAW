@@ -41,14 +41,14 @@ const router = createBrowserRouter(
         },
         {
             path: "/games/:id",
-            element: <GetGame />
+            element: <GetGame/>
         },
         {
             path: "/logout",
             element: <Logout/>
         },
         {
-            path:"/games",
+            path: "/games",
             element: <GetGameById/>
         }
     ]
@@ -57,7 +57,7 @@ const router = createBrowserRouter(
 function App() {
     return (
         <AuthContainer>
-        <RouterProvider router={router}/>
+            <RouterProvider router={router}/>
         </AuthContainer>
     );
 }
